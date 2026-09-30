@@ -1,0 +1,3325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Teme Astegni • Enterprise RBAC Operations Portal</title>
+  <meta name="description" content="Secure Role-Based Access Control Portal for Teme Astegni Founders and Coordinator Admins.">
+  <meta name="theme-color" content="#090d16">
+  <link rel="icon" type="image/jpeg" href="assets/teme_astegni_logo.jpg">
+  <link rel="apple-touch-icon" href="assets/teme_astegni_logo.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: #111827;
+      --card-surface: #1e293b;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-green: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', -apple-system, sans-serif;
+      line-height: 1.5;
+      padding-bottom: 5.5rem;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1rem 0.9rem;
+    }
+
+    /* TOP HEADER */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      margin-bottom: 1.25rem;
+      position: sticky;
+      top: 0.5rem;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-titles h1 {
+      font-size: 1.05rem;
+      font-weight: 850;
+      letter-spacing: -0.3px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .brand-titles span {
+      font-size: 0.72rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .role-badge-owner {
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: var(--accent-amber);
+    }
+
+    .role-badge-admin {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-blue);
+    }
+
+    .btn-header {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.4rem 0.7rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s;
+    }
+
+    .btn-header:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* AUTH OVERLAYS (OWNER SETUP & LOGIN) */
+    .auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(9, 13, 22, 0.96);
+      backdrop-filter: blur(18px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      max-width: 440px;
+      width: 100%;
+      padding: 2.25rem 1.75rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      animation: popIn 0.25s ease-out;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .auth-icon {
+      font-size: 2.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .auth-title {
+      font-size: 1.35rem;
+      font-weight: 850;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* Password Input & Show/Hide */
+    .password-input-wrap {
+      position: relative;
+      margin-bottom: 1rem;
+      width: 100%;
+      text-align: left;
+    }
+
+    .password-field {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.8rem 2.8rem 0.8rem 0.9rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .password-field:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.15rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: color 0.2s;
+    }
+
+    .password-toggle-btn:hover {
+      color: #fff;
+    }
+
+    /* Password Strength Checklist */
+    .strength-meter-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 0.85rem;
+      margin-bottom: 1.25rem;
+      text-align: left;
+      font-size: 0.76rem;
+    }
+
+    .strength-meter-title {
+      font-weight: 750;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .strength-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin-bottom: 0.65rem;
+      overflow: hidden;
+    }
+
+    .strength-bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.25s, background-color 0.25s;
+    }
+
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .rule-item.valid {
+      color: var(--accent-green);
+    }
+
+    .rule-icon {
+      font-size: 0.8rem;
+    }
+
+    .btn-auth-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 800;
+      padding: 0.85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+      transition: all 0.2s;
+    }
+
+    .btn-auth-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-auth-submit:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .auth-error {
+      color: var(--accent-rose);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    /* PANELS & VIEWS */
+    .view-panel {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (min-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1rem 0.9rem;
+      position: relative;
+    }
+
+    .kpi-card.restricted {
+      background: rgba(17, 24, 39, 0.6);
+      border-style: dashed;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 750;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .kpi-sub {
+      font-size: 0.7rem;
+      color: var(--accent-blue);
+      margin-top: 0.3rem;
+      font-weight: 600;
+    }
+
+    /* TOOLBAR & SEARCH */
+    .toolbar-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 0.85rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .toolbar-box {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .search-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 0.4rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .pill-btn.active {
+      background: var(--accent-blue);
+      color: #090d16;
+      border-color: var(--accent-blue);
+      font-weight: 800;
+    }
+
+    /* RECORD CARDS */
+    .record-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.1rem;
+      margin-bottom: 0.85rem;
+      transition: border-color 0.2s;
+    }
+
+    .record-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .record-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.65rem;
+      gap: 0.5rem;
+    }
+
+    .record-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .tag-pending { background: rgba(251, 191, 36, 0.15); color: var(--accent-amber); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .tag-trial { background: rgba(129, 140, 248, 0.15); color: var(--accent-indigo); border: 1px solid rgba(129, 140, 248, 0.3); }
+    .tag-active { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .tag-closed { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    /* TUTOR ACADEMIC METAL TIERS (GOLDEN, SILVER, BRONZE) & 5-LEVEL PROGRESSION */
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 850;
+      padding: 0.22rem 0.65rem;
+      border-radius: 12px;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+    }
+    .tier-badge-golden {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(251, 191, 36, 0.15));
+      color: #fbbf24;
+      border: 1.5px solid rgba(251, 191, 36, 0.6);
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+    }
+    .tier-badge-silver {
+      background: linear-gradient(135deg, rgba(148, 163, 184, 0.22), rgba(203, 213, 225, 0.12));
+      color: #e2e8f0;
+      border: 1.5px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 0 10px rgba(148, 163, 184, 0.15);
+    }
+    .tier-badge-bronze {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.25), rgba(249, 115, 22, 0.15));
+      color: #fdba74;
+      border: 1.5px solid rgba(249, 115, 22, 0.6);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.15);
+    }
+    .level-badge-0 { opacity: 0.85; }
+    .level-badge-1 { border-width: 2px; }
+    .level-badge-2 { border-width: 2px; }
+    .level-badge-3 { border-width: 2px; }
+    .level-badge-4 { border-width: 2px; }
+    .level-badge-5 { 
+      border-width: 2px; 
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.4); 
+    }
+
+    .exam-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      font-weight: 750;
+      padding: 0.2rem 0.55rem;
+      border-radius: 10px;
+    }
+    .exam-badge-passed { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .exam-badge-pending { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .exam-badge-none { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+
+    .record-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      margin-bottom: 0.85rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .record-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-act {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 750;
+      padding: 0.45rem 0.75rem;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+
+    .btn-act:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-act-call {
+      background: rgba(52, 211, 153, 0.15);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: var(--accent-green);
+    }
+
+    .btn-act-primary {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
+    /* MODERN CLASSIC STATUS DROPDOWN */
+    .status-dropdown {
+      background-color: #1e293b !important;
+      color: #f8fafc !important;
+      border: 1.5px solid rgba(56, 189, 248, 0.45) !important;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 750;
+      padding: 0.48rem 2.2rem 0.48rem 0.85rem;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2338bdf8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+      background-size: 0.95rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+      display: inline-block;
+      min-width: 175px;
+    }
+
+    .status-dropdown:hover {
+      border-color: #38bdf8 !important;
+      background-color: #27354f !important;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+    }
+
+    .status-dropdown:focus {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.35);
+    }
+
+    .status-dropdown option {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.75rem 1rem;
+    }
+
+    /* FIXED BOTTOM NAVIGATION */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0.5rem 0.25rem;
+      z-index: 90;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 750;
+      padding: 0.3rem 0.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+    }
+
+    .nav-item .icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .nav-item.active {
+      color: var(--accent-blue);
+    }
+
+    .nav-item.active .icon {
+      transform: scale(1.1);
+    }
+
+    /* MODAL STYLING */
+    .app-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .app-modal.active {
+      display: flex;
+    }
+
+    .modal-sheet {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-sheet h2 {
+      font-size: 1.2rem;
+      font-weight: 850;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-sheet p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 750;
+      color: #cbd5e1;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-ctrl {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 0.7rem 0.85rem;
+      color: #fff;
+      font-size: 0.88rem;
+      font-family: inherit;
+    }
+
+    .form-ctrl:focus {
+      border-color: var(--accent-blue);
+      outline: none;
+    }
+
+    select.form-ctrl option {
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 0.88rem;
+      padding: 0.5rem;
+    }
+
+    .code-box {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 0.85rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #38bdf8;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-modal-primary {
+      flex: 1;
+      background: #2563eb;
+      border: none;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 0.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn-modal-sec {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 750;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCREEN 1: OWNER FIRST-RUN INITIALIZATION WIZARD -->
+  <!-- Appears ONLY when no primary owner exists yet -->
+  <div id="screen-owner-setup" class="auth-overlay" style="display: none;">
+    <div class="auth-card" style="max-width: 480px;">
+      <div class="auth-icon">👑</div>
+      <h2 class="auth-title">Primary Founder Setup</h2>
+      <p class="auth-subtitle">
+        Welcome Founder! Initialize primary ownership for <b>Teme Astegni (ተሜ አስጠኚ)</b>. You will hold master cryptographic authority, manage staff admins, and control financial ledgers.
+      </p>
+
+      <form id="owner-setup-form" onsubmit="handleOwnerSetup(event)">
+        <div class="form-group">
+          <label class="form-label">Founder Full Name (የባለቤት ሙሉ ስም)</label>
+          <input type="text" id="setup-owner-name" class="form-ctrl" placeholder="e.g. Ashenafi Tobe" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Founder Email Address (ኢሜይል)</label>
+          <input type="email" id="setup-owner-email" class="form-ctrl" value="ashenafitobe@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Master Strong Password (ጠንካራ ሚስጥር ቃል)</label>
+          <div class="password-input-wrap">
+            <input type="password" id="setup-owner-pass" class="password-field" placeholder="Create Strong Password" oninput="validateSetupPassword()" required autocomplete="new-password">
+            <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('setup-owner-pass', this)" title="Show/Hide">👁️</button>
+          </div>
+        </div>
+
+        <!-- Live Password Strength Meter -->
+        <div class="strength-meter-box">
+          <div class="strength-meter-title">
+            <span>Password Security Level</span>
+            <span id="setup-strength-label" style="font-weight: 800; color: var(--accent-rose);">Too Weak</span>
+          </div>
+          <div class="strength-bar-bg">
+            <div id="setup-strength-fill" class="strength-bar-fill" style="width: 20%; background-color: var(--accent-rose);"></div>
+          </div>
+          <div id="rule-len" class="rule-item"><span class="rule-icon">○</span> At least 8 characters long (ቢያንስ 8 ፊደላት)</div>
+          <div id="rule-upper" class="rule-item"><span class="rule-icon">○</span> Uppercase letter [A-Z] (የካፒታል ፊደል)</div>
+          <div id="rule-lower" class="rule-item"><span class="rule-icon">○</span> Lowercase letter [a-z] (አነስተኛ ፊደል)</div>
+          <div id="rule-digit" class="rule-item"><span class="rule-icon">○</span> Number [0-9] (የቁጥር ምልክት)</div>
+          <div id="rule-special" class="rule-item"><span class="rule-icon">○</span> Special character [@#$%^&*!] (ልዩ ምልክቶች)</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Confirm Master Password (እንደገና ያረጋግጡ)</label>
+          <div class="password-input-wrap">
+            <input type="password" id="setup-owner-pass-confirm" class="password-field" placeholder="Repeat Password" oninput="validateSetupPassword()" required autocomplete="new-password">
+            <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('setup-owner-pass-confirm', this)" title="Show/Hide">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-owner-setup" class="btn-auth-submit" disabled>
+          👑 Initialize Primary Ownership ›
+        </button>
+
+        <div id="setup-error" class="auth-error"></div>
+      </form>
+      <div style="font-size: 0.74rem; color: #64748b; margin-top: 1rem;">
+        🔒 Hardened SHA-256 Cryptographic Storage • One-Time Initialization
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: SECURE UNIFIED LOGIN SCREEN -->
+  <!-- Appears when owner exists but session is locked -->
+  <div id="screen-login" class="auth-overlay" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-icon">🔐</div>
+      <h2 class="auth-title">Teme Astegni Portal</h2>
+      <p class="auth-subtitle">Enter your Founder or Coordinator credentials to access operations.</p>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email or Username (ኢሜይል ወይም ስም)</label>
+          <input type="text" id="login-identifier" class="form-ctrl" placeholder="ashenafitobe@gmail.com" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password (የይለፍ ቃል)</label>
+          <div class="password-input-wrap">
+            <input type="password" id="login-pass" class="password-field" placeholder="Enter Password" required autocomplete="current-password">
+            <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('login-pass', this)" title="Show/Hide">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-auth-submit">Unlock Operations Portal ›</button>
+        <div id="login-error" class="auth-error">የተሳሳተ ኢሜይል ወይም ሚስጥር ቃል ነው። እባክዎ እንደገና ይሞክሩ።</div>
+      </form>
+
+      <div style="font-size: 0.75rem; color: #64748b; margin-top: 1.25rem;">
+        Ethio 21 Technologies • Enterprise RBAC Protected System
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: MAIN APP CONTENT WRAPPER -->
+  <div class="wrap" id="main-content" style="display: none;">
+
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="brand-group">
+        <img src="assets/teme_astegni_logo.jpg" alt="Teme Astegni Logo" class="brand-logo-img">
+        <div class="brand-titles">
+          <h1>Teme Ops <span>Operations Portal</span></h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span id="user-role-badge" class="role-badge role-badge-owner">
+          👑 Owner: Ashenafi
+        </span>
+        <button class="btn-header" onclick="lockPortal()" title="Lock Screen">🔒 Lock</button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: OVERVIEW DASHBOARD -->
+    <section id="view-dashboard" class="view-panel active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Parent Requests</div>
+          <div class="kpi-val" id="kpi-parents-count">0</div>
+          <div class="kpi-sub" id="kpi-parents-sub">0 Pending Review</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Verified Tutors</div>
+          <div class="kpi-val" id="kpi-tutors-count">0</div>
+          <div class="kpi-sub">CGPA ≥ 3.00 Vetted</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Matches</div>
+          <div class="kpi-val" id="kpi-matches-count">0</div>
+          <div class="kpi-sub">Trials & Contracts</div>
+        </div>
+        <!-- Financial Metric Card (Restricted to Owner) -->
+        <div class="kpi-card" id="kpi-financial-card">
+          <div class="kpi-label">Est. Commission</div>
+          <div class="kpi-val" id="kpi-commission-val">0 ETB</div>
+          <div class="kpi-sub" id="kpi-commission-sub">25% Ethio21 Margin</div>
+        </div>
+      </div>
+
+      <!-- Quick Operations Banner -->
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 1.1rem; margin-bottom: 1.25rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 0.4rem;">
+          ⚡ Live Operations Command
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+          Coordinate student requests, arrange 1-day free in-home trials, and manage accredited university tutors across campuses.
+        </p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act btn-act-call">
+            ✈️ Open Astegni Ops Telegram
+          </a>
+          <button class="btn-act" onclick="switchView('view-parents')">
+            📥 Review Parent Leads ›
+          </button>
+          <button class="btn-act owner-only-feature" onclick="syncCloudDatabase()">
+            🔄 Force Cloud Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Leads Feed -->
+      <h3 style="font-size: 1rem; font-weight: 850; color: #fff; margin-bottom: 0.75rem;">
+        ⏱️ Recent Inquiries (የቅርብ ጊዜ ጥያቄዎች)
+      </h3>
+      <div id="dashboard-recent-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: PARENTS INBOX -->
+    <section id="view-parents" class="view-panel">
+      <div class="toolbar-box">
+        <input type="text" id="parent-search" class="search-input" placeholder="🔍 Search parent name, phone, area, grade..." oninput="filterParents()">
+        <div class="filter-pills">
+          <button class="pill-btn active" onclick="setParentFilter('ALL', this)">All</button>
+          <button class="pill-btn" onclick="setParentFilter('Pending', this)">Pending</button>
+          <button class="pill-btn" onclick="setParentFilter('Trial Scheduled', this)">In Trial</button>
+          <button class="pill-btn" onclick="setParentFilter('Active Contract', this)">Active</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="parent-list-counter">Showing 0 requests</span>
+        <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
+      </div>
+
+      <div id="parents-cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 3: TUTORS DIRECTORY -->
+    <section id="view-tutors" class="view-panel">
+      <div class="toolbar-box">
+        <input type="text" id="tutor-search" class="search-input" placeholder="🔍 Search tutor name, campus, CGPA, subjects..." oninput="filterTutors()">
+        <div class="filter-pills" style="gap: 0.4rem; flex-wrap: wrap;">
+          <button class="pill-btn active" onclick="setTutorFilter('ALL', this)">All Scholars</button>
+          <button class="pill-btn" style="border-color: rgba(251, 191, 36, 0.6); color: #fbbf24;" onclick="setTutorFilter('GOLDEN', this)">🥇 Golden Tier (CGPA ≥ 3.75)</button>
+          <button class="pill-btn" style="border-color: rgba(148, 163, 184, 0.6); color: #e2e8f0;" onclick="setTutorFilter('SILVER', this)">🥈 Silver Tier (3.40 - 3.74)</button>
+          <button class="pill-btn" style="border-color: rgba(249, 115, 22, 0.6); color: #fdba74;" onclick="setTutorFilter('BRONZE', this)">🥉 Bronze Tier (3.00 - 3.39)</button>
+          <button class="pill-btn" onclick="setTutorFilter('L5', this)">👑 L5 Master</button>
+          <button class="pill-btn" onclick="setTutorFilter('L4', this)">💎 L4</button>
+          <button class="pill-btn" onclick="setTutorFilter('L3', this)">⭐ L3</button>
+          <button class="pill-btn" onclick="setTutorFilter('L2', this)">⚡ L2</button>
+          <button class="pill-btn" onclick="setTutorFilter('L1', this)">🎙️ L1 Communicator</button>
+          <button class="pill-btn" onclick="setTutorFilter('BASIC', this)">Basic (L0)</button>
+          <button class="pill-btn" onclick="setTutorFilter('EXAM_PASSED', this)">✅ Exam Passed</button>
+          <button class="pill-btn" onclick="setTutorFilter('Female', this)">Female</button>
+          <button class="pill-btn" onclick="setTutorFilter('Male', this)">Male</button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="tutor-list-counter">Showing 0 verified tutors</span>
+        <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
+      </div>
+
+      <div id="tutors-cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: MATCHES & COMMISSION TRACKER -->
+    <section id="view-matches" class="view-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">🤝 Active Pairings & Commission</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Track tutoring contracts and 25% revenue shares.</p>
+        </div>
+        <button class="btn-act btn-act-primary" onclick="openNewMatchModal()">+ New Match</button>
+      </div>
+
+      <div id="matches-cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 5: STAFF & ADMIN ACCESS CONTROL (OWNER ONLY) -->
+    <section id="view-admins" class="view-panel">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">👥 Staff & Coordinator Admins</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Invite operational coordinators and configure granular permissions.</p>
+        </div>
+        <button class="btn-act btn-act-primary" onclick="openInviteAdminModal()">+ Invite New Admin</button>
+      </div>
+
+      <div id="admins-list-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 6: DATABASE & CLOUD (OWNER ONLY) -->
+    <section id="view-database" class="view-panel">
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem; margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff; margin-bottom: 0.4rem;">
+          ☁️ Google Sheets Cloud Database
+        </h2>
+        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+          Primary Account: <b>ashenafitobe@gmail.com</b>. Synchronizes live leads with Google Sheets for zero-cost scalability.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Google Apps Script Webhook Endpoint URL</label>
+          <input type="url" id="webhook-url-input" class="form-ctrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
+          <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
+          <button class="btn-act" onclick="syncCloudDatabase()">📥 Fetch Latest Records</button>
+        </div>
+      </div>
+
+      <!-- TELEGRAM UNLIMITED CLOUD PHOTO STORAGE & BOT DISPATCH -->
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">
+            ✈️ Telegram Unlimited Cloud Storage (Free Forever)
+          </h2>
+          <span class="tag-badge tag-active">100% Free Forever • Unlimited Files</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+          Tutor and parent ID cards, payment screenshots, and certificates stream directly to your private Telegram Channel or Coordinator Bot with <b>zero storage limits and zero monthly bills</b>.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Telegram Bot Token (from @BotFather)</label>
+          <input type="password" id="tg-bot-token-input" class="form-ctrl" placeholder="e.g. 7123456789:AAHk...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Telegram Admin Channel / Group Chat ID</label>
+          <input type="text" id="tg-chat-id-input" class="form-ctrl" placeholder="e.g. @Ethio21AstegniOps or -100123456789">
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="btn-act btn-act-primary" onclick="saveTelegramConfig()">💾 Save Telegram Settings</button>
+          <button class="btn-act" onclick="testTelegramAlert()">✈️ Send Test Alert to Telegram</button>
+        </div>
+      </div>
+
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 850; color: #fff; margin-bottom: 0.5rem;">
+          📜 Google Apps Script Webhook Code
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+          Copy and paste this code into your Google Sheet's <b>Extensions ➔ Apps Script</b> editor.
+        </p>
+        <button class="btn-act" onclick="openScriptCodeModal()">View & Copy Script Code ›</button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav" id="admin-bottom-nav" style="display: none;">
+    <button class="nav-item active" onclick="switchView('view-dashboard', this)">
+      <span class="icon">📊</span>
+      <span>Overview</span>
+    </button>
+    <button class="nav-item" onclick="switchView('view-parents', this)">
+      <span class="icon">📥</span>
+      <span>Parents</span>
+    </button>
+    <button class="nav-item" onclick="switchView('view-tutors', this)">
+      <span class="icon">🎓</span>
+      <span>Tutors</span>
+    </button>
+    <button class="nav-item" onclick="switchView('view-matches', this)">
+      <span class="icon">🤝</span>
+      <span>Matches</span>
+    </button>
+    <button class="nav-item owner-nav-item" id="nav-item-admins" onclick="switchView('view-admins', this)">
+      <span class="icon">👥</span>
+      <span>Admins</span>
+    </button>
+    <button class="nav-item owner-nav-item" id="nav-item-database" onclick="switchView('view-database', this)">
+      <span class="icon">⚙️</span>
+      <span>Database</span>
+    </button>
+  </nav>
+
+  <!-- MODAL: INVITE NEW ADMIN -->
+  <div id="modal-invite-admin" class="app-modal">
+    <div class="modal-sheet">
+      <h2>👥 Invite Coordinator Admin</h2>
+      <p>Create an operational coordinator account with restricted privileges.</p>
+
+      <form onsubmit="handleCreateAdmin(event)">
+        <div class="form-group">
+          <label class="form-label">Coordinator Name (e.g. Lemma / ለማ)</label>
+          <input type="text" id="admin-new-name" class="form-ctrl" required placeholder="Full Name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Coordinator Email or Username</label>
+          <input type="text" id="admin-new-email" class="form-ctrl" required placeholder="e.g. lemma@ethio21.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Temporary Strong Password</label>
+          <div class="password-input-wrap">
+            <input type="password" id="admin-new-pass" class="password-field" required placeholder="Enter Strong Password" oninput="validateAdminPassword()">
+            <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('admin-new-pass', this)">👁️</button>
+          </div>
+        </div>
+
+        <!-- Admin Password Checklist -->
+        <div class="strength-meter-box">
+          <div id="admin-rule-len" class="rule-item"><span class="rule-icon">○</span> At least 8 characters</div>
+          <div id="admin-rule-upper" class="rule-item"><span class="rule-icon">○</span> Uppercase [A-Z]</div>
+          <div id="admin-rule-lower" class="rule-item"><span class="rule-icon">○</span> Lowercase [a-z]</div>
+          <div id="admin-rule-digit" class="rule-item"><span class="rule-icon">○</span> Number [0-9]</div>
+          <div id="admin-rule-special" class="rule-item"><span class="rule-icon">○</span> Symbol [@#$%^&*!]</div>
+        </div>
+
+        <!-- Permissions Checklist -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1.25rem;">
+          <div style="font-size: 0.8rem; font-weight: 750; color: #fff; margin-bottom: 0.5rem;">Access Restrictions & Permissions:</div>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.4rem;">
+            <input type="checkbox" id="perm-financials" style="accent-color: var(--accent-blue);">
+            Allow viewing Financial Ledger & Commissions
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: #cbd5e1; margin-bottom: 0.4rem;">
+            <input type="checkbox" id="perm-delete" style="accent-color: var(--accent-blue);">
+            Allow deleting parent and tutor leads
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-sec" onclick="closeModal('modal-invite-admin')">Cancel</button>
+          <button type="submit" id="btn-save-admin" class="btn-modal-primary" disabled>Create Admin Account ›</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: MATCH MAKER -->
+  <div id="modal-match-maker" class="app-modal">
+    <div class="modal-sheet">
+      <h2>🤝 Create Tutoring Match</h2>
+      <p>Pair an incoming parent request with a vetted university scholar.</p>
+
+      <div class="form-group">
+        <label class="form-label">Select Parent Request</label>
+        <select id="match-select-parent" class="form-ctrl"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Verified Tutor</label>
+        <select id="match-select-tutor" class="form-ctrl"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Monthly Tuition Fee (ETB)</label>
+        <input type="number" id="match-price-input" class="form-ctrl" value="3500" oninput="calculateCommissionPreview()">
+      </div>
+
+      <div class="form-group" id="match-rate-group">
+        <label class="form-label">Commission Rate (%)</label>
+        <select id="match-rate-select" class="form-ctrl" onchange="calculateCommissionPreview()">
+          <option value="20">20% Margin</option>
+          <option value="25" selected>25% Standard (Ethio 21)</option>
+          <option value="30">30% High-Touch</option>
+        </select>
+      </div>
+
+      <div id="match-calc-preview" style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.82rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+          <span style="color: var(--text-muted);">Tutor Net Take-Home:</span>
+          <span style="color: var(--accent-green); font-weight: 800;" id="calc-tutor-net">2,625 ETB</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Ethio 21 Revenue:</span>
+          <span style="color: var(--accent-blue); font-weight: 800;" id="calc-ethio21-share">875 ETB</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-sec" onclick="closeModal('modal-match-maker')">Cancel</button>
+        <button class="btn-modal-primary" onclick="confirmNewMatch()">Create Pairing ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TUTOR COMMUNICATIVE & TEACHING EXAM -->
+  <div id="modal-tutor-exam" class="app-modal">
+    <div class="modal-sheet" style="max-width: 540px;">
+      <h2>🎙️ Conduct Communicative &amp; Teaching Skills Exam</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Evaluate the university tutor's voice clarity, pedagogical patience, and communicative skills via Voice Call, Video Call, or In-Person. Passing immediately unlocks <b>Level 1 &amp; 1st Priority Dispatch</b> in their Metal Tier!
+      </p>
+
+      <input type="hidden" id="exam-tutor-phone">
+
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.95rem; font-weight: 800; color: #fff;" id="exam-tutor-name">Tutor Name</div>
+        <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 0.2rem;" id="exam-tutor-meta">University • CGPA</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Evaluation Interview Medium *</label>
+        <select id="exam-medium-select" class="form-ctrl">
+          <option value="Voice Call" selected>📞 Voice Call (Telegram / Direct Phone Interview)</option>
+          <option value="Video Call">📹 Video Call (Telegram / Google Meet Teaching Demo)</option>
+          <option value="Physical In-Person">🏛️ Physical In-Person (Campus / Office Demo)</option>
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+        <div class="form-group">
+          <label class="form-label">Communicative Score (0 - 100) *</label>
+          <input type="number" id="exam-score-input" class="form-ctrl" min="0" max="100" value="88" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Clarity &amp; Pedagogical Tone *</label>
+          <select id="exam-clarity-select" class="form-ctrl">
+            <option value="Exceptional (A+)">Exceptional (A+) - Extremely Patient &amp; Fluent</option>
+            <option value="Strong (A)" selected>Strong (A) - Clear &amp; Articulate</option>
+            <option value="Adequate (B)">Adequate (B) - Good Concept Delivery</option>
+            <option value="Needs Practice (C)">Needs Practice (C) - Shy / Unclear</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Coordinator Feedback &amp; Interview Notes</label>
+        <textarea id="exam-notes-input" class="form-ctrl" rows="2" placeholder="e.g. Demonstrated clear 10-minute algebra lesson. Fluent in Amharic &amp; English, very courteous tone."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Official Evaluation Decision *</label>
+        <select id="exam-decision-select" class="form-ctrl" style="border-color: #34d399; font-weight: 800; color: #34d399; background: #0f172a;">
+          <option value="PASS_LEVEL_1" selected>✅ PASS EXAM ➔ Promote to Level 1 (1st Priority Dispatch in their Metal Tier)</option>
+          <option value="RETRY">⏳ Needs Practice / Re-try (Keep Basic Level 0)</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-sec" onclick="closeModal('modal-tutor-exam')">Cancel</button>
+        <button type="button" class="btn-modal-primary" onclick="submitTutorExamResult()">💾 Save Exam &amp; Update Rank ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TUTOR PROGRESSION & LEVEL UPGRADE (50 ETB) -->
+  <div id="modal-level-upgrade" class="app-modal">
+    <div class="modal-sheet" style="max-width: 520px;">
+      <h2>⭐ Tutor Progression &amp; Level Upgrade</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Elevate vetted tutors through their 5-Level Tier Hierarchy (Golden, Silver, or Bronze). Higher levels get first-pick dispatch and higher prestige.
+      </p>
+
+      <input type="hidden" id="upgrade-tutor-phone">
+
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #fff;" id="upgrade-tutor-name">Tutor Name</div>
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem;" id="upgrade-tutor-current">Current Rank: Calculating Tier &amp; Level...</div>
+          </div>
+          <span id="upgrade-current-badge" class="level-badge level-badge-0">Level 0</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Target Promotion Level *</label>
+        <select id="upgrade-target-level" class="form-ctrl" onchange="updateUpgradeModalPreview()">
+          <option value="1">Level 1 (Certified Communicator - Free with Voice/Video Exam)</option>
+          <option value="2">Level 2 (Advanced Scholar - 50 ETB Fee)</option>
+          <option value="3">Level 3 (Senior Astegni - 50 ETB Fee)</option>
+          <option value="4">Level 4 (Distinguished Scholar - 50 ETB Fee)</option>
+          <option value="5">👑 Level 5 (Master Astegni - Physical/Video Demo Required)</option>
+        </select>
+      </div>
+
+      <!-- Upgrade Price & Protocol Card -->
+      <div id="upgrade-fee-box" style="background: rgba(245, 158, 11, 0.1); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+          <span style="font-size: 0.82rem; font-weight: 750; color: #fff;">Platform Progression Fee:</span>
+          <span style="font-size: 1.1rem; font-weight: 850; color: #f59e0b;" id="upgrade-fee-amount">50 ETB</span>
+        </div>
+        <p style="font-size: 0.74rem; color: #cbd5e1; margin: 0;" id="upgrade-fee-note">
+          Collect <b>50 ETB via Telebirr</b> from the tutor to activate this level booster and record in platform revenue ledger.
+        </p>
+      </div>
+
+      <!-- Level 5 Special Verification Checkbox (Visible only when Level 5 selected) -->
+      <div id="upgrade-l5-check-box" style="display: none; background: rgba(250, 204, 21, 0.1); border: 1.5px solid rgba(250, 204, 21, 0.4); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.78rem; color: #fff; cursor: pointer;">
+          <input type="checkbox" id="check-l5-master-demo" style="accent-color: #facc15; width: 18px; height: 18px; margin-top: 2px;">
+          <span>
+            <b style="color: #facc15;">MANDATORY MASTER AUDIT VERIFIED *</b><br>
+            I certify that this tutor completed a live in-depth physical teaching demonstration or comprehensive video call lesson audit with senior coordinators.
+          </span>
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-sec" onclick="closeModal('modal-level-upgrade')">Cancel</button>
+        <button type="button" class="btn-modal-primary" onclick="confirmLevelUpgrade()">🚀 Confirm Promotion ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ID & CREDENTIAL INSPECTOR (FRONT & BACK + 1-MONTH VALIDITY) -->
+  <div id="modal-id-inspect" class="app-modal">
+    <div class="modal-sheet" style="max-width: 620px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h2 style="margin: 0; font-size: 1.2rem;">🔍 ID &amp; Credential Inspector</h2>
+        <span id="inspect-role-badge" class="tag-badge tag-active">Tutor Verified</span>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Verify that both <b>Front &amp; Back</b> photos are sharp, unblurred, and that the ID has at least 1 month (30 days) of remaining validity before expiration.
+      </p>
+
+      <!-- Subject Summary -->
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 1rem; font-weight: 850; color: #fff;" id="inspect-person-name">Person Name</div>
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem;" id="inspect-person-meta">Phone • Location</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: #94a3b8;">Document Type</div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;" id="inspect-doc-type">National Fayda ID</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expiry Date & Validity Status Box -->
+      <div id="inspect-expiry-box" style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 0.75rem; color: #cbd5e1; font-weight: 700;">Document Expiry Date:</span>
+            <div style="font-size: 0.95rem; font-weight: 850; color: #fff;" id="inspect-expiry-date">2027-11-20</div>
+          </div>
+          <div id="inspect-expiry-status" style="font-size: 0.8rem; font-weight: 800; color: #34d399; background: rgba(16, 185, 129, 0.2); padding: 0.3rem 0.65rem; border-radius: 8px;">
+            ✓ Valid (&gt; 1 Month Remaining)
+          </div>
+        </div>
+      </div>
+
+      <!-- Front and Back ID Previews Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 1rem;">
+        <!-- Front Side -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.75rem; text-align: center;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.76rem; font-weight: 800; color: #fff;">📸 ID Front (የፊት ገጽ)</span>
+            <span class="tag-badge tag-active" style="font-size: 0.65rem;">Front Side</span>
+          </div>
+          <div style="height: 140px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+            <img id="inspect-img-front" src="" alt="ID Front" style="max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
+            <span id="inspect-empty-front" style="font-size: 0.75rem; color: #64748b;">No Front Photo Uploaded</span>
+          </div>
+          <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.4rem;">Click image to open high-res</div>
+        </div>
+
+        <!-- Back Side -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.75rem; text-align: center;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.76rem; font-weight: 800; color: #fff;">🔄 ID Back (የኋላ ገጽ)</span>
+            <span class="tag-badge tag-active" style="font-size: 0.65rem;">Back Side</span>
+          </div>
+          <div style="height: 140px; background: rgba(0,0,0,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+            <img id="inspect-img-back" src="" alt="ID Back" style="max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in;" onclick="window.open(this.src, '_blank')">
+            <span id="inspect-empty-back" style="font-size: 0.75rem; color: #64748b;">No Back Photo Uploaded</span>
+          </div>
+          <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.4rem;">Click image to open high-res</div>
+        </div>
+      </div>
+
+      <!-- Coordinator Verification Actions -->
+      <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.8rem; font-weight: 850; color: #38bdf8; margin-bottom: 0.35rem;">🛡️ Coordinator Legibility Audit Checklist:</div>
+        <div style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.45;">
+          • Name matches form input precisely.<br>
+          • Photo is clear, recognizable, and has no digital alterations.<br>
+          • Expiry date shows at least 1 month remaining validity.<br>
+          • Household location correlates with Kebele / Fayda address.
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-sec" onclick="closeModal('modal-id-inspect')">Close Inspector</button>
+        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-modal-primary" style="text-decoration: none; text-align: center;">✈️ Open in Ops Room ›</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GOOGLE APPS SCRIPT CODE -->
+  <div id="modal-script-code" class="app-modal">
+    <div class="modal-sheet" style="max-width: 600px;">
+      <h2>📜 Google Apps Script Webhook Code</h2>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+        <span class="tag-badge tag-active">⚡ 100% Free Forever ($0.00 / Zero Ongoing Costs)</span>
+        <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">✨ Auto-Styled Modern Sheets</span>
+      </div>
+      <p>Log into Google with <b>ashenafitobe@gmail.com</b>, open your Sheet, go to <b>Extensions ➔ Apps Script</b>, and paste this automation script:</p>
+
+      <div class="code-box" id="apps-script-code-box">/**
+ * Teme Astegni (ተሜ አስጠኚ) - 100% Free Cloud Database Engine
+ * Primary Owner: ashenafitobe@gmail.com
+ * Organization: Ethio 21 Technologies
+ * Cost: 100% FREE FOREVER (Google Sheets API & Apps Script)
+ */
+
+function doGet(e) {
+  var action = (e && e.parameter) ? e.parameter.action : '';
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  if (action === 'getData') {
+    var pSheet = ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
+    var tSheet = ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
+    var mSheet = ss.getSheetByName('Matches_Ledger') || ss.getSheetByName('Matches') || createMatchesSheet(ss);
+    
+    var parents = rowsToJson(pSheet);
+    var tutors = rowsToJson(tSheet);
+    var matches = rowsToJson(mSheet);
+    
+    var output = { parents: parents, tutors: tutors, matches: matches };
+    return ContentService.createTextOutput(JSON.stringify(output))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({ status: 'OK', message: 'Teme Astegni Modern Cloud API Active' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var postData = JSON.parse(e.postData.contents);
+    var action = postData.action;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    if (action === 'addParent') {
+      var sheet = ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
+      var d = postData.data;
+      var newRow = [
+        new Date(),
+        d.name || '',
+        d.phone || '',
+        d.area || '',
+        d.studentGender || d.childGender || 'Student',
+        d.grade || '',
+        d.subjs || '',
+        d.status || 'Pending'
+      ];
+      sheet.appendRow(newRow);
+      formatLastRow(sheet, '#0f172a');
+    } 
+    else if (action === 'addTutor') {
+      var sheet = ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
+      var d = postData.data;
+      var g = parseFloat(d.cgpa) || 0;
+      var tier = g >= 3.75 ? 'Golden' : (g >= 3.40 ? 'Silver' : 'Bronze');
+      var lvl = Number(d.level) || 0;
+      var rankTitle = tier + (lvl > 0 ? (' Level ' + lvl) : ' Basic (L0)');
+      var newRow = [
+        new Date(),
+        d.name || '',
+        d.phone || '',
+        d.gender || '',
+        d.uni || '',
+        d.year || '',
+        d.cgpa || '',
+        tier,
+        'Level ' + lvl,
+        rankTitle,
+        d.subj || '',
+        d.examStatus || 'Not Taken',
+        d.examScore ? (d.examScore + '%') : 'N/A',
+        d.govtId || '',
+        d.status || 'Verified'
+      ];
+      sheet.appendRow(newRow);
+      formatLastRow(sheet, '#065f46');
+    }
+    else if (action === 'addMatch') {
+      var sheet = ss.getSheetByName('Matches_Ledger') || ss.getSheetByName('Matches') || createMatchesSheet(ss);
+      var d = postData.data;
+      var newRow = [
+        new Date(),
+        d.parentName || '',
+        d.parentPhone || '',
+        d.tutorName || '',
+        d.tutorPhone || '',
+        d.monthlyFee || '',
+        d.commission || '',
+        d.status || 'Active'
+      ];
+      sheet.appendRow(newRow);
+      formatLastRow(sheet, '#1e40af');
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function createParentsSheet(ss) {
+  var s = ss.getSheetByName('Parents_Requests') || ss.insertSheet('Parents_Requests');
+  var headers = ['Timestamp', 'Parent/Student Name', 'Phone Number', 'Neighborhood / Location', 'Student Gender', 'Grade Level', 'Subjects', 'Status'];
+  s.clear();
+  s.appendRow(headers);
+  applyModernHeader(s, '#0f172a');
+  return s;
+}
+
+function createTutorsSheet(ss) {
+  var s = ss.getSheetByName('Verified_Tutors') || ss.insertSheet('Verified_Tutors');
+  var headers = ['Timestamp', 'Full Name', 'Phone Number', 'Gender', 'University & Campus', 'Academic Year', 'CGPA', 'Metal Tier', 'Level Rank', 'Full Rank Title', 'Subjects Taught', 'Communicative Exam', 'Exam Score', 'Government ID', 'Status'];
+  s.clear();
+  s.appendRow(headers);
+  applyModernHeader(s, '#065f46');
+  return s;
+}
+
+function createMatchesSheet(ss) {
+  var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
+  var headers = ['Timestamp', 'Parent Name', 'Parent Phone', 'Tutor Name', 'Tutor Phone', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
+  s.clear();
+  s.appendRow(headers);
+  applyModernHeader(s, '#1e40af');
+  return s;
+}
+
+function applyModernHeader(sheet, bgColor) {
+  var lastCol = sheet.getLastColumn();
+  sheet.setFrozenRows(1);
+  var header = sheet.getRange(1, 1, 1, lastCol);
+  header.setBackground(bgColor);
+  header.setFontColor('#ffffff');
+  header.setFontWeight('bold');
+  header.setFontFamily('Arial');
+  header.setFontSize(10);
+  header.setHorizontalAlignment('center');
+  header.setVerticalAlignment('middle');
+  sheet.setRowHeight(1, 38);
+  for (var c = 1; c <= lastCol; c++) {
+    sheet.autoResizeColumn(c);
+    var w = sheet.getColumnWidth(c);
+    if (w < 130) sheet.setColumnWidth(c, 130);
+    if (w > 320) sheet.setColumnWidth(c, 320);
+  }
+}
+
+function formatLastRow(sheet, themeColor) {
+  var lastRow = sheet.getLastRow();
+  var lastCol = sheet.getLastColumn();
+  if (lastRow <= 1) return;
+  var rowRange = sheet.getRange(lastRow, 1, 1, lastCol);
+  var isEven = (lastRow % 2 === 0);
+  rowRange.setBackground(isEven ? '#f8fafc' : '#ffffff');
+  rowRange.setFontFamily('Arial');
+  rowRange.setFontSize(9);
+  rowRange.setVerticalAlignment('middle');
+  sheet.setRowHeight(lastRow, 30);
+  sheet.getRange(lastRow, 1).setNumberFormat('yyyy-mm-dd hh:mm');
+}
+
+function rowsToJson(sheet) {
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+  var headers = data[0];
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = data[i][j];
+    }
+    rows.push(obj);
+  }
+  return rows;
+}</div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-sec" onclick="closeModal('modal-script-code')">Close</button>
+        <button class="btn-modal-primary" onclick="copyAppsScriptCode()">📋 Copy Code to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // CRYPTOGRAPHY & PASSWORD STRENGTH ENGINE
+    // ==========================================
+    async function hashPassword(password, salt) {
+      const enc = new TextEncoder();
+      const data = enc.encode(password + ':' + salt);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function generateSalt() {
+      const arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function checkPasswordComplexity(pass) {
+      const len = pass.length >= 8;
+      const upper = /[A-Z]/.test(pass);
+      const lower = /[a-z]/.test(pass);
+      const digit = /[0-9]/.test(pass);
+      const special = /[^A-Za-z0-9]/.test(pass);
+      const isStrong = len && upper && lower && digit && special;
+      return { len, upper, lower, digit, special, isStrong };
+    }
+
+    function togglePassVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerText = '🙈';
+      } else {
+        input.type = 'password';
+        btn.innerText = '👁️';
+      }
+    }
+
+    // ==========================================
+    // OWNER SETUP VALIDATOR
+    // ==========================================
+    function validateSetupPassword() {
+      const pass = document.getElementById('setup-owner-pass').value;
+      const confirm = document.getElementById('setup-owner-pass-confirm').value;
+      const res = checkPasswordComplexity(pass);
+
+      updateRule('rule-len', res.len);
+      updateRule('rule-upper', res.upper);
+      updateRule('rule-lower', res.lower);
+      updateRule('rule-digit', res.digit);
+      updateRule('rule-special', res.special);
+
+      const score = [res.len, res.upper, res.lower, res.digit, res.special].filter(Boolean).length;
+      const fill = document.getElementById('setup-strength-fill');
+      const label = document.getElementById('setup-strength-label');
+
+      fill.style.width = (score * 20) + '%';
+      if (score <= 2) {
+        fill.style.backgroundColor = 'var(--accent-rose)';
+        label.innerText = 'Too Weak';
+        label.style.color = 'var(--accent-rose)';
+      } else if (score <= 4) {
+        fill.style.backgroundColor = 'var(--accent-amber)';
+        label.innerText = 'Moderate';
+        label.style.color = 'var(--accent-amber)';
+      } else {
+        fill.style.backgroundColor = 'var(--accent-green)';
+        label.innerText = 'Strong & Compliant';
+        label.style.color = 'var(--accent-green)';
+      }
+
+      const match = pass.length > 0 && pass === confirm;
+      document.getElementById('btn-owner-setup').disabled = !(res.isStrong && match);
+    }
+
+    function validateAdminPassword() {
+      const pass = document.getElementById('admin-new-pass').value;
+      const res = checkPasswordComplexity(pass);
+
+      updateRule('admin-rule-len', res.len);
+      updateRule('admin-rule-upper', res.upper);
+      updateRule('admin-rule-lower', res.lower);
+      updateRule('admin-rule-digit', res.digit);
+      updateRule('admin-rule-special', res.special);
+
+      document.getElementById('btn-save-admin').disabled = !res.isStrong;
+    }
+
+    function updateRule(elementId, isValid) {
+      const el = document.getElementById(elementId);
+      if (isValid) {
+        el.classList.add('valid');
+        el.querySelector('.rule-icon').innerText = '✓';
+      } else {
+        el.classList.remove('valid');
+        el.querySelector('.rule-icon').innerText = '○';
+      }
+    }
+
+    // ==========================================
+    // OWNER FIRST-RUN INITIALIZATION
+    // ==========================================
+    async function handleOwnerSetup(e) {
+      e.preventDefault();
+      const name = document.getElementById('setup-owner-name').value.trim();
+      const email = document.getElementById('setup-owner-email').value.trim().toLowerCase();
+      const pass = document.getElementById('setup-owner-pass').value;
+      const confirm = document.getElementById('setup-owner-pass-confirm').value;
+
+      if (pass !== confirm) {
+        alert('Passwords do not match.');
+        return;
+      }
+
+      const complexity = checkPasswordComplexity(pass);
+      if (!complexity.isStrong) {
+        alert('Please satisfy all 5 password complexity requirements.');
+        return;
+      }
+
+      const salt = generateSalt();
+      const hash = await hashPassword(pass, salt);
+
+      const ownerAccount = {
+        role: 'owner',
+        name: name,
+        email: email,
+        salt: salt,
+        hash: hash,
+        createdAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('teme_astegni_owner', JSON.stringify(ownerAccount));
+      
+      // Auto login owner
+      setSessionUser({
+        role: 'owner',
+        name: name,
+        email: email,
+        permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+      });
+
+      document.getElementById('screen-owner-setup').style.display = 'none';
+      launchDashboard();
+    }
+
+    // ==========================================
+    // UNIFIED LOGIN SYSTEM
+    // ==========================================
+    async function handleLogin(e) {
+      e.preventDefault();
+      const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
+      const pass = document.getElementById('login-pass').value;
+      const errEl = document.getElementById('login-error');
+
+      const owner = JSON.parse(localStorage.getItem('teme_astegni_owner') || 'null');
+      if (owner && (owner.email.toLowerCase() === identifier || owner.name.toLowerCase() === identifier)) {
+        const testHash = await hashPassword(pass, owner.salt);
+        if (testHash === owner.hash) {
+          errEl.style.display = 'none';
+          setSessionUser({
+            role: 'owner',
+            name: owner.name,
+            email: owner.email,
+            permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+          });
+          document.getElementById('screen-login').style.display = 'none';
+          launchDashboard();
+          return;
+        }
+      }
+
+      // Check invited admins
+      const admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]');
+      const matchedAdmin = admins.find(a => a.email.toLowerCase() === identifier || a.name.toLowerCase() === identifier);
+
+      if (matchedAdmin && matchedAdmin.active) {
+        const testHash = await hashPassword(pass, matchedAdmin.salt);
+        if (testHash === matchedAdmin.hash) {
+          errEl.style.display = 'none';
+          setSessionUser({
+            role: 'admin',
+            name: matchedAdmin.name,
+            email: matchedAdmin.email,
+            permissions: matchedAdmin.permissions || { viewFinancials: false, canDelete: false, manageSettings: false }
+          });
+          document.getElementById('screen-login').style.display = 'none';
+          launchDashboard();
+          return;
+        }
+      }
+
+      errEl.style.display = 'block';
+      document.getElementById('login-pass').value = '';
+    }
+
+    function setSessionUser(user) {
+      sessionStorage.setItem('teme_session_user', JSON.stringify(user));
+    }
+
+    function getSessionUser() {
+      return JSON.parse(sessionStorage.getItem('teme_session_user') || 'null');
+    }
+
+    function lockPortal() {
+      sessionStorage.removeItem('teme_session_user');
+      document.getElementById('main-content').style.display = 'none';
+      document.getElementById('admin-bottom-nav').style.display = 'none';
+      document.getElementById('login-pass').value = '';
+      document.getElementById('screen-login').style.display = 'flex';
+    }
+
+    // ==========================================
+    // DASHBOARD & RBAC DISPLAY
+    // ==========================================
+    function launchDashboard() {
+      const user = getSessionUser();
+      if (!user) {
+        document.getElementById('screen-login').style.display = 'flex';
+        return;
+      }
+
+      document.getElementById('main-content').style.display = 'block';
+      document.getElementById('admin-bottom-nav').style.display = 'flex';
+
+      const roleBadge = document.getElementById('user-role-badge');
+      if (user.role === 'owner') {
+        roleBadge.className = 'role-badge role-badge-owner';
+        roleBadge.innerText = `👑 Owner: ${user.name}`;
+        document.querySelectorAll('.owner-nav-item').forEach(el => el.style.display = 'flex');
+        document.querySelectorAll('.owner-only-feature').forEach(el => el.style.display = 'inline-flex');
+        document.getElementById('kpi-financial-card').classList.remove('restricted');
+      } else {
+        roleBadge.className = 'role-badge role-badge-admin';
+        roleBadge.innerText = `🛡️ Admin: ${user.name}`;
+        
+        // Hide owner only navigation
+        document.querySelectorAll('.owner-nav-item').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.owner-only-feature').forEach(el => el.style.display = 'none');
+
+        // Mask financial card if restricted
+        if (!user.permissions.viewFinancials) {
+          const finCard = document.getElementById('kpi-financial-card');
+          finCard.classList.add('restricted');
+          document.getElementById('kpi-commission-val').innerText = '🔒 Restricted';
+          document.getElementById('kpi-commission-sub').innerText = 'Primary Owner Only';
+        }
+      }
+
+      renderAll();
+    }
+
+    // ==========================================
+    // ADMINS MANAGEMENT (OWNER ONLY)
+    // ==========================================
+    function openInviteAdminModal() {
+      document.getElementById('admin-new-name').value = '';
+      document.getElementById('admin-new-email').value = '';
+      document.getElementById('admin-new-pass').value = '';
+      document.getElementById('perm-financials').checked = false;
+      document.getElementById('perm-delete').checked = false;
+      validateAdminPassword();
+      document.getElementById('modal-invite-admin').classList.add('active');
+    }
+
+    async function handleCreateAdmin(e) {
+      e.preventDefault();
+      const name = document.getElementById('admin-new-name').value.trim();
+      const email = document.getElementById('admin-new-email').value.trim().toLowerCase();
+      const pass = document.getElementById('admin-new-pass').value;
+
+      const complexity = checkPasswordComplexity(pass);
+      if (!complexity.isStrong) {
+        alert('Password does not meet complexity requirements.');
+        return;
+      }
+
+      const salt = generateSalt();
+      const hash = await hashPassword(pass, salt);
+
+      const newAdmin = {
+        id: 'ADM-' + Date.now(),
+        name,
+        email,
+        salt,
+        hash,
+        role: 'admin',
+        active: true,
+        permissions: {
+          viewFinancials: document.getElementById('perm-financials').checked,
+          canDelete: document.getElementById('perm-delete').checked
+        },
+        createdAt: new Date().toISOString()
+      };
+
+      const admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]');
+      admins.push(newAdmin);
+      localStorage.setItem('teme_astegni_admins', JSON.stringify(admins));
+
+      closeModal('modal-invite-admin');
+      renderAdmins();
+      alert(`✅ Coordinator Admin "${name}" successfully created!`);
+    }
+
+    function renderAdmins() {
+      const admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]');
+      const container = document.getElementById('admins-list-container');
+      container.innerHTML = '';
+
+      if (admins.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 2.5rem 1rem; text-align: center; color: var(--text-muted);">
+            No coordinator admins invited yet. Click "+ Invite New Admin" to delegate staff access with restricted privileges.
+          </div>
+        `;
+        return;
+      }
+
+      admins.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'record-card';
+        div.innerHTML = `
+          <div class="record-top">
+            <div>
+              <div class="record-name">
+                🛡️ ${escapeHtml(a.name)}
+                <span class="tag-badge ${a.active ? 'tag-active' : 'tag-closed'}">${a.active ? 'Active Staff' : 'Suspended'}</span>
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                📧 ${escapeHtml(a.email)} • Added: ${new Date(a.createdAt).toLocaleDateString()}
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.4rem;">
+              <button class="btn-act" onclick="toggleAdminStatus('${a.id}')">${a.active ? 'Suspend' : 'Activate'}</button>
+              <button class="btn-act" style="color: var(--accent-rose);" onclick="deleteAdmin('${a.id}')">🗑️ Remove</button>
+            </div>
+          </div>
+          <div class="record-details">
+            <div class="detail-item"><span class="detail-label">Financial Access:</span> ${a.permissions.viewFinancials ? '✅ Allowed' : '🔒 Restricted (Hidden)'}</div>
+            <div class="detail-item"><span class="detail-label">Delete Records:</span> ${a.permissions.canDelete ? '✅ Allowed' : '🔒 Restricted (Hidden)'}</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function toggleAdminStatus(id) {
+      const admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]');
+      const a = admins.find(adm => adm.id === id);
+      if (a) {
+        a.active = !a.active;
+        localStorage.setItem('teme_astegni_admins', JSON.stringify(admins));
+        renderAdmins();
+      }
+    }
+
+    function deleteAdmin(id) {
+      if (!confirm('Are you sure you want to delete this coordinator admin account?')) return;
+      let admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]').filter(a => a.id !== id);
+      localStorage.setItem('teme_astegni_admins', JSON.stringify(admins));
+      renderAdmins();
+    }
+
+    // ==========================================
+    // DATA RENDERING & OPERATIONS
+    // ==========================================
+    let currentParentFilter = 'ALL';
+    let currentTutorFilter = 'ALL';
+
+    function getParents() { return JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]'); }
+    function getTutors() { return JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]'); }
+    function getMatches() { return JSON.parse(localStorage.getItem('astegni_matches') || '[]'); }
+
+    function renderAll() {
+      renderDashboard();
+      renderParents();
+      renderTutors();
+      renderMatches();
+      const user = getSessionUser();
+      if (user && user.role === 'owner') {
+        renderAdmins();
+      }
+    }
+
+    function renderDashboard() {
+      const parents = getParents();
+      const tutors = getTutors();
+      const matches = getMatches();
+      const user = getSessionUser();
+
+      const pendingParents = parents.filter(p => (p.status || 'Pending') === 'Pending').length;
+      document.getElementById('kpi-parents-count').innerText = parents.length;
+      document.getElementById('kpi-parents-sub').innerText = `${pendingParents} Pending Review`;
+      document.getElementById('kpi-tutors-count').innerText = tutors.length;
+      document.getElementById('kpi-matches-count').innerText = matches.length;
+
+      if (user && (user.role === 'owner' || user.permissions.viewFinancials)) {
+        const matchesCommission = matches.reduce((sum, m) => sum + (Number(m.commission) || 0), 0);
+        const upgradeLedger = JSON.parse(localStorage.getItem('astegni_upgrade_ledger') || '[]');
+        const totalUpgradeRevenue = upgradeLedger.reduce((sum, u) => sum + (Number(u.fee) || 0), 0);
+        const totalRevenue = matchesCommission + totalUpgradeRevenue;
+
+        document.getElementById('kpi-commission-val').innerText = `${totalRevenue.toLocaleString()} ETB`;
+        document.getElementById('kpi-commission-sub').innerText = totalUpgradeRevenue > 0
+          ? `${matchesCommission.toLocaleString()} ETB Margin + ${totalUpgradeRevenue.toLocaleString()} ETB Level Fees`
+          : `25% Tutoring Margin (Ethio 21)`;
+      }
+
+      // Recent leads
+      const recentList = document.getElementById('dashboard-recent-list');
+      recentList.innerHTML = '';
+      const recentItems = [...parents].reverse().slice(0, 3);
+
+      if (recentItems.length === 0) {
+        recentList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">No inquiries received yet.</div>`;
+        return;
+      }
+
+      recentItems.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'record-card';
+        div.innerHTML = `
+          <div class="record-top">
+            <div class="record-name">
+              <span>${escapeHtml(p.name)}</span>
+              <span class="tag-badge ${getStatusBadgeClass(p.status || 'Pending')}">${p.status || 'Pending'}</span>
+            </div>
+            <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call">📞 ${escapeHtml(p.phone)}</a>
+          </div>
+          <div class="record-details">
+            <div class="detail-item"><span class="detail-label">📍 Area:</span> ${escapeHtml(p.area)}</div>
+            <div class="detail-item"><span class="detail-label">🎓 Grade:</span> ${escapeHtml(p.grade)}</div>
+            <div class="detail-item"><span class="detail-label">🧒 Student Gender:</span> <span class="tag-badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: 700;">${escapeHtml(p.studentGender || p.childGender || 'Student')}</span></div>
+          </div>
+        `;
+        recentList.appendChild(div);
+      });
+    }
+
+    function renderParents() {
+      const parents = getParents();
+      const query = (document.getElementById('parent-search').value || '').toLowerCase();
+      const container = document.getElementById('parents-cards-container');
+      const user = getSessionUser();
+      const canDelete = user && (user.role === 'owner' || user.permissions.canDelete);
+
+      container.innerHTML = '';
+
+        let filtered = parents.filter(p => {
+        const matchesQuery = !query || 
+          p.name.toLowerCase().includes(query) || 
+          p.phone.toLowerCase().includes(query) || 
+          p.area.toLowerCase().includes(query) ||
+          (p.childGender && p.childGender.toLowerCase().includes(query)) ||
+          p.grade.toLowerCase().includes(query);
+
+        const status = p.status || 'Pending';
+        const matchesFilter = currentParentFilter === 'ALL' || status === currentParentFilter;
+        return matchesQuery && matchesFilter;
+      });
+
+      document.getElementById('parent-list-counter').innerText = `Showing ${filtered.length} of ${parents.length} requests`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">No parent inquiries matching this criteria.</div>`;
+        return;
+      }
+
+      filtered.reverse().forEach((p) => {
+        const card = document.createElement('div');
+        card.className = 'record-card';
+        const currentStatus = p.status || 'Pending';
+        const isAdult = p.applicantType === 'STUDENT_ADULT';
+        const applicantBadge = isAdult
+          ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35);">🎓 Student 18+ (Independent)</span>`
+          : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35);">👨‍👩‍👧 Parent Lead</span>`;
+
+        card.innerHTML = `
+          <div class="record-top">
+            <div>
+              <div class="record-name">
+                ${escapeHtml(p.name)}
+                ${applicantBadge}
+                <span class="tag-badge ${getStatusBadgeClass(currentStatus)}">${currentStatus}</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
+                📅 Received: ${new Date(p.date).toLocaleString()}
+              </div>
+            </div>
+            <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call">📞 Call Client</a>
+          </div>
+
+          <div class="record-details">
+            <div class="detail-item"><span class="detail-label">📞 Phone:</span> ${escapeHtml(p.phone)}</div>
+            <div class="detail-item"><span class="detail-label">📍 Location:</span> ${escapeHtml(p.area)}</div>
+            <div class="detail-item"><span class="detail-label">🧒 Student Gender:</span> <span class="tag-badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: 700; font-size: 0.75rem;">${escapeHtml(p.studentGender || p.childGender || 'Student')}</span></div>
+            <div class="detail-item"><span class="detail-label">🎓 Grade Level:</span> ${escapeHtml(p.grade)}</div>
+            <div class="detail-item"><span class="detail-label">🆔 Household ID:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(p.idType || 'National Fayda / Kebele')}</span> (Front &amp; Back)</div>
+            <div class="detail-item"><span class="detail-label">📅 ID Expiry:</span> ${escapeHtml(p.idExpiry || 'Active Valid')} ${checkExpiryBadgeHtml(p.idExpiry)}</div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects:</span> ${escapeHtml(p.subjs)}</div>
+          </div>
+
+          <div class="record-actions">
+            <select class="status-dropdown" onchange="updateParentStatus('${escapeHtml(p.phone)}', this.value)">
+              <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending (በመጠባበቅ)</option>
+              <option value="Trial Scheduled" ${currentStatus === 'Trial Scheduled' ? 'selected' : ''}>📅 Trial Scheduled (በሙከራ)</option>
+              <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
+              <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
+            </select>
+            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
+            <button class="btn-act btn-act-primary" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
+            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️ Remove</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // TUTOR ACADEMIC METAL TIERS & 5-LEVEL ENGINE
+    // ==========================================
+    function getTutorMetalTier(cgpa) {
+      const g = parseFloat(cgpa) || 0;
+      if (g >= 3.75) {
+        return {
+          code: 'GOLDEN',
+          name: 'Golden',
+          fullName: 'Golden Tier',
+          emoji: '🥇',
+          color: '#fbbf24',
+          badgeClass: 'tier-badge-golden',
+          weight: 300,
+          minCgpa: 3.75,
+          distinction: 'Great Distinction / Top Honor'
+        };
+      }
+      if (g >= 3.40) {
+        return {
+          code: 'SILVER',
+          name: 'Silver',
+          fullName: 'Silver Tier',
+          emoji: '🥈',
+          color: '#e2e8f0',
+          badgeClass: 'tier-badge-silver',
+          weight: 200,
+          minCgpa: 3.40,
+          distinction: 'Distinction Honor'
+        };
+      }
+      return {
+        code: 'BRONZE',
+        name: 'Bronze',
+        fullName: 'Bronze Tier',
+        emoji: '🥉',
+        color: '#fdba74',
+        badgeClass: 'tier-badge-bronze',
+        weight: 100,
+        minCgpa: 3.00,
+        distinction: 'Accredited Scholar'
+      };
+    }
+
+    function getLevelBadgeHtml(lvl, cgpa) {
+      const l = Number(lvl) || 0;
+      const tier = getTutorMetalTier(cgpa);
+      const tName = tier.name;
+
+      if (l === 5) return `<span class="level-badge ${tier.badgeClass} level-badge-5">👑 ${tier.emoji} ${tName} L5 Master</span>`;
+      if (l === 4) return `<span class="level-badge ${tier.badgeClass} level-badge-4">💎 ${tier.emoji} ${tName} L4 Top</span>`;
+      if (l === 3) return `<span class="level-badge ${tier.badgeClass} level-badge-3">⭐ ${tier.emoji} ${tName} L3 Senior</span>`;
+      if (l === 2) return `<span class="level-badge ${tier.badgeClass} level-badge-2">⚡ ${tier.emoji} ${tName} L2 Adv</span>`;
+      if (l === 1) return `<span class="level-badge ${tier.badgeClass} level-badge-1">🎙️ ${tier.emoji} ${tName} L1 Communicator</span>`;
+      return `<span class="level-badge ${tier.badgeClass} level-badge-0">${tier.emoji} Basic ${tName} (L0)</span>`;
+    }
+
+    function getExamBadgeHtml(t) {
+      if (t.examStatus === 'passed' || t.examStatus === 'Passed') {
+        return `<span class="exam-badge exam-badge-passed">✓ Exam Passed (${escapeHtml(t.examType || 'Voice Call')} • ${t.examScore || 88}%)</span>`;
+      }
+      if (t.examOptIn || t.examStatus === 'Pending Exam' || t.examStatus === 'pending_exam') {
+        return `<span class="exam-badge exam-badge-pending">⏳ Exam: Call Requested</span>`;
+      }
+      return `<span class="exam-badge exam-badge-none">○ Exam: Not Taken</span>`;
+    }
+
+    function getDispatchPriorityText(lvl, cgpa) {
+      const l = Number(lvl) || 0;
+      const tier = getTutorMetalTier(cgpa);
+      if (l === 5) return `🚀 #1 Elite Household Priority (${tier.name} Master)`;
+      if (l === 4) return `✨ Top Priority Dispatch (${tier.name} L4)`;
+      if (l === 3) return `⚡ High Priority Dispatch (${tier.name} L3)`;
+      if (l === 2) return `⭐ Enhanced Priority Dispatch (${tier.name} L2)`;
+      if (l === 1) return `🎙️ 1st Priority Dispatch Queue (${tier.name} L1)`;
+      return `Standard Dispatch Queue (${tier.name} L0)`;
+    }
+
+    function renderTutors() {
+      const tutors = getTutors();
+      const query = (document.getElementById('tutor-search').value || '').toLowerCase();
+      const container = document.getElementById('tutors-cards-container');
+      const user = getSessionUser();
+      const canDelete = user && (user.role === 'owner' || user.permissions.canDelete);
+
+      container.innerHTML = '';
+
+      let filtered = tutors.filter(t => {
+        const matchesQuery = !query || 
+          t.name.toLowerCase().includes(query) || 
+          t.phone.toLowerCase().includes(query) || 
+          t.uni.toLowerCase().includes(query) ||
+          t.subj.toLowerCase().includes(query);
+
+        const lvl = Number(t.level) || 0;
+        const tier = getTutorMetalTier(t.cgpa);
+        const examPassed = t.examStatus === 'passed' || t.examStatus === 'Passed';
+
+        if (currentTutorFilter === 'ALL') return matchesQuery;
+        if (currentTutorFilter === 'GOLDEN') return matchesQuery && tier.code === 'GOLDEN';
+        if (currentTutorFilter === 'SILVER') return matchesQuery && tier.code === 'SILVER';
+        if (currentTutorFilter === 'BRONZE') return matchesQuery && tier.code === 'BRONZE';
+        if (currentTutorFilter === 'L5') return matchesQuery && lvl === 5;
+        if (currentTutorFilter === 'L4') return matchesQuery && lvl === 4;
+        if (currentTutorFilter === 'L3') return matchesQuery && lvl === 3;
+        if (currentTutorFilter === 'L2') return matchesQuery && lvl === 2;
+        if (currentTutorFilter === 'L1') return matchesQuery && lvl === 1;
+        if (currentTutorFilter === 'BASIC') return matchesQuery && lvl === 0;
+        if (currentTutorFilter === 'EXAM_PASSED') return matchesQuery && examPassed;
+        if (currentTutorFilter === 'Female') return matchesQuery && (t.gender || '').toLowerCase().includes('female');
+        if (currentTutorFilter === 'Male') return matchesQuery && (t.gender || '').toLowerCase().includes('male');
+        if (currentTutorFilter === 'HIGH_GPA') return matchesQuery && parseFloat(t.cgpa || 0) >= 3.50;
+        return matchesQuery;
+      });
+
+      // Sort tutors: Composite Score = (Tier weight * 10) + (Level * 10) + CGPA
+      filtered.sort((a, b) => {
+        const tierA = getTutorMetalTier(a.cgpa);
+        const tierB = getTutorMetalTier(b.cgpa);
+        const scoreA = (tierA.weight * 10) + ((Number(a.level) || 0) * 10) + (parseFloat(a.cgpa) || 0);
+        const scoreB = (tierB.weight * 10) + ((Number(b.level) || 0) * 10) + (parseFloat(b.cgpa) || 0);
+        return scoreB - scoreA;
+      });
+
+      document.getElementById('tutor-list-counter').innerText = `Showing ${filtered.length} of ${tutors.length} verified tutors`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">No verified tutors matching this criteria.</div>`;
+        return;
+      }
+
+      filtered.forEach((t) => {
+        const card = document.createElement('div');
+        card.className = 'record-card';
+        const tier = getTutorMetalTier(t.cgpa);
+        const l = Number(t.level) || 0;
+        const levelTitle = l === 5 ? 'Level 5 Master' : (l === 4 ? 'Level 4 Distinguished' : (l === 3 ? 'Level 3 Senior' : (l === 2 ? 'Level 2 Advanced' : (l === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
+
+        card.innerHTML = `
+          <div class="record-top">
+            <div>
+              <div class="record-name">
+                ${escapeHtml(t.name)}
+                ${getLevelBadgeHtml(t.level, t.cgpa)}
+                <span class="tag-badge tag-active">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
+                <span class="tag-badge tag-trial">${escapeHtml(t.gender || 'Verified')}</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span>🏛️ ${escapeHtml(t.uni)} • ${escapeHtml(t.year)}</span>
+                <span>•</span>
+                ${getExamBadgeHtml(t)}
+                <span>•</span>
+                <span style="color: #38bdf8; font-weight: 750;">${getDispatchPriorityText(t.level, t.cgpa)}</span>
+              </div>
+            </div>
+            <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call">📞 Call Astegni</a>
+          </div>
+
+          <div class="record-details">
+            <div class="detail-item"><span class="detail-label">📞 Phone:</span> ${escapeHtml(t.phone)}</div>
+            <div class="detail-item"><span class="detail-label">🆔 ID Verification:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(t.govtId || 'National Fayda / Kebele')}</span> (Front &amp; Back)</div>
+            <div class="detail-item"><span class="detail-label">📅 ID Expiry:</span> ${escapeHtml(t.idExpiry || 'Active Valid')} ${checkExpiryBadgeHtml(t.idExpiry)}</div>
+            <div class="detail-item"><span class="detail-label">🏅 Metal Tier:</span> <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name} (CGPA ${escapeHtml(t.cgpa)})</span></div>
+            <div class="detail-item"><span class="detail-label">🎖️ Progression Rank:</span> ${tier.emoji} ${tier.name} ${levelTitle} (${l}/5)</div>
+            <div class="detail-item"><span class="detail-label">🎙️ Teaching Clarity:</span> ${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
+            <div class="detail-item"><span class="detail-label">🚀 Dispatch Queue:</span> <span style="color: #38bdf8; font-weight: 750;">${getDispatchPriorityText(t.level, t.cgpa)}</span></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects (Grade A):</span> ${escapeHtml(t.subj)}</div>
+            ${t.examNotes ? `<div class="detail-item" style="grid-column: 1 / -1; font-style: italic; color: #94a3b8;"><span class="detail-label">📝 Exam Notes:</span> "${escapeHtml(t.examNotes)}"</div>` : ''}
+          </div>
+
+          <div class="record-actions">
+            <button class="btn-act btn-act-primary" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
+            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
+            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Teaching Exam</button>
+            <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Upgrade Level</button>
+            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act">✈️ Send Ops Brief</a>
+            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️ Remove</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // TUTOR EXAM HANDLERS
+    function openTutorExamModal(phone) {
+      const tutors = getTutors();
+      const tutor = tutors.find(t => t.phone === phone);
+      if (!tutor) return;
+      const tier = getTutorMetalTier(tutor.cgpa);
+      const curLevel = Number(tutor.level) || 0;
+      document.getElementById('exam-tutor-phone').value = tutor.phone;
+      document.getElementById('exam-tutor-name').innerText = `${tutor.name} (${tutor.gender || 'Scholar'})`;
+      document.getElementById('exam-tutor-meta').innerText = `${tutor.uni} • CGPA ${tutor.cgpa} (${tier.emoji} ${tier.name} Tier) • Current Rank: Level ${curLevel}`;
+      document.getElementById('exam-score-input').value = tutor.examScore || 88;
+      document.getElementById('exam-notes-input').value = tutor.examNotes || '';
+      document.getElementById('modal-tutor-exam').classList.add('active');
+    }
+
+    function submitTutorExamResult() {
+      const phone = document.getElementById('exam-tutor-phone').value;
+      const medium = document.getElementById('exam-medium-select').value;
+      const score = Number(document.getElementById('exam-score-input').value) || 0;
+      const clarity = document.getElementById('exam-clarity-select').value;
+      const notes = document.getElementById('exam-notes-input').value.trim();
+      const decision = document.getElementById('exam-decision-select').value;
+
+      const tutors = getTutors();
+      const tutor = tutors.find(t => t.phone === phone);
+      if (!tutor) return;
+
+      const tier = getTutorMetalTier(tutor.cgpa);
+      tutor.examType = medium;
+      tutor.examScore = score;
+      tutor.examClarity = clarity;
+      tutor.examNotes = notes;
+      tutor.examDate = new Date().toISOString();
+
+      if (decision === 'PASS_LEVEL_1') {
+        tutor.examStatus = 'passed';
+        if ((Number(tutor.level) || 0) === 0) {
+          tutor.level = 1;
+        }
+        alert(`🎉 Congratulations! ${tutor.name} passed the Communicative Exam (${medium}, Score: ${score}%).\nPromoted to ${tier.emoji} ${tier.name} Level 1 with 1st Priority Dispatch!`);
+      } else {
+        tutor.examStatus = 'retry';
+        alert(`${tutor.name} marked for re-evaluation. Retained at ${tier.emoji} ${tier.name} Level ${tutor.level || 0}.`);
+      }
+
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+      closeModal('modal-tutor-exam');
+      renderAll();
+    }
+
+    // LEVEL UPGRADE HANDLERS (50 ETB FEE)
+    function openLevelUpgradeModal(phone) {
+      const tutors = getTutors();
+      const tutor = tutors.find(t => t.phone === phone);
+      if (!tutor) return;
+      const tier = getTutorMetalTier(tutor.cgpa);
+      const curLevel = Number(tutor.level) || 0;
+      document.getElementById('upgrade-tutor-phone').value = tutor.phone;
+      document.getElementById('upgrade-tutor-name').innerText = `${tutor.name} (${tutor.uni})`;
+      document.getElementById('upgrade-tutor-current').innerText = `Current Rank: ${tier.emoji} ${tier.name} Level ${curLevel} (CGPA ${tutor.cgpa} - ${tier.distinction})`;
+      
+      const badge = document.getElementById('upgrade-current-badge');
+      badge.className = `level-badge ${tier.badgeClass} level-badge-${curLevel}`;
+      badge.innerHTML = `${tier.emoji} ${tier.name} L${curLevel}`;
+
+      const nextLevel = Math.min(curLevel + 1, 5);
+      const targetSelect = document.getElementById('upgrade-target-level');
+      targetSelect.value = nextLevel;
+
+      updateUpgradeModalPreview();
+      document.getElementById('modal-level-upgrade').classList.add('active');
+    }
+
+    function updateUpgradeModalPreview() {
+      const target = Number(document.getElementById('upgrade-target-level').value);
+      const feeBox = document.getElementById('upgrade-fee-box');
+      const l5Box = document.getElementById('upgrade-l5-check-box');
+      const feeAmount = document.getElementById('upgrade-fee-amount');
+      const feeNote = document.getElementById('upgrade-fee-note');
+
+      if (target === 1) {
+        feeAmount.innerText = '0 ETB (Free Exam)';
+        feeNote.innerHTML = 'Level 1 is <b>FREE</b> upon passing the Voice / Video Communicative Exam.';
+        feeBox.style.display = 'block';
+        l5Box.style.display = 'none';
+      } else if (target >= 2 && target <= 4) {
+        feeAmount.innerText = '50 ETB';
+        feeNote.innerHTML = 'Collect <b>50 ETB via Telebirr</b> from the tutor to activate this level booster and record in platform revenue ledger.';
+        feeBox.style.display = 'block';
+        l5Box.style.display = 'none';
+      } else if (target === 5) {
+        feeAmount.innerText = 'Master Evaluation';
+        feeNote.innerHTML = 'Level 5 (Master Astegni) requires a <b>Physical In-Person Demonstration or Comprehensive Video Lesson Audit</b> with Senior Coordinators.';
+        feeBox.style.display = 'block';
+        l5Box.style.display = 'block';
+      }
+    }
+
+    function confirmLevelUpgrade() {
+      const phone = document.getElementById('upgrade-tutor-phone').value;
+      const targetLevel = Number(document.getElementById('upgrade-target-level').value);
+      const tutors = getTutors();
+      const tutor = tutors.find(t => t.phone === phone);
+      if (!tutor) return;
+
+      const tier = getTutorMetalTier(tutor.cgpa);
+      const oldLevel = Number(tutor.level) || 0;
+      if (targetLevel === oldLevel) {
+        alert('Tutor is already at this level.');
+        return;
+      }
+
+      if (targetLevel === 5) {
+        const check = document.getElementById('check-l5-master-demo').checked;
+        if (!check) {
+          alert('Level 5 promotion requires verifying the physical/video in-depth lesson demo.');
+          return;
+        }
+      }
+
+      // Record upgrade fee if target is level 2, 3, or 4
+      if (targetLevel >= 2 && targetLevel <= 4 && targetLevel > oldLevel) {
+        const feePerLevel = 50;
+        const levelsJumped = targetLevel - Math.max(oldLevel, 1);
+        const totalFee = Math.max(levelsJumped, 1) * feePerLevel;
+        
+        const upgradeHistory = JSON.parse(localStorage.getItem('astegni_upgrade_ledger') || '[]');
+        upgradeHistory.push({
+          tutorPhone: tutor.phone,
+          tutorName: tutor.name,
+          metalTier: tier.name,
+          fromLevel: oldLevel,
+          toLevel: targetLevel,
+          fee: totalFee,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify(upgradeHistory));
+      }
+
+      tutor.level = targetLevel;
+      if (targetLevel >= 1 && tutor.examStatus !== 'passed') {
+        tutor.examStatus = 'passed';
+        tutor.examType = (targetLevel === 5) ? 'Physical / Video Demo' : 'Evaluated';
+      }
+
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+      closeModal('modal-level-upgrade');
+      renderAll();
+      alert(`🚀 Success! ${tutor.name} has been promoted to ${tier.emoji} ${tier.name} Level ${targetLevel}!`);
+    }
+
+    function renderMatches() {
+      const matches = getMatches();
+      const container = document.getElementById('matches-cards-container');
+      const user = getSessionUser();
+      const canViewFin = user && (user.role === 'owner' || user.permissions.viewFinancials);
+      const canDelete = user && (user.role === 'owner' || user.permissions.canDelete);
+
+      container.innerHTML = '';
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: var(--card-bg); border-radius: 16px; border: 1px solid var(--card-border);">
+            No matches created yet. Click "+ New Match" above to link a parent and tutor!
+          </div>
+        `;
+        return;
+      }
+
+      matches.reverse().forEach((m) => {
+        const card = document.createElement('div');
+        card.className = 'record-card';
+
+        const financialText = canViewFin 
+          ? `Monthly Fee: ${Number(m.monthlyFee).toLocaleString()} ETB | Commission (${m.rate || 25}%): ${Number(m.commission).toLocaleString()} ETB`
+          : `Tutoring Pair • Active In-Home Term`;
+
+        card.innerHTML = `
+          <div class="record-top">
+            <div>
+              <div class="record-name">
+                👨‍👩‍👧 ${escapeHtml(m.parentName)} ⟷ 🎓 ${escapeHtml(m.tutorName)}
+              </div>
+              <div style="font-size: 0.75rem; color: var(--accent-blue); margin-top: 0.2rem; font-weight: 700;">
+                ${financialText}
+              </div>
+            </div>
+            <span class="tag-badge ${getStatusBadgeClass(m.status)}">${m.status}</span>
+          </div>
+
+          <div class="record-details">
+            <div class="detail-item"><span class="detail-label">Parent Phone:</span> <a href="tel:${escapeHtml(m.parentPhone)}" style="color:#fff;">${escapeHtml(m.parentPhone)}</a></div>
+            <div class="detail-item"><span class="detail-label">Tutor Phone:</span> <a href="tel:${escapeHtml(m.tutorPhone)}" style="color:#fff;">${escapeHtml(m.tutorPhone)}</a></div>
+            <div class="detail-item"><span class="detail-label">Pairing Date:</span> ${new Date(m.date).toLocaleDateString()}</div>
+            <div class="detail-item"><span class="detail-label">💳 Payment Proof:</span> <span class="tag-badge ${m.paymentProof ? 'tag-active' : 'tag-trial'}">${m.paymentProof ? '✓ Telebirr Verified' : '⏳ Awaiting Ops Screenshot'}</span></div>
+          </div>
+
+          <div class="record-actions">
+            <select class="status-dropdown" onchange="updateMatchStatus('${m.id}', this.value)">
+              <option value="1-Day Trial Pending" ${m.status === '1-Day Trial Pending' ? 'selected' : ''}>⏳ Trial Pending (የ 1 ቀን ሙከራ)</option>
+              <option value="Trial Completed" ${m.status === 'Trial Completed' ? 'selected' : ''}>🎯 Trial Done (ሙከራ አልቋል)</option>
+              <option value="Active Contract" ${m.status === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
+              <option value="Commission Paid" ${m.status === 'Commission Paid' ? 'selected' : ''}>💰 Commission Paid (ኮሚሽን ተከፍሏል)</option>
+            </select>
+            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Screenshot Verified ✓' : 'Verify Screenshot'}</button>
+            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteMatch('${m.id}')">🗑️ Remove</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function checkExpiryBadgeHtml(expiryStr) {
+      if (!expiryStr) return `<span class="tag-badge tag-active" style="font-size:0.65rem;">Active</span>`;
+      const expDate = new Date(expiryStr);
+      if (isNaN(expDate.getTime())) return `<span class="tag-badge tag-active" style="font-size:0.65rem;">Active</span>`;
+      const today = new Date();
+      const diffDays = Math.round((expDate - today) / (24 * 60 * 60 * 1000));
+      if (diffDays < 30) {
+        return `<span class="tag-badge tag-closed" style="font-size:0.65rem;">⚠️ &lt; 30d (${diffDays}d left)</span>`;
+      }
+      return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Valid (${diffDays}d left)</span>`;
+    }
+
+    function openIdInspectModal(type, phone) {
+      let record = null;
+      if (type === 'PARENT') {
+        const parents = getParents();
+        record = parents.find(p => p.phone === phone);
+        if (!record) return;
+        document.getElementById('inspect-role-badge').innerText = (record.applicantType === 'STUDENT_ADULT') ? 'Student 18+ (Independent)' : 'Parent / Household';
+        document.getElementById('inspect-role-badge').className = 'tag-badge ' + ((record.applicantType === 'STUDENT_ADULT') ? 'tag-trial' : 'tag-active');
+        document.getElementById('inspect-person-name').innerText = record.name;
+        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'}`;
+        document.getElementById('inspect-doc-type').innerText = record.idType || 'National Fayda / Kebele';
+        
+        const expiry = record.idExpiry || '2026-12-31';
+        document.getElementById('inspect-expiry-date').innerText = expiry;
+        updateInspectExpiryStatus(expiry);
+
+        const frontImg = document.getElementById('inspect-img-front');
+        const emptyFront = document.getElementById('inspect-empty-front');
+        const backImg = document.getElementById('inspect-img-back');
+        const emptyBack = document.getElementById('inspect-empty-back');
+
+        frontImg.src = 'assets/teme_astegni_logo.jpg';
+        frontImg.style.display = 'block';
+        emptyFront.style.display = 'none';
+
+        backImg.src = 'assets/teme_astegni_logo.jpg';
+        backImg.style.display = 'block';
+        emptyBack.style.display = 'none';
+
+      } else {
+        const tutors = getTutors();
+        record = tutors.find(t => t.phone === phone);
+        if (!record) return;
+        const tier = getTutorMetalTier(record.cgpa);
+        document.getElementById('inspect-role-badge').innerText = `${tier.emoji} ${tier.name} Tutor`;
+        document.getElementById('inspect-role-badge').className = 'tag-badge tag-active';
+        document.getElementById('inspect-person-name').innerText = record.name;
+        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa})`;
+        document.getElementById('inspect-doc-type').innerText = record.govtId || 'National Fayda / Kebele (Front & Back)';
+        
+        const expiry = record.idExpiry || '2027-08-15';
+        document.getElementById('inspect-expiry-date').innerText = expiry;
+        updateInspectExpiryStatus(expiry);
+
+        const frontImg = document.getElementById('inspect-img-front');
+        const emptyFront = document.getElementById('inspect-empty-front');
+        const backImg = document.getElementById('inspect-img-back');
+        const emptyBack = document.getElementById('inspect-empty-back');
+
+        frontImg.src = 'assets/teme_astegni_logo.jpg';
+        frontImg.style.display = 'block';
+        emptyFront.style.display = 'none';
+
+        backImg.src = 'assets/teme_astegni_logo.jpg';
+        backImg.style.display = 'block';
+        emptyBack.style.display = 'none';
+      }
+
+      document.getElementById('modal-id-inspect').classList.add('active');
+    }
+
+    function updateInspectExpiryStatus(expiryStr) {
+      const statusEl = document.getElementById('inspect-expiry-status');
+      const boxEl = document.getElementById('inspect-expiry-box');
+      const expDate = new Date(expiryStr);
+      const today = new Date();
+      const diffDays = Math.round((expDate - today) / (24 * 60 * 60 * 1000));
+
+      if (diffDays < 30) {
+        statusEl.style.color = '#ef4444';
+        statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
+        statusEl.innerHTML = `⚠️ Invalid: Less than 30 days remaining (${diffDays} days left)`;
+        boxEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+        boxEl.style.background = 'rgba(239, 68, 68, 0.08)';
+      } else {
+        statusEl.style.color = '#34d399';
+        statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
+        statusEl.innerHTML = `✓ Valid (${diffDays} days remaining • ≥ 1 Month Check Passed)`;
+        boxEl.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+        boxEl.style.background = 'rgba(16, 185, 129, 0.1)';
+      }
+    }
+
+    function toggleMatchPaymentProof(id) {
+      const matches = getMatches();
+      const item = matches.find(m => m.id === id);
+      if (item) {
+        item.paymentProof = !item.paymentProof;
+        if (item.paymentProof && item.status === '1-Day Trial Pending') {
+          item.status = 'Active Contract';
+        }
+        localStorage.setItem('astegni_matches', JSON.stringify(matches));
+        renderAll();
+        alert(`💳 Payment screenshot status updated: ${item.paymentProof ? 'Verified' : 'Pending'}!`);
+      }
+    }
+
+    function getStatusBadgeClass(status) {
+      if (status === 'Pending' || status === '1-Day Trial Pending') return 'tag-pending';
+      if (status === 'Trial Scheduled' || status === 'Trial Completed') return 'tag-trial';
+      if (status === 'Active Contract' || status === 'Commission Paid') return 'tag-active';
+      return 'tag-closed';
+    }
+
+    function updateParentStatus(phone, newStatus) {
+      const parents = getParents();
+      const item = parents.find(p => p.phone === phone);
+      if (item) {
+        item.status = newStatus;
+        localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+        renderAll();
+      }
+    }
+
+    function deleteParentLead(phone) {
+      if (!confirm('Are you sure you want to remove this parent inquiry?')) return;
+      let parents = getParents().filter(p => p.phone !== phone);
+      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+      renderAll();
+    }
+
+    function deleteTutorLead(phone) {
+      if (!confirm('Are you sure you want to remove this tutor record?')) return;
+      let tutors = getTutors().filter(t => t.phone !== phone);
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+      renderAll();
+    }
+
+    function updateMatchStatus(id, newStatus) {
+      const matches = getMatches();
+      const item = matches.find(m => m.id === id);
+      if (item) {
+        item.status = newStatus;
+        localStorage.setItem('astegni_matches', JSON.stringify(matches));
+        renderAll();
+      }
+    }
+
+    function deleteMatch(id) {
+      if (!confirm('Are you sure you want to remove this match record?')) return;
+      let matches = getMatches().filter(m => m.id !== id);
+      localStorage.setItem('astegni_matches', JSON.stringify(matches));
+      renderAll();
+    }
+
+    // MATCH MAKER WITH LEVEL PRIORITY DISPATCH
+    function openNewMatchModal() {
+      const parents = getParents();
+      const tutors = getTutors();
+      const user = getSessionUser();
+
+      const pSelect = document.getElementById('match-select-parent');
+      const tSelect = document.getElementById('match-select-tutor');
+
+      pSelect.innerHTML = parents.map((p, i) => `<option value="${i}">${escapeHtml(p.name)} (${escapeHtml(p.grade)} - ${escapeHtml(p.area)})</option>`).join('');
+
+      // Sort tutors by composite score: Metal Tier (Golden > Silver > Bronze) & Level (L5 down to L0) & CGPA
+      const sortedTutorsWithIndex = tutors.map((t, originalIndex) => ({ tutor: t, originalIndex }))
+        .sort((a, b) => {
+          const tierA = getTutorMetalTier(a.tutor.cgpa);
+          const tierB = getTutorMetalTier(b.tutor.cgpa);
+          const scoreA = (tierA.weight * 10) + ((Number(a.tutor.level) || 0) * 10) + (parseFloat(a.tutor.cgpa) || 0);
+          const scoreB = (tierB.weight * 10) + ((Number(b.tutor.level) || 0) * 10) + (parseFloat(b.tutor.cgpa) || 0);
+          return scoreB - scoreA;
+        });
+
+      tSelect.innerHTML = sortedTutorsWithIndex.map(item => {
+        const t = item.tutor;
+        const tier = getTutorMetalTier(t.cgpa);
+        const lvl = Number(t.level) || 0;
+        const tierTag = tier.code === 'GOLDEN' ? 'GOLDEN' : (tier.code === 'SILVER' ? 'SILVER' : 'BRONZE');
+        let lvlPrefix = `${tier.emoji} [${tierTag} L0]`;
+        if (lvl === 5) lvlPrefix = `👑 ${tier.emoji} [${tierTag} L5 MASTER]`;
+        else if (lvl === 4) lvlPrefix = `💎 ${tier.emoji} [${tierTag} L4]`;
+        else if (lvl === 3) lvlPrefix = `⭐ ${tier.emoji} [${tierTag} L3]`;
+        else if (lvl === 2) lvlPrefix = `⚡ ${tier.emoji} [${tierTag} L2]`;
+        else if (lvl === 1) lvlPrefix = `🎙️ ${tier.emoji} [${tierTag} L1 EXAM PASSED]`;
+
+        const examNote = (t.examStatus === 'passed' || t.examStatus === 'Passed') ? ` • Exam: ${t.examScore || 88}%` : '';
+        return `<option value="${item.originalIndex}">${lvlPrefix} ${escapeHtml(t.name)} (CGPA ${escapeHtml(t.cgpa)} - ${escapeHtml(t.uni)}${examNote})</option>`;
+      }).join('');
+
+      // Restrict commission controls if not permitted
+      if (user && !user.permissions.viewFinancials && user.role !== 'owner') {
+        document.getElementById('match-rate-group').style.display = 'none';
+        document.getElementById('match-calc-preview').style.display = 'none';
+      } else {
+        document.getElementById('match-rate-group').style.display = 'block';
+        document.getElementById('match-calc-preview').style.display = 'block';
+        calculateCommissionPreview();
+      }
+
+      document.getElementById('modal-match-maker').classList.add('active');
+    }
+
+    function quickMatchParent(parentName, parentPhone) {
+      openNewMatchModal();
+      const parents = getParents();
+      const idx = parents.findIndex(p => p.phone === parentPhone);
+      if (idx !== -1) document.getElementById('match-select-parent').value = idx;
+    }
+
+    function quickMatchTutor(tutorName, tutorPhone) {
+      openNewMatchModal();
+      const tutors = getTutors();
+      const idx = tutors.findIndex(t => t.phone === tutorPhone);
+      if (idx !== -1) document.getElementById('match-select-tutor').value = idx;
+    }
+
+    function calculateCommissionPreview() {
+      const price = parseFloat(document.getElementById('match-price-input').value) || 0;
+      const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
+
+      const commission = Math.round(price * (rate / 100));
+      const tutorNet = price - commission;
+
+      document.getElementById('calc-tutor-net').innerText = `${tutorNet.toLocaleString()} ETB`;
+      document.getElementById('calc-ethio21-share').innerText = `${commission.toLocaleString()} ETB`;
+    }
+
+    function confirmNewMatch() {
+      const parents = getParents();
+      const tutors = getTutors();
+      const pIdx = document.getElementById('match-select-parent').value;
+      const tIdx = document.getElementById('match-select-tutor').value;
+
+      if (!parents[pIdx] || !tutors[tIdx]) {
+        alert('Please select both a parent and a tutor.');
+        return;
+      }
+
+      const p = parents[pIdx];
+      const t = tutors[tIdx];
+      const fee = parseFloat(document.getElementById('match-price-input').value) || 0;
+      const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
+      const commission = Math.round(fee * (rate / 100));
+
+      const newMatch = {
+        id: 'M-' + Date.now(),
+        parentName: p.name,
+        parentPhone: p.phone,
+        tutorName: t.name,
+        tutorPhone: t.phone,
+        monthlyFee: fee,
+        rate: rate,
+        commission: commission,
+        status: '1-Day Trial Pending',
+        date: new Date().toISOString()
+      };
+
+      const matches = getMatches();
+      matches.push(newMatch);
+      localStorage.setItem('astegni_matches', JSON.stringify(matches));
+
+      p.status = 'Trial Scheduled';
+      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+
+      closeModal('modal-match-maker');
+      renderAll();
+      switchView('view-matches');
+    }
+
+    // CLOUD DATABASE
+    function saveWebhookUrl() {
+      const url = document.getElementById('webhook-url-input').value.trim();
+      localStorage.setItem('teme_astegni_db_webhook', url);
+      alert('Webhook URL saved successfully!');
+    }
+
+    async function testWebhookConnection() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || document.getElementById('webhook-url-input').value.trim();
+      if (!url) {
+        alert('Please enter your Google Apps Script Webhook URL first.');
+        return;
+      }
+
+      try {
+        const res = await fetch(url + '?action=getData');
+        const json = await res.json();
+        alert('✅ Google Sheets Cloud Database connected successfully!');
+      } catch (err) {
+        alert('Could not connect. Ensure deployment access is set to "Anyone" and try again.');
+      }
+    }
+
+    function saveTelegramConfig() {
+      const token = document.getElementById('tg-bot-token-input').value.trim();
+      const chatId = document.getElementById('tg-chat-id-input').value.trim();
+      localStorage.setItem('teme_astegni_tg_bot_token', token);
+      localStorage.setItem('teme_astegni_tg_chat_id', chatId);
+      alert('✅ Telegram Settings saved! All uploads and alerts will route to this channel.');
+    }
+
+    async function testTelegramAlert() {
+      const token = localStorage.getItem('teme_astegni_tg_bot_token') || document.getElementById('tg-bot-token-input').value.trim();
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id') || document.getElementById('tg-chat-id-input').value.trim();
+      if (!token || !chatId) {
+        alert('Please enter both Telegram Bot Token and Chat ID first.');
+        return;
+      }
+
+      try {
+        const text = '🚀 <b>Teme Astegni Test Alert</b>\n\nCloud connection active. Verified inquiries and ID verification photos will arrive here safely.';
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: text,
+            parse_mode: 'HTML'
+          })
+        });
+        const json = await res.json();
+        if (json.ok) {
+          alert('✅ Test message successfully delivered to your Telegram Channel!');
+        } else {
+          alert('Telegram error: ' + (json.description || 'Check token and chat ID'));
+        }
+      } catch (err) {
+        alert('Connection error: ' + err.message);
+      }
+    }
+
+    async function syncCloudDatabase() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || document.getElementById('webhook-url-input').value.trim();
+      if (!url) {
+        alert('Please configure your Google Apps Script Webhook URL first in Settings.');
+        switchView('view-database');
+        return;
+      }
+
+      try {
+        const res = await fetch(url + '?action=getData');
+        const json = await res.json();
+
+        if (json.parents && Array.isArray(json.parents)) {
+          const currentParents = getParents();
+          json.parents.forEach(p => {
+            const phone = p['Phone Number'] || p.Phone;
+            if (!currentParents.some(cp => cp.phone === phone)) {
+              currentParents.push({
+                type: 'PARENT',
+                name: p['Parent Name'],
+                phone: phone,
+                area: p['Neighborhood / Location'] || p.Location,
+                childGender: p['Student Gender'] || 'Unspecified',
+                grade: p['Child Grade'] || p.Grade,
+                genderPref: p['Tutor Gender Preference'] || p['Gender Preference'] || 'Any',
+                subjs: p.Subjects,
+                status: p.Status || 'Pending',
+                date: p.Timestamp || new Date().toISOString()
+              });
+            }
+          });
+          localStorage.setItem('astegni_parent_leads', JSON.stringify(currentParents));
+        }
+
+        if (json.tutors && Array.isArray(json.tutors)) {
+          const currentTutors = getTutors();
+          json.tutors.forEach(t => {
+            const phone = t['Phone Number'] || t.Phone;
+            if (!currentTutors.some(ct => ct.phone === phone)) {
+              const cgpaVal = t.CGPA || t['CGPA'] || '3.50';
+              const rawLvl = t['Level Rank'] || t['Silver Level Rank'] || t.Level || 0;
+              const lvl = typeof rawLvl === 'string' ? (parseInt(rawLvl.replace(/\D/g, '')) || 0) : Number(rawLvl) || 0;
+              currentTutors.push({
+                type: 'TUTOR',
+                name: t['Full Name'] || t.Name,
+                phone: phone,
+                gender: t.Gender || '',
+                uni: t['University & Campus'] || t.University || '',
+                year: t['Academic Year'] || t.Year || '',
+                cgpa: cgpaVal,
+                subj: t['Subjects Taught'] || t.Subjects || '',
+                level: lvl,
+                examStatus: t['Communicative Exam'] || 'Not Taken',
+                examScore: t['Exam Score'] ? parseInt(t['Exam Score']) : 0,
+                govtId: t['Government ID'] || '',
+                status: t.Status || 'Verified',
+                date: t.Timestamp || new Date().toISOString()
+              });
+            }
+          });
+          localStorage.setItem('astegni_tutor_leads', JSON.stringify(currentTutors));
+        }
+
+        renderAll();
+        alert('✅ Cloud Database successfully synchronized!');
+      } catch (err) {
+        alert('Sync error: ' + err.message);
+      }
+    }
+
+    function exportDataToCsv(type) {
+      let data = [];
+      let filename = `teme_astegni_${type}_${Date.now()}.csv`;
+
+      if (type === 'parents') {
+        const parents = getParents();
+        if (parents.length === 0) return alert('No parent records to export.');
+        data = parents.map(p => ({
+          Date: p.date,
+          Name: p.name,
+          Phone: p.phone,
+          Area: p.area,
+          Student_Gender: p.studentGender || p.childGender || 'Student',
+          Grade: p.grade,
+          Subjects: `"${(p.subjs || '').replace(/"/g, '""')}"`,
+          Status: p.status || 'Pending'
+        }));
+      } else if (type === 'tutors') {
+        const tutors = getTutors();
+        if (tutors.length === 0) return alert('No tutor records to export.');
+        data = tutors.map(t => {
+          const tier = getTutorMetalTier(t.cgpa);
+          const lvl = Number(t.level) || 0;
+          return {
+            Date: t.date,
+            Name: t.name,
+            Phone: t.phone,
+            Gender: t.gender,
+            University: t.uni,
+            Year: t.year,
+            CGPA: t.cgpa,
+            Metal_Tier: tier.name,
+            Level_Rank: `Level ${lvl}`,
+            Combined_Rank: `${tier.name} Level ${lvl}`,
+            Communicative_Exam: t.examStatus || 'Not Taken',
+            Exam_Score: t.examScore ? `${t.examScore}%` : 'N/A',
+            Subjects: `"${(t.subj || '').replace(/"/g, '""')}"`,
+            Government_ID: t.govtId
+          };
+        });
+      }
+
+      const headers = Object.keys(data[0]).join(',');
+      const rows = data.map(obj => Object.values(obj).join(',')).join('\n');
+      const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + headers + '\n' + rows;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function switchView(viewId, btn) {
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+
+      if (btn) {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setParentFilter(filter, btn) {
+      currentParentFilter = filter;
+      btn.parentElement.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderParents();
+    }
+
+    function filterParents() { renderParents(); }
+
+    function setTutorFilter(filter, btn) {
+      currentTutorFilter = filter;
+      btn.parentElement.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTutors();
+    }
+
+    function filterTutors() { renderTutors(); }
+
+    function openScriptCodeModal() { document.getElementById('modal-script-code').classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function copyAppsScriptCode() {
+      const code = document.getElementById('apps-script-code-box').innerText;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => alert('📋 Apps Script code copied to clipboard!'));
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    // ==========================================
+    // SEED DATA INITIALIZATION
+    // ==========================================
+    function initializeSeedData() {
+      if (!localStorage.getItem('astegni_parent_leads')) {
+        const seedParents = [
+          {
+            type: 'PARENT',
+            name: 'ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)',
+            phone: '0911223344',
+            area: 'ሳሪስ / ካዲስኮ (Saris, AAU Campus nearby)',
+            studentGender: 'Male',
+            childGender: 'Male',
+            grade: 'Grade 9',
+            subjs: 'Physics, Mathematics',
+            status: 'Pending',
+            date: new Date(Date.now() - 3600000 * 2).toISOString()
+          },
+          {
+            type: 'PARENT',
+            name: 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)',
+            phone: '0922446688',
+            area: 'ገርጂ / መብራት ኃይል (Gerji)',
+            studentGender: 'Female',
+            childGender: 'Female',
+            grade: 'Grade 7',
+            subjs: 'English, General Science',
+            status: 'Trial Scheduled',
+            date: new Date(Date.now() - 3600000 * 8).toISOString()
+          }
+        ];
+        localStorage.setItem('astegni_parent_leads', JSON.stringify(seedParents));
+      }
+
+      if (!localStorage.getItem('astegni_tutor_leads')) {
+        const seedTutors = [
+          {
+            type: 'TUTOR',
+            name: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
+            phone: '0944112233',
+            gender: 'ሴት (Female)',
+            uni: 'AAU (Tikur Anbessa Medical)',
+            year: '4th Year (Medicine)',
+            cgpa: '3.88',
+            subj: 'Biology, Chemistry, English',
+            govtId: 'Kebele ID: Verified',
+            level: 5,
+            examStatus: 'passed',
+            examType: 'Physical / Video Demo',
+            examScore: 97,
+            examClarity: 'Exceptional (A+)',
+            examNotes: 'Conducted live in-person teaching demonstration. Exceptional patience, clinical precision, and warm pedagogical rapport.',
+            date: new Date(Date.now() - 3600000 * 24).toISOString()
+          },
+          {
+            type: 'TUTOR',
+            name: 'ናትናኤል አለማየሁ (Natnael A.)',
+            phone: '0911559900',
+            gender: 'ወንድ (Male)',
+            uni: 'AAU (4 Kilo Science & Tech)',
+            year: '3rd Year (Electrical Eng.)',
+            cgpa: '3.78',
+            subj: 'Physics, Mathematics',
+            govtId: 'National Fayda ID: Verified',
+            level: 3,
+            examStatus: 'passed',
+            examType: 'Video Call',
+            examScore: 92,
+            examClarity: 'Strong (A)',
+            examNotes: 'Passed live video teaching exam. Strong visual explanations for calculus and kinematics.',
+            date: new Date(Date.now() - 3600000 * 18).toISOString()
+          },
+          {
+            type: 'TUTOR',
+            name: 'ዮሐንስ መላኩ (Yohannes M.)',
+            phone: '0933778899',
+            gender: 'ወንድ (Male)',
+            uni: 'ASTU (Adama Science & Tech)',
+            year: '2nd Year (Software Eng.)',
+            cgpa: '3.65',
+            subj: 'Mathematics, ICT, English',
+            govtId: 'National Fayda ID: Verified',
+            level: 1,
+            examStatus: 'passed',
+            examType: 'Voice Call',
+            examScore: 89,
+            examClarity: 'Strong (A)',
+            examNotes: 'Passed voice call interview. Fluent in Amharic & English, very courteous tone.',
+            date: new Date(Date.now() - 3600000 * 8).toISOString()
+          },
+          {
+            type: 'TUTOR',
+            name: 'ጴጥሮስ ኃይሌ (Petros H.)',
+            phone: '0955223344',
+            gender: 'ወንድ (Male)',
+            uni: 'AAU (5 Kilo Technology)',
+            year: '2nd Year (Civil Eng.)',
+            cgpa: '3.42',
+            subj: 'General Math, Technical Drawing',
+            govtId: 'Kebele ID: Attached',
+            level: 0,
+            examStatus: 'Pending Exam',
+            examType: 'None',
+            examScore: 0,
+            examNotes: 'Registered applicant; requested free voice/video call evaluation.',
+            date: new Date(Date.now() - 3600000 * 3).toISOString()
+          },
+          {
+            type: 'TUTOR',
+            name: 'ዳዊት ግርማ (Dawit Girma)',
+            phone: '0977441122',
+            gender: 'ወንድ (Male)',
+            uni: 'AAU (College of Natural Sciences)',
+            year: '3rd Year (Statistics)',
+            cgpa: '3.25',
+            subj: 'Basic Mathematics, Geography',
+            govtId: 'National Fayda ID: Verified',
+            level: 1,
+            examStatus: 'passed',
+            examType: 'Voice Call',
+            examScore: 86,
+            examClarity: 'Strong (A)',
+            examNotes: 'Passed voice call teaching exam. Very calm, encouraging pedagogical manner.',
+            date: new Date(Date.now() - 3600000 * 5).toISOString()
+          }
+        ];
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify(seedTutors));
+      }
+
+      if (!localStorage.getItem('astegni_matches')) {
+        const seedMatches = [
+          {
+            id: 'M-' + Date.now(),
+            parentName: 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)',
+            parentPhone: '0922446688',
+            tutorName: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
+            tutorPhone: '0944112233',
+            monthlyFee: 4000,
+            rate: 25,
+            commission: 1000,
+            status: 'Trial Scheduled',
+            date: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem('astegni_matches', JSON.stringify(seedMatches));
+      }
+
+      if (!localStorage.getItem('astegni_upgrade_ledger')) {
+        const seedUpgrades = [
+          {
+            tutorPhone: '0944112233',
+            tutorName: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
+            fromLevel: 1,
+            toLevel: 4,
+            fee: 150,
+            date: new Date(Date.now() - 3600000 * 12).toISOString()
+          },
+          {
+            tutorPhone: '0911559900',
+            tutorName: 'ናትናኤል አለማየሁ (Natnael A.)',
+            fromLevel: 1,
+            toLevel: 3,
+            fee: 100,
+            date: new Date(Date.now() - 3600000 * 6).toISOString()
+          }
+        ];
+        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify(seedUpgrades));
+      }
+    }
+
+    // ==========================================
+    // APPLICATION ENTRYPOINT
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeSeedData();
+
+      const savedWebhook = localStorage.getItem('teme_astegni_db_webhook');
+      if (savedWebhook && document.getElementById('webhook-url-input')) {
+        document.getElementById('webhook-url-input').value = savedWebhook;
+      }
+
+      const savedTgToken = localStorage.getItem('teme_astegni_tg_bot_token');
+      if (savedTgToken && document.getElementById('tg-bot-token-input')) {
+        document.getElementById('tg-bot-token-input').value = savedTgToken;
+      }
+
+      const savedTgChat = localStorage.getItem('teme_astegni_tg_chat_id');
+      if (savedTgChat && document.getElementById('tg-chat-id-input')) {
+        document.getElementById('tg-chat-id-input').value = savedTgChat;
+      }
+
+      const owner = localStorage.getItem('teme_astegni_owner');
+      if (!owner) {
+        // First run: No owner exists yet! Render Owner Setup Wizard
+        document.getElementById('screen-owner-setup').style.display = 'flex';
+        document.getElementById('screen-login').style.display = 'none';
+        document.getElementById('main-content').style.display = 'none';
+      } else {
+        // Owner exists: Check session auth
+        const sessionUser = getSessionUser();
+        if (sessionUser) {
+          launchDashboard();
+        } else {
+          document.getElementById('screen-login').style.display = 'flex';
+          document.getElementById('screen-owner-setup').style.display = 'none';
+          document.getElementById('main-content').style.display = 'none';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
