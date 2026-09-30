@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Teme Astegni (ተሜ አስጠኚ) • Verified University Home Tutors | Ethio 21</title>
+  <meta name="description" content="Teme Astegni (ተሜ አስጠኚ) - Ethiopia's premier network of verified university home tutors. CGPA ≥ 3.00 scholars vetted by campus ID, grade report, and National Fayda/Kebele ID with a 1-day free trial.">
+  <meta name="keywords" content="Tutor Ethiopia, University Tutor Addis Ababa, Teme Astegni, ተሜ አስጠኚ, AAU Tutor, Private Tutor Addis Ababa, Ethiopian Tutors, High School Tutoring Ethiopia, Telebirr Tutor">
+  <meta name="theme-color" content="#090d16">
+
+  <!-- Open Graph / Facebook / Telegram Link Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://t.me/teme_astegni">
+  <meta property="og:title" content="Teme Astegni (ተሜ አስጠኚ) • Verified University Home Tutors">
+  <meta property="og:description" content="Find verified university scholars from nearby campuses (AAU, ASTU...). CGPA ≥ 3.00, strict ID security, 1-day free in-home trial.">
+  <meta property="og:image" content="assets/teme_astegni_logo.jpg">
+  <meta property="og:locale" content="am_ET">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Teme Astegni (ተሜ አስጠኚ) • Verified University Home Tutors">
+  <meta name="twitter:description" content="Ethiopia's trusted university home tutoring platform. Verified credentials, nearby campus scholars, zero-risk free trial.">
+  <meta name="twitter:image" content="assets/teme_astegni_logo.jpg">
+
+  <!-- Favicon & Touch Icons -->
+  <link rel="icon" type="image/jpeg" href="assets/teme_astegni_logo.jpg">
+  <link rel="apple-touch-icon" href="assets/teme_astegni_logo.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #090d16;
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', -apple-system, sans-serif;
+      line-height: 1.5;
+      padding-bottom: 5.5rem; /* space for fixed bottom navigation bar */
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 1rem 0.9rem;
+    }
+
+    /* Top Global Header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      margin-bottom: 1rem;
+      position: sticky;
+      top: 0.5rem;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+    }
+
+    .brand-logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-titles h1 {
+      font-size: 1.05rem;
+      font-weight: 850;
+      letter-spacing: -0.3px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .brand-titles span {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 600;
+      display: block;
+    }
+
+    /* 3-Language Segmented Switcher */
+    .lang-switcher {
+      display: flex;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 3px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.76rem;
+      font-weight: 750;
+      padding: 0.35rem 0.6rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn.active {
+      background: #3b82f6;
+      color: #fff;
+      box-shadow: 0 1px 6px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Screen Transitions */
+    .app-screen {
+      display: none;
+      animation: fadeIn 0.22s ease-out;
+    }
+
+    .app-screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Screen Sub-Header / Back Bar */
+    .screen-back-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f8fafc;
+      padding: 0.5rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateX(-2px);
+    }
+
+    /* Dashboard / Home View Cards */
+    .hero-banner {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 20px;
+      padding: 1.35rem 1.15rem;
+      margin-bottom: 1.15rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      margin-bottom: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-banner h2 {
+      font-size: 1.35rem;
+      font-weight: 850;
+      color: #fff;
+      line-height: 1.35;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-banner p {
+      font-size: 0.86rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .action-card {
+      background: #151d2f;
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 1.15rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.9rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      text-align: left;
+      position: relative;
+    }
+
+    .action-card:hover, .action-card:active {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-card.card-parent {
+      border-color: rgba(56, 189, 248, 0.35);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.07), #151d2f);
+    }
+    .action-card.card-parent:hover { border-color: #38bdf8; }
+
+    .action-card.card-tutor {
+      border-color: rgba(52, 211, 153, 0.35);
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.07), #151d2f);
+    }
+    .action-card.card-tutor:hover { border-color: #34d399; }
+
+    .action-card.card-vetting {
+      border-color: rgba(167, 139, 250, 0.35);
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.07), #151d2f);
+    }
+    .action-card.card-vetting:hover { border-color: #a78bfa; }
+
+    .action-card.card-hotline {
+      border-color: rgba(251, 191, 36, 0.35);
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.07), #151d2f);
+    }
+    .action-card.card-hotline:hover { border-color: #fbbf24; }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .card-icon-bubble {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .card-parent .card-icon-bubble { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+    .card-tutor .card-icon-bubble { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+    .card-vetting .card-icon-bubble { background: rgba(167, 139, 250, 0.15); color: #a78bfa; }
+    .card-hotline .card-icon-bubble { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+
+    .card-info h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+
+    .card-info p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+
+    .card-arrow {
+      font-size: 1.25rem;
+      color: #64748b;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* Trust highlights */
+    .trust-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .trust-pill {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 0.75rem 0.8rem;
+    }
+
+    .trust-pill h4 {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .trust-pill p {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+
+    /* Forms */
+    .form-card {
+      background: #141c2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.35rem 1.2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      margin-bottom: 1.25rem;
+    }
+
+    .form-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-header h2 {
+      font-size: 1.25rem;
+      font-weight: 850;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-header p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    .field {
+      margin-bottom: 1.15rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 750;
+      color: #e2e8f0;
+      margin-bottom: 0.4rem;
+    }
+
+    .field input[type="text"],
+    .field input[type="tel"],
+    .field input[type="number"],
+    .field select {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: #38bdf8;
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    /* Checkbox Group */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.6rem 0.75rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .check-label:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .check-label input {
+      accent-color: #38bdf8;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* File Upload Box */
+    .file-upload-box {
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 14px;
+      padding: 1.15rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .file-upload-box:hover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.09);
+    }
+
+    .file-upload-box input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .file-preview-thumb {
+      max-width: 140px;
+      max-height: 90px;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      border: 1.5px solid #38bdf8;
+      display: none;
+    }
+
+    .file-status-tag {
+      font-size: 0.78rem;
+      font-weight: 750;
+      color: #38bdf8;
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    /* Buttons */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      border: none;
+      padding: 1.05rem;
+      border-radius: 14px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit.tutor {
+      background: linear-gradient(135deg, #059669, #10b981);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Vetting Page Layout */
+    .vetting-pillar {
+      background: #151d2f;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 16px;
+      padding: 1.15rem 1.1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .vetting-pillar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .vetting-pillar-icon {
+      font-size: 1.4rem;
+    }
+
+    .vetting-pillar h3 {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .vetting-pillar p {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    /* Hotline Cards */
+    .hotline-item {
+      background: #151d2f;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .hotline-item:hover {
+      border-color: #38bdf8;
+      transform: translateY(-1px);
+    }
+
+    .hotline-btn-pill {
+      background: #0284c7;
+      color: #fff;
+      padding: 0.5rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    /* Fixed Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 15, 25, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.45rem 0.25rem 0.65rem;
+      z-index: 100;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .nav-tab {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      font-size: 0.68rem;
+      font-weight: 750;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 10px;
+      transition: all 0.18s;
+      flex: 1;
+    }
+
+    .nav-tab-icon {
+      font-size: 1.25rem;
+    }
+
+    .nav-tab.active {
+      color: #38bdf8;
+    }
+
+    .nav-tab.active .nav-tab-icon {
+      transform: scale(1.1);
+    }
+
+    /* Dispatch Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 1rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 1.5rem 1.25rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-card h3 {
+      font-size: 1.2rem;
+      font-weight: 850;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-card p {
+      font-size: 0.86rem;
+      color: #94a3b8;
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-tg-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #0284c7;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.95rem 1.25rem;
+      border-radius: 12px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-tg-action:hover {
+      background: #0369a1;
+    }
+
+    .btn-modal-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #cbd5e1;
+      padding: 0.65rem 1.15rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Small credit */
+    .mini-footer {
+      text-align: center;
+      font-size: 0.74rem;
+      color: #475569;
+      margin-top: 1rem;
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    
+    <!-- Top Global Header -->
+    <header class="app-header">
+      <div class="brand-group" onclick="showScreen('screen-home')">
+        <img src="assets/teme_astegni_logo.jpg" alt="Teme Astegni Logo" class="brand-logo-img">
+        <div class="brand-titles">
+          <h1>Teme Astegni <span style="font-weight: 400; font-size: 0.85rem; color: #38bdf8;">ተሜ</span></h1>
+          <span id="i18n-header-sub">Verified University Home Tutors</span>
+        </div>
+      </div>
+
+      <!-- 3-Language Toggle: Amharic / English / Afaan Oromoo -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" id="btn-lang-am" onclick="setLang('am')">አማ</button>
+        <button class="lang-btn" id="btn-lang-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="btn-lang-or" onclick="setLang('or')">OR</button>
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: HOME (DASHBOARD & MAIN MENU)     -->
+    <!-- ========================================== -->
+    <div id="screen-home" class="app-screen active">
+      
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-badge" id="i18n-hero-badge">⭐ CGPA ≥ 3.00 • 100% VERIFIED</div>
+        <h2 id="i18n-hero-h2">Find High-Achieving University Tutors For Your Child</h2>
+        <p id="i18n-hero-p">Matched exclusively from nearby university campuses. Identity and academic records verified with zero compromise.</p>
+      </div>
+
+      <!-- Main Task Navigation Cards -->
+      <div class="action-grid">
+        
+        <!-- Card 1: Request a Tutor (Parents) -->
+        <div class="action-card card-parent" onclick="showScreen('screen-parent')">
+          <div class="card-left">
+            <div class="card-icon-bubble">👨‍👩‍👧</div>
+            <div class="card-info">
+              <h3 id="i18n-c1-h">Request a Tutor for Child</h3>
+              <p id="i18n-c1-p">For parents seeking top university scholars nearby</p>
+            </div>
+          </div>
+          <div class="card-arrow">›</div>
+        </div>
+
+        <!-- Card 2: Apply as Tutor (Students) -->
+        <div class="action-card card-tutor" onclick="showScreen('screen-tutor')">
+          <div class="card-left">
+            <div class="card-icon-bubble">🎓</div>
+            <div class="card-info">
+              <h3 id="i18n-c2-h">Apply as University Astegni</h3>
+              <p id="i18n-c2-p">For active 2nd Year+ students with CGPA ≥ 3.00</p>
+            </div>
+          </div>
+          <div class="card-arrow">›</div>
+        </div>
+
+        <!-- Card 3: 4-Tier Vetting Deep Dive -->
+        <div class="action-card card-vetting" onclick="showScreen('screen-vetting')">
+          <div class="card-left">
+            <div class="card-icon-bubble">🛡️</div>
+            <div class="card-info">
+              <h3 id="i18n-c3-h">4-Tier Tutor Verification</h3>
+              <p id="i18n-c3-p">How we ensure child safety & academic mastery</p>
+            </div>
+          </div>
+          <div class="card-arrow">›</div>
+        </div>
+
+        <!-- Card 4: 24/7 Hotline & Telegram Ops -->
+        <div class="action-card card-hotline" onclick="showScreen('screen-hotline')">
+          <div class="card-left">
+            <div class="card-icon-bubble">📞</div>
+            <div class="card-info">
+              <h3 id="i18n-c4-h">24/7 Direct Call Hotline</h3>
+              <p id="i18n-c4-p">Call our coordinators directly or chat on Telegram</p>
+            </div>
+          </div>
+          <div class="card-arrow">›</div>
+        </div>
+
+      </div>
+
+      <!-- Quick Trust Indicators -->
+      <div class="trust-strip">
+        <div class="trust-pill">
+          <h4 id="i18n-t1-h">🆔 Verified Identity</h4>
+          <p id="i18n-t1-p">National/Kebele & Student ID permanently on file.</p>
+        </div>
+        <div class="trust-pill">
+          <h4 id="i18n-t2-h">⭐ CGPA ≥ 3.00</h4>
+          <p id="i18n-t2-p">Top 2nd Year+ scholars with Grade 'A' mastery.</p>
+        </div>
+        <div class="trust-pill">
+          <h4 id="i18n-t3-h">🏛️ Campus Proximity</h4>
+          <p id="i18n-t3-p">Dispatched from university campuses closest to home.</p>
+        </div>
+        <div class="trust-pill">
+          <h4 id="i18n-t4-h">🤝 1-Day Free Trial</h4>
+          <p id="i18n-t4-p">Evaluate teaching chemistry with zero obligation.</p>
+        </div>
+      </div>
+
+      <!-- Private Matching Notice -->
+      <div style="background: rgba(30, 41, 59, 0.4); border: 1px dashed rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 0.9rem; font-size: 0.78rem; color: #94a3b8; text-align: center; line-height: 1.45;" id="i18n-home-privacy">
+        🛡️ <b>100% Confidential Matching:</b> Requests are handled privately by Teme Astegni coordinators in <b>Ethio - 21 Astegni Ops</b>. No jobs are posted publicly to prevent fake locations.
+      </div>
+
+      <div class="mini-footer">
+        Teme Astegni (ተሜ አስጠኚ) • Powered by ETHIO 21
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: PARENT BOOKING FORM              -->
+    <!-- ========================================== -->
+    <div id="screen-parent" class="app-screen">
+      
+      <div class="screen-back-bar">
+        <button class="btn-back" onclick="showScreen('screen-home')">
+          <span>‹</span> <span id="i18n-back-p">Back to Menu</span>
+        </button>
+        <span style="font-size: 0.8rem; color: #38bdf8; font-weight: 750;" id="i18n-p-badge">Parent Request</span>
+      </div>
+
+      <div class="form-card">
+        <div class="form-header">
+          <h2 id="i18n-p-title">Request a Qualified University Tutor</h2>
+          <p id="i18n-p-subtitle">Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.</p>
+        </div>
+
+        <form id="parent-form" onsubmit="handleParentSubmit(event)">
+          
+          <!-- APPLICANT SELECTION: Parent/Guardian OR Independent Student (18+) -->
+          <div class="field" style="background: rgba(56, 189, 248, 0.06); border: 1.5px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+            <label id="i18n-f-papplicant-type" style="font-weight: 850; color: #38bdf8; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">Who is this tutoring request for? (ይህ ጥያቄ ለማን ነው?) *</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+              <label class="check-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.65rem 0.75rem; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 10px; margin: 0;">
+                <input type="radio" name="applicant_type" value="PARENT" checked onchange="toggleApplicantType('PARENT')">
+                <span id="i18n-opt-app-parent" style="font-size: 0.8rem; font-weight: 750; color: #fff;">👨‍👩‍👧 Parent / Guardian (ለልጄ)</span>
+              </label>
+              <label class="check-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.65rem 0.75rem; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(251, 191, 36, 0.4); border-radius: 10px; margin: 0;">
+                <input type="radio" name="applicant_type" value="STUDENT_ADULT" onchange="toggleApplicantType('STUDENT_ADULT')">
+                <span id="i18n-opt-app-adult" style="font-size: 0.8rem; font-weight: 750; color: #fbbf24;">🎓 Student 18+ (ለራሴ / በራሴ)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-pname">Parent / Guardian Full Name (የወላጅ ሙሉ ስም) *</label>
+            <input type="text" id="p_name" required placeholder="e.g. Dr. Abebe Tadesse / W/ro Selam">
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-pphone">Phone Number (Calls &amp; Telebirr) *</label>
+            <input type="tel" id="p_phone" required placeholder="09xxxxxxxx / 07xxxxxxxx">
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-parea">Residential Neighborhood &amp; City (Near Campus) *</label>
+            <input type="text" id="p_area" required placeholder="e.g. 4 Kilo, 6 Kilo, Bole, Ferensay, Adama, Hawassa...">
+          </div>
+
+          <!-- STUDENT GENDER SECTION (The student who will be tutored) -->
+          <div class="field">
+            <label id="i18n-f-pchild-gender" style="color: #38bdf8; font-weight: 850;">Student Gender (የሚማረው ተማሪ ፆታ) *</label>
+            <select id="p_child_gender" required>
+              <option value="" disabled selected id="i18n-popt-sel-child">የተማሪውን ፆታ ይምረጡ (Select Student Gender) *</option>
+              <option value="Female" id="i18n-popt-fem-child">ሴት ተማሪ (Female Student)</option>
+              <option value="Male" id="i18n-popt-male-child">ወንድ ተማሪ (Male Student)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-pgrade">Child's Academic Grade Level *</label>
+            <select id="p_grade" required>
+              <option value="Grade 1 - 4">Grade 1 - 4 (Primary Foundation)</option>
+              <option value="Grade 5 - 8">Grade 5 - 8 (Middle School &amp; Regional Exam)</option>
+              <option value="Grade 9 - 10" selected>Grade 9 - 10 (Secondary School)</option>
+              <option value="Grade 11 - 12 (Natural Science)">Grade 11 - 12 (Natural Science - National Exam)</option>
+              <option value="Grade 11 - 12 (Social Science)">Grade 11 - 12 (Social Science - National Exam)</option>
+              <option value="KG / Early Childhood">KG / Early Childhood Development</option>
+              <option value="University Remedial / Freshman">University Remedial / Freshman Tutoring</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-psubj">Subjects Requiring Tutoring</label>
+            <div class="checkbox-grid">
+              <label class="check-label"><input type="checkbox" name="subj" value="Mathematics" checked> Math</label>
+              <label class="check-label"><input type="checkbox" name="subj" value="Physics"> Physics</label>
+              <label class="check-label"><input type="checkbox" name="subj" value="Chemistry"> Chemistry</label>
+              <label class="check-label"><input type="checkbox" name="subj" value="Biology"> Biology</label>
+              <label class="check-label"><input type="checkbox" name="subj" value="English"> English</label>
+              <label class="check-label"><input type="checkbox" name="subj" value="All Subjects"> All Subjects</label>
+            </div>
+          </div>
+
+          <!-- MANDATORY ID VERIFICATION: Front & Back + Expiry (>= 30 days) -->
+          <div class="field" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1.2rem; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label style="color: #38bdf8; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-pid-title">🆔 Household ID Verification (የመታወቂያ ማረጋገጫ) *</label>
+              <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">2-Way Safety Protocol</span>
+            </div>
+            <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;" id="i18n-f-pid-desc">
+              To protect both your household and our university scholars entering residential homes, please provide a valid National Fayda or Kebele ID. IDs must be clearly readable and have at least 1 month (30 days) of remaining validity.
+            </p>
+
+            <!-- ID Type & Expiry Row -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.75rem;">
+              <div>
+                <label style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.25rem;">ID Document Type *</label>
+                <select id="p_id_type" required>
+                  <option value="National Fayda ID" selected>National Fayda ID (ፋይዳ)</option>
+                  <option value="Kebele ID">Kebele Resident ID (ቀበሌ)</option>
+                  <option value="Passport">Passport (ፓስፖርት)</option>
+                  <option value="Driver License">Driver's License (መንጃ ፈቃድ)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.25rem;">Expiry Date (ቢያንስ 1 ወር) *</label>
+                <input type="date" id="p_id_expiry" required onchange="validateIdExpiryDate(this, 'p_id_expiry_warn')">
+              </div>
+            </div>
+            <div id="p_id_expiry_warn" style="font-size: 0.75rem; margin-bottom: 0.75rem; display: none;"></div>
+
+            <!-- Front and Back Upload Boxes Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+              <!-- Front Photo -->
+              <div class="file-upload-box" id="box-p-id-front" style="padding: 0.85rem 0.5rem;">
+                <input type="file" id="p_id_front_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-p-front', 'status-p-front', 'p-front-clarity')">
+                <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">📸</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Front Photo *</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">የፊት ገጽ (Clear &amp; visible)</div>
+                <img id="preview-p-front" class="file-preview-thumb" alt="ID Front Preview" style="max-width: 100px; max-height: 70px;">
+                <div id="status-p-front" class="file-status-tag" style="font-size: 0.7rem;">✓ Front Attached</div>
+                <div id="p-front-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
+              </div>
+
+              <!-- Back Photo -->
+              <div class="file-upload-box" id="box-p-id-back" style="padding: 0.85rem 0.5rem;">
+                <input type="file" id="p_id_back_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-p-back', 'status-p-back', 'p-back-clarity')">
+                <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🔄</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Back Photo *</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (Clear &amp; visible)</div>
+                <img id="preview-p-back" class="file-preview-thumb" alt="ID Back Preview" style="max-width: 100px; max-height: 70px;">
+                <div id="status-p-back" class="file-status-tag" style="font-size: 0.7rem;">✓ Back Attached</div>
+                <div id="p-back-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.6rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>👁️ Clarity Audit:</span>
+              <span>All 4 edges must be within frame, unblurred text, without flash reflection glare.</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <span id="i18n-btn-psubmit">📲 Submit Request &amp; Match Nearby Scholar ›</span>
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: TUTOR APPLICATION FORM           -->
+    <!-- ========================================== -->
+    <div id="screen-tutor" class="app-screen">
+      
+      <div class="screen-back-bar">
+        <button class="btn-back" onclick="showScreen('screen-home')">
+          <span>‹</span> <span id="i18n-back-t">Back to Menu</span>
+        </button>
+        <span style="font-size: 0.8rem; color: #34d399; font-weight: 750;" id="i18n-t-badge">Tutor Registration</span>
+      </div>
+
+      <div class="form-card" style="border-color: rgba(52, 211, 153, 0.3);">
+        <div class="form-header">
+          <h2 id="i18n-t-title">Apply as a Certified Teme Astegni</h2>
+          <p id="i18n-t-subtitle">Requirements: Active 2nd Year+ university student with CGPA ≥ 3.00 and verified ID credentials.</p>
+        </div>
+
+        <form id="tutor-form" onsubmit="handleTutorSubmit(event)">
+          
+          <div class="field">
+            <label id="i18n-f-tname">Full Name (As on Student ID) *</label>
+            <input type="text" id="t_name" required placeholder="e.g. Yohannes Melaku / Hawi Bekele">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="field">
+              <label id="i18n-f-tphone">Phone Number (Telebirr) *</label>
+              <input type="tel" id="t_phone" required placeholder="09xxxxxxxx">
+            </div>
+            <div class="field">
+              <label id="i18n-f-tgender">Gender / Sex (ፆታ) *</label>
+              <select id="t_gender" required>
+                <option value="" disabled selected id="i18n-topt-sel">ፆታ ይምረጡ</option>
+                <option value="Male" id="i18n-topt-male">ወንድ (Male)</option>
+                <option value="Female" id="i18n-topt-female">ሴት (Female)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-tuni">University &amp; Campus Name *</label>
+            <input type="text" id="t_uni" required placeholder="e.g. AAU 4 Kilo, AAU 5 Kilo, ASTU, Hawassa Main...">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="field">
+              <label id="i18n-f-tyear">Academic Year *</label>
+              <select id="t_year" required>
+                <option value="2nd Year" selected>2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="5th Year / Graduate">5th Year / Graduate</option>
+              </select>
+            </div>
+            <div class="field">
+              <label id="i18n-f-tcgpa">CGPA (≥ 3.00) *</label>
+              <input type="number" id="t_cgpa" step="0.01" min="3.00" max="4.00" required placeholder="e.g. 3.65">
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="i18n-f-tsubj">Subjects You Can Confidently Teach (Grade 'A') *</label>
+            <input type="text" id="t_subj" required placeholder="e.g. Mathematics, Physics, Chemistry, English...">
+          </div>
+
+          <!-- Mandatory Attachment 1: Campus ID -->
+          <div class="field">
+            <label style="color: #34d399; font-weight: 850;" id="i18n-f-tcid">📸 Campus Student ID Photo • MANDATORY *</label>
+            <div class="file-upload-box" id="box-campus-id" style="border-color: rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.05);">
+              <input type="file" id="t_campus_id_file" accept="image/*" required onchange="handleCampusIdPick(event)">
+              <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">🏛️</div>
+              <div style="font-size: 0.88rem; font-weight: 800; color: #fff;" id="i18n-box-cid-h">Attach Campus Student ID Photo</div>
+              <div style="font-size: 0.74rem; color: #94a3b8;" id="i18n-box-cid-p">Front photo of your university ID card</div>
+              <img id="preview-campus-id" class="file-preview-thumb" alt="Campus ID Preview">
+              <div id="status-campus-id" class="file-status-tag" style="color: #34d399;">✓ Campus Student ID Attached</div>
+            </div>
+          </div>
+
+          <!-- Mandatory Attachment 2: Grade Report -->
+          <div class="field">
+            <label style="color: #facc15; font-weight: 850;" id="i18n-f-tgrade">📄 Grade Report / Portal Screenshot • MANDATORY *</label>
+            <div class="file-upload-box" id="box-grade-report" style="border-color: rgba(250, 204, 21, 0.45); background: rgba(250, 204, 21, 0.05);">
+              <input type="file" id="t_grade_file" accept="image/*,.pdf" required onchange="handleGradePick(event)">
+              <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">📊</div>
+              <div style="font-size: 0.88rem; font-weight: 800; color: #fff;" id="i18n-box-grade-h">Attach Portal Screenshot / Grade Report</div>
+              <div style="font-size: 0.74rem; color: #94a3b8;" id="i18n-box-grade-p">Verifies CGPA ≥ 3.00 &amp; subject grades</div>
+              <img id="preview-grade" class="file-preview-thumb" style="border-color: #facc15;" alt="Grade Report Preview">
+              <div id="status-grade" class="file-status-tag" style="color: #facc15;">✓ Grade Report Attached</div>
+            </div>
+          </div>
+
+          <!-- Mandatory Attachment 3: National Fayda OR Kebele ID (Front & Back + Validity >= 30 days) -->
+          <div class="field" style="background: rgba(56, 189, 248, 0.05); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label style="color: #38bdf8; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-tgovt">🆔 National Fayda ID OR Kebele ID • Front &amp; Back (MANDATORY) *</label>
+              <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">Child Safety Mandate</span>
+            </div>
+            <p style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 0.65rem;" id="i18n-box-govt-p">
+              Both Front and Back photos are required. ID must have at least 1 month (30 days) of remaining validity before expiration.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.65rem;">
+              <div>
+                <label style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.2rem;">ID Type *</label>
+                <select id="t_govt_id_type">
+                  <option value="National Fayda ID">National Fayda ID</option>
+                  <option value="Kebele ID">Kebele ID</option>
+                  <option value="Passport">Passport</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.2rem;">ID Expiry Date (≥ 1 Month) *</label>
+                <input type="date" id="t_id_expiry" required onchange="validateIdExpiryDate(this, 't_id_expiry_warn')">
+              </div>
+            </div>
+            <div id="t_id_expiry_warn" style="font-size: 0.75rem; margin-bottom: 0.65rem; display: none;"></div>
+
+            <!-- Front and Back Upload Boxes Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+              <!-- Front Photo -->
+              <div class="file-upload-box" id="box-t-id-front" style="padding: 0.85rem 0.5rem;">
+                <input type="file" id="t_govt_front_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-t-front', 'status-t-front', 't-front-clarity')">
+                <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">📸</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Front Photo *</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">የፊት ገጽ (Clear &amp; visible)</div>
+                <img id="preview-t-front" class="file-preview-thumb" alt="ID Front Preview" style="max-width: 100px; max-height: 70px;">
+                <div id="status-t-front" class="file-status-tag" style="font-size: 0.7rem;">✓ Front Attached</div>
+                <div id="t-front-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
+              </div>
+
+              <!-- Back Photo -->
+              <div class="file-upload-box" id="box-t-id-back" style="padding: 0.85rem 0.5rem;">
+                <input type="file" id="t_govt_back_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-t-back', 'status-t-back', 't-back-clarity')">
+                <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🔄</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Back Photo *</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (Clear &amp; visible)</div>
+                <img id="preview-t-back" class="file-preview-thumb" alt="ID Back Preview" style="max-width: 100px; max-height: 70px;">
+                <div id="status-t-back" class="file-status-tag" style="font-size: 0.7rem;">✓ Back Attached</div>
+                <div id="t-back-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.55rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>👁️ Readability Check:</span>
+              <span>Must show full legal name, ID number, and photo clearly without glare.</span>
+            </div>
+          </div>
+
+          <!-- Communicative Skills Exam Opt-in (Optional for Level 1 & 1st Priority Dispatch) -->
+          <div class="field" style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1.25rem;">
+            <label class="check-label" style="background: transparent; border: none; padding: 0; color: #fff; cursor: pointer; display: flex; align-items: flex-start; gap: 0.75rem;">
+              <input type="checkbox" id="t_exam_optin" checked style="accent-color: #38bdf8; width: 22px; height: 22px; margin-top: 2px;">
+              <span style="line-height: 1.45;">
+                <span style="color: #38bdf8; font-weight: 850; font-size: 0.92rem;" id="i18n-t-exam-h">🎙️ Free Teaching & Communicative Skills Exam (የማስተማር እና የኮሙኒኬሽን ፈተና)</span><br>
+                <span style="font-size: 0.78rem; color: #cbd5e1; font-weight: normal;" id="i18n-t-exam-p">Not mandatory to register (Basic tier is open to all eligible students), but passing this free voice/video call interview unlocks <b>Level 1 &amp; 1st Priority Job Dispatch</b> in your metal tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.</span>
+              </span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-submit tutor">
+            <span id="i18n-btn-tsubmit">🎓 Submit Tutor Application for Verification ›</span>
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4: VETTING PROCESS (FOR PARENTS)   -->
+    <!-- ========================================== -->
+    <div id="screen-vetting" class="app-screen">
+      
+      <div class="screen-back-bar">
+        <button class="btn-back" onclick="showScreen('screen-home')">
+          <span>‹</span> <span id="i18n-back-v">Back to Menu</span>
+        </button>
+        <span style="font-size: 0.8rem; color: #a78bfa; font-weight: 750;" id="i18n-v-badge">Trust &amp; Vetting</span>
+      </div>
+
+      <div class="form-card" style="border-color: rgba(167, 139, 250, 0.25);">
+        <div class="form-header">
+          <h2 id="i18n-vp-title">How We Choose &amp; Verify Your Child's Tutor</h2>
+          <p id="i18n-vp-subtitle">Before an Astegni ever steps into your home, they must pass 4 strict verification gates with ETHIO 21 coordinators.</p>
+        </div>
+
+        <div class="vetting-pillar">
+          <div class="vetting-pillar-header">
+            <span class="vetting-pillar-icon">🏛️</span>
+            <h3 id="i18n-vp1-h">1. Active Campus Student ID</h3>
+          </div>
+          <p id="i18n-vp1-p">The tutor must be an active 2nd year or above student from a nearby accredited university (AAU, ASTU, Hawassa, etc.). We verify physical student ID cards and campus enrollment.</p>
+        </div>
+
+        <div class="vetting-pillar">
+          <div class="vetting-pillar-header">
+            <span class="vetting-pillar-icon">📊</span>
+            <h3 id="i18n-vp2-h">2. Official Grade Report (CGPA ≥ 3.00)</h3>
+          </div>
+          <p id="i18n-vp2-p">We audit portal grade transcripts. Only students maintaining a Cumulative GPA of 3.00 or higher and scoring Grade 'A' in the subjects they teach are accepted into our certified roster.</p>
+        </div>
+
+        <div class="vetting-pillar">
+          <div class="vetting-pillar-header">
+            <span class="vetting-pillar-icon">🆔</span>
+            <h3 id="i18n-vp3-h">3. Government ID on File (Fayda / Kebele)</h3>
+          </div>
+          <p id="i18n-vp3-p">For absolute child safety and household peace of mind, every tutor is mandatorily required to submit their National Fayda ID or Kebele ID, which is archived in our secure registry.</p>
+        </div>
+
+        <div class="vetting-pillar">
+          <div class="vetting-pillar-header">
+            <span class="vetting-pillar-icon">🤝</span>
+            <h3 id="i18n-vp4-h">4. 1-Day Free In-Home Trial Session</h3>
+          </div>
+          <p id="i18n-vp4-p">The tutor comes to your home and conducts a 1-day free trial lesson. You and your child evaluate their pedagogy and character. You only confirm the monthly agreement if 100% satisfied.</p>
+        <!-- Academic Metal Tiers (CGPA) & 5-Level Communicative Career Ladder -->
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1.15rem; margin-top: 1.25rem; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span style="font-size: 1.3rem;">🏅</span>
+            <h3 style="font-size: 0.98rem; font-weight: 850; color: #fff; margin: 0;" id="i18n-ladder-h">Academic Metal Tiers &amp; 5-Level Ranking</h3>
+          </div>
+          <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;" id="i18n-ladder-p">
+            Tutors are categorized by academic university CGPA into Golden, Silver, and Bronze tiers, with 5 communicative teaching levels in each tier.
+          </p>
+
+          <!-- Tiers Overview Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(251, 191, 36, 0.4); border-radius: 8px; padding: 0.5rem; text-align: center;">
+              <div style="font-size: 0.85rem; font-weight: 850; color: #fbbf24;">🥇 Golden Tier</div>
+              <div style="font-size: 0.72rem; color: #fde68a;">CGPA ≥ 3.75 (Top Honor)</div>
+            </div>
+            <div style="background: rgba(148, 163, 184, 0.12); border: 1px solid rgba(148, 163, 184, 0.4); border-radius: 8px; padding: 0.5rem; text-align: center;">
+              <div style="font-size: 0.85rem; font-weight: 850; color: #e2e8f0;">🥈 Silver Tier</div>
+              <div style="font-size: 0.72rem; color: #cbd5e1;">CGPA 3.40 – 3.74 (Distinction)</div>
+            </div>
+            <div style="background: rgba(249, 115, 22, 0.12); border: 1px solid rgba(249, 115, 22, 0.4); border-radius: 8px; padding: 0.5rem; text-align: center;">
+              <div style="font-size: 0.85rem; font-weight: 850; color: #fdba74;">🥉 Bronze Tier</div>
+              <div style="font-size: 0.72rem; color: #fed7aa;">CGPA 3.00 – 3.39 (Scholar)</div>
+            </div>
+          </div>
+
+          <!-- 5-Level Communicative Progression Ladder (Active in ALL Tiers) -->
+          <div style="display: flex; flex-direction: column; gap: 0.45rem; font-size: 0.76rem;">
+            <div style="background: rgba(255,255,255,0.04); padding: 0.5rem 0.75rem; border-radius: 8px; border-left: 3px solid #94a3b8;">
+              <b style="color: #94a3b8;">Level 0 (Basic Tier):</b> Verified student ID &amp; CGPA threshold. Standard dispatch queue in their tier.
+            </div>
+            <div style="background: rgba(56, 189, 248, 0.08); padding: 0.5rem 0.75rem; border-radius: 8px; border-left: 3px solid #38bdf8;">
+              <b style="color: #38bdf8;">🎙️ Level 1 (Certified Communicator):</b> Passed Coordinator Voice / Video Call Teaching Exam. <b>1st Priority Dispatch</b> for requests matching their tier.
+            </div>
+            <div style="background: rgba(129, 140, 248, 0.08); padding: 0.5rem 0.75rem; border-radius: 8px; border-left: 3px solid #818cf8;">
+              <b style="color: #818cf8;">⚡ Levels 2, 3, 4 (Progression Boosters):</b> 50 ETB tier upgrade. Priority queue &amp; multi-subject matching.
+            </div>
+            <div style="background: rgba(250, 204, 21, 0.08); padding: 0.5rem 0.75rem; border-radius: 8px; border-left: 3px solid #facc15;">
+              <b style="color: #facc15;">👑 Level 5 (Master Astegni):</b> Comprehensive In-Person or Live Video Demonstration audit. Top Priority for elite households.
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-submit" onclick="showScreen('screen-parent')" style="margin-top: 0.5rem;">
+          <span id="i18n-btn-vaction">👨‍👩‍👧 Request a Verified Tutor Now ›</span>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 5: 24/7 HOTLINE & TELEGRAM OPS      -->
+    <!-- ========================================== -->
+    <div id="screen-hotline" class="app-screen">
+      
+      <div class="screen-back-bar">
+        <button class="btn-back" onclick="showScreen('screen-home')">
+          <span>‹</span> <span id="i18n-back-h">Back to Menu</span>
+        </button>
+        <span style="font-size: 0.8rem; color: #fbbf24; font-weight: 750;" id="i18n-h-badge">Direct Contact</span>
+      </div>
+
+      <div class="form-card" style="border-color: rgba(251, 191, 36, 0.25);">
+        <div class="form-header">
+          <h2 id="i18n-hp-title">24/7 Direct Coordination Hotline</h2>
+          <p id="i18n-hp-subtitle">Prefer speaking to our matching team directly? Call our hotlines or reach our Telegram operations room anytime.</p>
+        </div>
+
+        <a href="tel:+251945399808" class="hotline-item">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800;" id="i18n-call1-name">📞 Call Hotline 1 (Ashenafi)</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">0945 39 98 08 • Immediate Assistance</div>
+          </div>
+          <span class="hotline-btn-pill" id="i18n-call-btn1">Call Now</span>
+        </a>
+
+        <a href="tel:+251960064466" class="hotline-item">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800;" id="i18n-call2-name">📞 Call Hotline 2 (Lemma)</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">0960 06 44 66 • Secondary Coordinator</div>
+          </div>
+          <span class="hotline-btn-pill" id="i18n-call-btn2">Call Now</span>
+        </a>
+
+        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="hotline-item" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.06);">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #38bdf8;">✈️ Ethio - 21 Astegni Ops</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">Private Telegram Operations Room</div>
+          </div>
+          <span class="hotline-btn-pill" style="background: #0284c7;" id="i18n-ops-btn">Join Ops</span>
+        </a>
+
+        <a href="https://t.me/teme_astegni" target="_blank" class="hotline-item">
+          <div>
+            <div style="font-size: 0.95rem; font-weight: 800;">📢 @teme_astegni</div>
+            <div style="font-size: 0.8rem; color: #94a3b8;">Official Telegram Channel</div>
+          </div>
+          <span class="hotline-btn-pill" style="background: rgba(255, 255, 255, 0.1);" id="i18n-ch-btn">View</span>
+        </a>
+
+        <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+          <a href="teme-admin.html" style="font-size: 0.78rem; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>🔒 Coordinator Admin Portal (የአስተዳዳሪ መግቢያ) ›</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- FIXED BOTTOM NAVIGATION BAR                -->
+  <!-- ========================================== -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" data-screen="screen-home" onclick="showScreen('screen-home')">
+      <span class="nav-tab-icon">🏠</span>
+      <span id="i18n-tab-home">Home</span>
+    </button>
+    <button class="nav-tab" data-screen="screen-parent" onclick="showScreen('screen-parent')">
+      <span class="nav-tab-icon">👨‍👩‍👧</span>
+      <span id="i18n-tab-parent">Parents</span>
+    </button>
+    <button class="nav-tab" data-screen="screen-tutor" onclick="showScreen('screen-tutor')">
+      <span class="nav-tab-icon">🎓</span>
+      <span id="i18n-tab-tutor">Tutors</span>
+    </button>
+    <button class="nav-tab" data-screen="screen-vetting" onclick="showScreen('screen-vetting')">
+      <span class="nav-tab-icon">🛡️</span>
+      <span id="i18n-tab-vetting">Vetting</span>
+    </button>
+    <button class="nav-tab" data-screen="screen-hotline" onclick="showScreen('screen-hotline')">
+      <span class="nav-tab-icon">📞</span>
+      <span id="i18n-tab-hotline">Hotline</span>
+    </button>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- RESULT DISPATCH MODAL                      -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="dispatch-modal">
+    <div class="modal-card">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
+      <h3 id="modal-title">Request Successfully Prepared!</h3>
+      <p id="modal-desc">Your request has been copied to your clipboard. Tap below to send directly into <b>Ethio - 21 Astegni Ops</b>.</p>
+      
+      <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-tg-action" id="btn-tg-action">
+        <span id="btn-tg-modal-text">✈️ Open "Ethio - 21 Astegni Ops"</span>
+      </a>
+
+      <!-- Direct Payment Screenshot Action for Parents & Tutors -->
+      <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-tg-action" style="background: linear-gradient(135deg, #059669, #10b981); margin-top: 0.6rem; text-decoration: none;" id="btn-tg-payment-proof">
+        <span>💳 Send Payment Screenshot to Ops Telegram ›</span>
+      </a>
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.6rem 0.75rem; margin-top: 0.6rem; text-align: left;">
+        <div style="font-size: 0.74rem; font-weight: 800; color: #34d399; margin-bottom: 0.2rem;">💡 Free &amp; Instant Payment Verification:</div>
+        <div style="font-size: 0.7rem; color: #cbd5e1; line-height: 1.4;">
+          After paying deposit or match fee via Telebirr / CBE, send the transaction screenshot directly to <b>Ethio - 21 Astegni Ops</b> for instantaneous confirmation.
+        </div>
+      </div>
+
+      <button class="btn-modal-close" onclick="closeModal()" id="i18n-modal-close" style="margin-top: 0.8rem;">Close / Done</button>
+    </div>
+  </div>
+
+  <script>
+    // SCREEN NAVIGATION MANAGER
+    function showScreen(screenId) {
+      document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.screen === screenId);
+      });
+    }
+
+    // 3-LANGUAGE DICTIONARY (AMHARIC / ENGLISH / AFAAN OROMOO)
+    const translations = {
+      am: {
+        headerSub: "የተረጋገጡ የዩኒቨርሲቲ አስጠኚዎች መድረክ",
+        heroBadge: "⭐ CGPA ≥ 3.00 • 100% የተረጋገጠ",
+        heroH2: "ለልጅዎ ብቁ እና ጎበዝ የዩኒቨርሲቲ አስጠኚ ያግኙ",
+        heroP: "ከአቅራቢያዎ ዩኒቨርሲቲ ግቢዎች ብቻ ይመደባሉ። ማንነታቸውና የትምህርት ውጤታቸው በጥብቅ የተረጋገጠ።",
+        c1H: "ለልጅዎ አስጠኚ ይዘዙ",
+        c1P: "ለልጃቸው አስተማማኝ አስጠኚ ለሚፈልጉ ወላጆች",
+        c2H: "አስጠኚ ለመሆን ይመዝገቡ",
+        c2P: "2ኛ ዓመት+ እና CGPA ≥ 3.00 ላላችሁ ተማሪዎች",
+        c3H: "4ቱ ጥብቅ የምርጫ መስፈርቶች",
+        c3P: "አስጠኚዎችን እንዴት እንደምናረጋግጥ ይመልከቱ",
+        c4H: "24/7 ቀጥታ የስልክ መስመር",
+        c4P: "በስልክ ደውለው ወዲያውኑ ከአስተባባሪዎች ጋር ይነጋገሩ",
+        t1H: "🆔 የተረጋገጠ ማንነት",
+        t1P: "የብሔራዊ/ቀበሌ እና የካምፓስ መታወቂያ የተመዘገበ።",
+        t2H: "⭐ CGPA ≥ 3.00",
+        t2P: "የላቀ ውጤት እና Grade 'A' ያላቸው ተማሪዎች።",
+        t3H: "🏛️ የካምፓስ ቅርበት",
+        t3P: "ለቤትዎ ቅርብ ከሆነው የዩኒቨርሲቲ ግቢ ይመደባሉ።",
+        t4H: "🤝 የ 1 ቀን ነጻ ሙከራ",
+        t4P: "የትምህርት አሰጣጡን አይተው እስኪያምኑ ምንም ክፍያ የለም።",
+        homePrivacy: "🛡️ <b>100% ሚስጥራዊ አሰራር፡</b> የወላጆች መረጃ በይፋ አይለጠፍም፤ በቀጥታ በ <b>Ethio - 21 Astegni Ops</b> አስተዳዳሪዎች ብቻ በሚስጥር ይመረጣል።",
+        tabHome: "ዋና ገጽ",
+        tabParent: "ወላጆች",
+        tabTutor: "አስጠኚ",
+        tabVetting: "ማረጋገጫ",
+        tabHotline: "ስልክ",
+        backP: "ወደ ዋናው",
+        backT: "ወደ ዋናው",
+        backV: "ወደ ዋናው",
+        backH: "ወደ ዋናው",
+        pBadge: "የወላጆች መጠየቂያ",
+        pTitle: "ለልጅዎ ብቁ የዩኒቨርሲቲ አስጠኚ ይዘዙ",
+        pSubtitle: "የሚከተሉትን ቀላል መረጃዎች ይሙሉ፤ በአቅራቢያዎ ከሚገኝ ዩኒቨርሲቲ ተማሪ ወዲያውኑ እናገናኝዎታለን።",
+        fPappType: "ይህ ጥያቄ ለማን ነው? (Who is this request for?) *",
+        optAppParent: "👨‍👩‍👧 የወላጅ ጥያቄ (ለልጄ)",
+        optAppAdult: "🎓 የተማሪ ጥያቄ 18+ (ለራሴ / በራሴ)",
+        fPidTitle: "🆔 የመታወቂያ ማረጋገጫ (Front & Back) *",
+        fPidDesc: "የልጅዎን ደህንነት እና ወደ ቤት የሚመጡ አስጠኚዎችን ጥበቃ 100% ለማረጋገጥ የሚሰራ ብሔራዊ (ፋይዳ) ወይም የቀበሌ መታወቂያ ያያይዙ። መታወቂያው ቢያንስ 1 ወር የሚሰራ መሆን አለበት።",
+        fPname: "የወላጅ ሙሉ ስም *",
+        fPphone: "ስልክ ቁጥር (ቴሌብር / ጥሪ) *",
+        fParea: "የሚኖሩበት አካባቢ / ሰፈር (ከግቢ አቅራቢያ) *",
+        fPchildGender: "የሚማረው ተማሪ ፆታ (የተማሪው ፆታ) *",
+        poptSelChild: "የተማሪውን ፆታ ይምረጡ *",
+        poptFemChild: "ሴት ተማሪ (Female Student)",
+        poptMaleChild: "ወንድ ተማሪ (Male Student)",
+        fPgrade: "የልጅዎ የክፍል ደረጃ *",
+        fPsubj: "ማስጠናት የሚፈልጓቸው የትምህርት አይነቶች",
+        btnPsubmit: "📲 አስጠኚ ለመጠየቅ ይላኩ ›",
+        tBadge: "የአስጠኚዎች መመዝገቢያ",
+        tTitle: "የተሜ አስጠኚ (Teme Astegni) ይሁኑ",
+        tSubtitle: "መስፈርት፡ 2ኛ ዓመት እና ከዚያ በላይ የሆናችሁ፣ CGPA ≥ 3.00 ያላችሁ ንቁ ተማሪዎች።",
+        fTname: "ሙሉ ስም (በመታወቂያው ላይ እንዳለው) *",
+        fTphone: "ስልክ ቁጥር (ቴሌብር ያለው) *",
+        fTgender: "ፆታ *",
+        toptSel: "ፆታዎን ይምረጡ *",
+        toptMale: "ወንድ (Male)",
+        toptFemale: "ሴት (Female)",
+        fTuni: "ዩኒቨርሲቲ እና ካምፓስ *",
+        fTyear: "የትምህርት ዓመት *",
+        fTcgpa: "CGPA (≥ 3.00) *",
+        fTsubj: "በደንብ ማስተማር የሚችሉት የትምህርት አይነት (ውጤት 'A') *",
+        fTcid: "📸 የካምፓስ መታወቂያ ፎቶ • ግዴታ ነው (MANDATORY) *",
+        boxCidH: "የካምፓስ መታወቂያዎን ፎቶ እዚህ ይጫኑ",
+        boxCidP: "የተማሪነት መታወቂያ የፊት ገጽ ፎቶ",
+        fTgrade: "📄 የውጤት ሪፖርት (ግሬድ ሪፖርት / ፖርታል) • ግዴታ ነው *",
+        boxGradeH: "የግሬድ ሪፖርት ወይም የፖርታል ውጤት ፎቶ ይጫኑ",
+        boxGradeP: "CGPA ≥ 3.00 እና የትምህርት ውጤትዎን ለማረጋገጥ",
+        fTgovt: "🆔 ብሔራዊ የፋይዳ ወይም የቀበሌ መታወቂያ • አንዱ ግዴታ ነው (REQUIRED) *",
+        boxGovtH: "የብሔራዊ ፋይዳ ወይም የቀበሌ መታወቂያ ፎቶ ይጫኑ",
+        boxGovtP: "ያለዎትን አንዱን ይምረጡ — ለልጆች ደህንነት አንዱን ማያያዝ ግዴታ ነው",
+        tExamH: "🎙️ ነጻ የማስተማር እና የኮሙኒኬሽን ፈተና (የ 1ኛ ደረጃ የስራ ቅድሚያ)",
+        tExamP: "ለመመዝገብ ግዴታ አይደለም፤ ነገር ግን ይህንን የድምጽ/ቪዲዮ ፈተና ማለፍ በደረጃችሁ (በጎልደን፣ በሲልቨር ወይም በብሮንዝ) ውስጥ ወደ ሌቭል 1 (Level 1) ያሳድጋችኋል፤ በአካባቢያችሁ ስራ ሲመጣ የመጀመሪያ ቅድሚያ ይሰጣችኋል።",
+        ladderH: "የትምህርት ሜዳልያ ደረጃዎች (CGPA) እና የ 5 ደረጃ እድገት",
+        ladderP: "አስጠኚዎች በዩኒቨርሲቲ ውጤታቸው (CGPA) ወደ ጎልደን፣ ሲልቨር እና ብሮንዝ ይመደባሉ፤ በእያንዳንዱ ሜዳልያ ውስጥ ደግሞ ከሌቭል 1 እስከ 5 የማስተማር እድገት አላቸው።",
+        btnTsubmit: "🎓 ማመልከቻዎን ይላኩ ›",
+        vBadge: "የጥራትና ደህንነት ማረጋገጫ",
+        vpTitle: "ለልጅዎ የምንመድበው አስጠኚ እንዴት ይመረጣል?",
+        vpSubtitle: "እያንዳንዱ አስጠኚ ወደ ቤትዎ ከመመደቡ በፊት የሚከተሉትን 4 ጥብቅ ማረጋገጫዎች እንዲያሟላ ይደረጋል፡",
+        vp1H: "1. የካምፓስ መታወቂያ ማረጋገጫ",
+        vp1P: "ከአቅራቢያዎ ዩኒቨርሲቲ (AAU፣ ASTU...) 2ኛ ዓመት ወይም ከዚያ በላይ መሆኑ እና ንቁ ተማሪነቱ በካምፓስ መታወቂያው ፎቶ ይረጋገጣል።",
+        vp2H: "2. የግሬድ ሪፖርት (CGPA ≥ 3.00)",
+        vp2P: "አጠቃላይ ውጤቱ CGPA 3.00 እና ከዚያ በላይ መሆኑ እና በሚያስተምረው ትምህርት Grade 'A' ማስመዝገቡ በፖርታል ውጤቱ ይረጋገጣል።",
+        vp3H: "3. ብሔራዊ ወይም የቀበሌ መታወቂያ (ግዴታ)",
+        vp3P: "የልጅዎን ደህንነት እና የቤትዎን ሰላም 100% ለማረጋገጥ የአስጠኚው የፋይዳ ብሔራዊ መታወቂያ ወይም የቀበሌ መታወቂያ በ ETHIO 21 እጅ ተመዝግቦ ይያዛል።",
+        vp4H: "4. የ 1 ቀን ነጻ የሙከራ ክፍለ-ጊዜ",
+        vp4P: "አስጠኚው መጥቶ የመጀመሪያውን ቀን በነጻ ያስተምራል። የልጅዎን ለውጥ እና የአስጠኚውን ስነ-ምግባር አይተው ካመኑበት ብቻ ወርሃዊ ክፍያውን ይፈጽማሉ።",
+        btnVaction: "👨‍👩‍👧 አሁኑኑ የተረጋገጠ አስጠኚ ይዘዙ ›",
+        hBadge: "የቀጥታ ስልክ መስመር",
+        hpTitle: "24/7 ቀጥታ የስልክ ጥሪ መስመር",
+        hpSubtitle: "በስልክ ደውለው ወዲያውኑ ማስተባበር ከፈለጉ ወደ ስልክ መስመሮቻችን ይደውሉ ወይም በቴሌግራም ያናግሩን።",
+        call1Name: "📞 የስልክ መስመር 1 (አሸናፊ)",
+        call2Name: "📞 የስልክ መስመር 2 (ለማ)",
+        callBtn1: "ይደውሉ",
+        callBtn2: "ይደውሉ",
+        opsBtn: "ቴሌግራም",
+        chBtn: "ቻናል",
+        modalClose: "ዝጋ / ተጠናቋል"
+      },
+
+      en: {
+        headerSub: "Verified University Home Tutors Platform",
+        heroBadge: "⭐ CGPA ≥ 3.00 • 100% VERIFIED",
+        heroH2: "Find High-Achieving University Tutors For Your Child",
+        heroP: "Matched exclusively from nearby university campuses. Identity and academic records verified with zero compromise.",
+        c1H: "Request a Tutor for Child",
+        c1P: "For parents seeking top university scholars nearby",
+        c2H: "Apply as University Astegni",
+        c2P: "For active 2nd Year+ students with CGPA ≥ 3.00",
+        c3H: "4-Tier Tutor Verification",
+        c3P: "How we ensure child safety & academic mastery",
+        c4H: "24/7 Direct Call Hotline",
+        c4P: "Call our coordinators directly or chat on Telegram",
+        t1H: "🆔 Verified Identity",
+        t1P: "National/Kebele & Student ID permanently on file.",
+        t2H: "⭐ CGPA ≥ 3.00",
+        t2P: "Top 2nd Year+ scholars with Grade 'A' mastery.",
+        t3H: "🏛️ Campus Proximity",
+        t3P: "Dispatched from university campuses closest to home.",
+        t4H: "🤝 1-Day Free Trial",
+        t4P: "Evaluate teaching chemistry with zero obligation.",
+        homePrivacy: "🛡️ <b>100% Confidential Matching:</b> Requests are handled privately by Teme Astegni coordinators in <b>Ethio - 21 Astegni Ops</b>. No jobs are posted publicly to prevent fake locations.",
+        tabHome: "Home",
+        tabParent: "Parents",
+        tabTutor: "Tutors",
+        tabVetting: "Vetting",
+        tabHotline: "Hotline",
+        backP: "Back to Menu",
+        backT: "Back to Menu",
+        backV: "Back to Menu",
+        backH: "Back to Menu",
+        pBadge: "Parent Request",
+        pTitle: "Request a Qualified University Tutor",
+        pSubtitle: "Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.",
+        fPappType: "Who is this tutoring request for? *",
+        optAppParent: "👨‍👩‍👧 Parent / Guardian (For my child)",
+        optAppAdult: "🎓 Student 18+ (For myself)",
+        fPidTitle: "🆔 Household ID Verification (Front & Back) *",
+        fPidDesc: "To protect both your household and university scholars entering residential homes, please provide a valid National Fayda or Kebele ID (minimum 1 month validity).",
+        fPname: "Parent / Guardian Full Name *",
+        fPphone: "Phone Number (Calls & Telebirr) *",
+        fParea: "Residential Neighborhood & City (Near Campus) *",
+        fPchildGender: "Student Gender (The Student Who Will Be Tutored) *",
+        poptSelChild: "Select Student's Gender *",
+        poptFemChild: "Female Student",
+        poptMaleChild: "Male Student",
+        fPgrade: "Child's Academic Grade Level *",
+        fPsubj: "Subjects Requiring Tutoring",
+        btnPsubmit: "📲 Submit Request & Match Nearby Scholar ›",
+        tBadge: "Tutor Registration",
+        tTitle: "Apply as a Certified Teme Astegni",
+        tSubtitle: "Requirements: Active 2nd Year+ university student with CGPA ≥ 3.00 and verified ID credentials.",
+        fTname: "Full Name (As on Student ID) *",
+        fTphone: "Phone Number (Telebirr Registered) *",
+        fTgender: "Gender / Sex *",
+        toptSel: "Select Gender *",
+        toptMale: "Male",
+        toptFemale: "Female",
+        fTuni: "University & Campus Name *",
+        fTyear: "Academic Year *",
+        fTcgpa: "CGPA (≥ 3.00) *",
+        fTsubj: "Subjects You Can Confidently Teach (Grade 'A') *",
+        fTcid: "📸 Campus Student ID Photo • MANDATORY *",
+        boxCidH: "Attach Campus Student ID Photo",
+        boxCidP: "Front photo of your university ID card",
+        fTgrade: "📄 Grade Report / Portal Screenshot • MANDATORY *",
+        boxGradeH: "Attach Portal Screenshot / Grade Report",
+        boxGradeP: "Verifies CGPA ≥ 3.00 & subject grades",
+        fTgovt: "🆔 National Fayda ID OR Kebele ID • Choose 1 (MANDATORY) *",
+        boxGovtH: "Upload National Fayda ID or Kebele ID Photo",
+        boxGovtP: "Choose whichever you have — 1 of them is mandatory for child safety",
+        tExamH: "🎙️ Free Teaching & Communicative Skills Exam (1st Priority Dispatch)",
+        tExamP: "Not mandatory to register, but passing this free voice/video interview unlocks Level 1 & 1st Priority Dispatch in your tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.",
+        ladderH: "Academic Metal Tiers & 5-Level Communicative Ranking",
+        ladderP: "Tutors are categorized by academic university CGPA into Golden, Silver, and Bronze tiers, with 5 communicative teaching levels in each tier.",
+        btnTsubmit: "🎓 Submit Tutor Application for Verification ›",
+        vBadge: "Trust & Vetting",
+        vpTitle: "How We Choose & Verify Your Child's Tutor",
+        vpSubtitle: "Before an Astegni ever steps into your home, they must pass 4 strict verification gates with ETHIO 21 coordinators.",
+        vp1H: "1. Active Campus Student ID",
+        vp1P: "The tutor must be an active 2nd year or above student from a nearby accredited university (AAU, ASTU, Hawassa, etc.). We verify physical student ID cards and campus enrollment.",
+        vp2H: "2. Official Grade Report (CGPA ≥ 3.00)",
+        vp2P: "We audit portal grade transcripts. Only students maintaining a Cumulative GPA of 3.00 or higher and scoring Grade 'A' in the subjects they teach are accepted into our certified roster.",
+        vp3H: "3. Government ID on File (Fayda / Kebele)",
+        vp3P: "For absolute child safety and household peace of mind, every tutor is mandatorily required to submit their National Fayda ID or Kebele ID, which is archived in our secure registry.",
+        vp4H: "4. 1-Day Free In-Home Trial Session",
+        vp4P: "The tutor comes to your home and conducts a 1-day free trial lesson. You and your child evaluate their pedagogy and character. You only confirm the monthly agreement if 100% satisfied.",
+        btnVaction: "👨‍👩‍👧 Request a Verified Tutor Now ›",
+        hBadge: "Direct Contact",
+        hpTitle: "24/7 Direct Coordination Hotline",
+        hpSubtitle: "Prefer speaking to our matching team directly? Call our hotlines or reach our Telegram operations room anytime.",
+        call1Name: "📞 Call Hotline 1 (Ashenafi)",
+        call2Name: "📞 Call Hotline 2 (Lemma)",
+        callBtn1: "Call",
+        callBtn2: "Call",
+        opsBtn: "Join Ops",
+        chBtn: "Channel",
+        modalClose: "Close / Done"
+      },
+
+      or: {
+        headerSub: "Waltajjii Barsiisota Manatti Barsiisanii Mirkanaa'aa",
+        heroBadge: "⭐ CGPA ≥ 3.00 • 100% KAN MIRKANAAYE",
+        heroH2: "Ijoollee Keessaniif Barsiisaa Yuunivarsitii Ga'umsa Qabu Argadhaa",
+        heroP: "Kaampaasii dhihoo irraa qofa kan ramadaman. Eenyummaa fi qabxiin barnootaa isaanii sirritti mirkanaa'eera.",
+        c1H: "Ijoollee Keessaniif Barsiisaa Gaafadhaa",
+        c1P: "Warra barsiisaa amansiisaa naannootti barbaadaniif",
+        c2H: "Barsiisaa Ta'uuf Galmaa'aa",
+        c2P: "Barattoota Waggaa 2ffaa+ fi CGPA ≥ 3.00 qabaniif",
+        c3H: "Ulaagaalee Filannoo Barsiisaa 4",
+        c3P: "Eenyummaa fi qabxii barsiisotaa akkamitti akka mirkaneessinu ilaalaa",
+        c4H: "Sarara Bilbilaa Kallattii 24/7",
+        c4P: "Kallattiin bilbilaan qunnamaa yookiin Telegiraamiin nu dubbisaa",
+        t1H: "🆔 Eenyummaa Mirkanaa'e",
+        t1P: "Waraqaan Fayidaa/Gandaa fi Kaampaasii galmeeffameera.",
+        t2H: "⭐ CGPA ≥ 3.00",
+        t2P: "Barattoota qabxii olaanaa fi 'A' fidan qofa.",
+        t3H: "🏛️ Kaampaasii Dhihoo",
+        t3P: "Kaampaasii yuunivarsitii mana keessanitti dhihoo irraa ramadamu.",
+        t4H: "🤝 Guyyaa 1 Bilisaan Yaaluu",
+        t4P: "Barsiisuu isaanii ilaaltanii hanga amantanitti kaffaltiin hin jiru.",
+        homePrivacy: "🛡️ <b>Sirna Qindeessaa Iccitii 100%:</b> Odeeffannoon warrarraa ifaan hin maxxanfamu; kallattiin qindeessitoota <b>Ethio - 21 Astegni Ops</b> tiin qofa qindeeffama.",
+        tabHome: "Mana",
+        tabParent: "Maatii",
+        tabTutor: "Barsiisota",
+        tabVetting: "Mirkaneessa",
+        tabHotline: "Bilbila",
+        backP: "Duubatti",
+        backT: "Duubatti",
+        backV: "Duubatti",
+        backH: "Duubatti",
+        pBadge: "Gaaffii Maatii",
+        pTitle: "Barsiisaa Yuunivarsitii Ga'umsa Qabu Gaafadhaa",
+        pSubtitle: "Oodeeffannoo armaan gadii guutaa. Yuunivarsitii dhihoo irraa barataa qabxii olaanaa qabu isiniif ramadna.",
+        fPappType: "Gaaffiin kun eenyuuf dhiyaate? *",
+        optAppParent: "👨‍👩‍👧 Warra / Guddiftuu (Daa'ima kiyyaaf)",
+        optAppAdult: "🎓 Barataa 18+ (Ofii kiyyaaf)",
+        fPidTitle: "🆔 Mirkaneessa Waraqaa Eenyummaa (Fuula & Dugda) *",
+        fPidDesc: "Nageenya maatii fi barsiisota yuunivarsitii mana seenan eeguuf, waraqaa eenyummaa Fayidaa ykn Gandaa yoo xiqqaate ji'a 1 kan qabu fe'aa.",
+        fPname: "Maqaa Guutuu Maatii / Guddistuu *",
+        fPphone: "Lakkoofsa Bilbilaa (Telebirr / Waamicha) *",
+        fParea: "Naannoo / Ganda Jiraattan (Kaampaasii Dhihoo) *",
+        fPchildGender: "Saala Barataa/Barattuu (Isa Baratamu) *",
+        poptSelChild: "Saala barataa filadhaa *",
+        poptFemChild: "Barattuu (Female Student)",
+        poptMaleChild: "Barataa (Male Student)",
+        fPgrade: "Kutaa Barnootaa Barataa *",
+        fPsubj: "Gosoota Barnootaa Barsiifamuu Qaban",
+        btnPsubmit: "📲 Barsiisaa Gaafachuuf Ergaa ›",
+        tBadge: "Galmee Barsiisummaa",
+        tTitle: "Barsiisaa Teme Astegni Mirkanaa'aa Ta'aa",
+        tSubtitle: "Ulaagaa: Barataa waggaa 2ffaa fi isaa ol, CGPA ≥ 3.00 fi eenyummaa mirkanaa'e kan qabu.",
+        fTname: "Maqaa Guutuu (Waraqaa Eenyummaa Irra Akkuma Jiru) *",
+        fTphone: "Lakkoofsa Bilbilaa (Telebirr Qabu) *",
+        fTgender: "Saala Keessan *",
+        toptSel: "Saala Keessan Filadhaa *",
+        toptMale: "Dhiira (Male)",
+        toptFemale: "Dubara (Female)",
+        fTuni: "Maqaa Yuunivarsitii fi Kaampaasii *",
+        fTyear: "Waggaa Barnootaa *",
+        fTcgpa: "CGPA (≥ 3.00) *",
+        fTsubj: "Gosoota Barnootaa Barsiisuu Dandeessan (Qabxii 'A') *",
+        fTcid: "📸 Waraqaa Eenyummaa Kaampaasii • DIRQAMA *",
+        boxCidH: "Suuraa Waraqaa Eenyummaa Kaampaasii Asitti Fe'aa",
+        boxCidP: "Fuula dura waraqaa eenyummaa barattummaa",
+        fTgrade: "📄 Gabaasa Qabxii (Portal / Grade Report) • DIRQAMA *",
+        boxGradeH: "Gabaasa Qabxii / Screenshot Portal Fe'aa",
+        boxGradeP: "CGPA ≥ 3.00 fi qabxii gosoota barnootaa mirkaneessuuf",
+        fTgovt: "🆔 Waraqaa Fayidaa Yookiin Gandaa • Tokko Filadhaa (DIRQAMA) *",
+        boxGovtH: "Suuraa Waraqaa Eenyummaa Fayidaa Ykn Gandaa Fe'aa",
+        boxGovtP: "Isa qabdan keessaa tokko filadhaa — nageenya ijoolleef tokko dirqama",
+        tExamH: "🎙️ Qormaata Dandeettii Barsiisuu fi Qunnamtii Bilisaa (Dursa Hojii 1ffaa)",
+        tExamP: "Galmaa'uuf dirqama miti; garuu qormaata bilbila/viidiyoo kana darbuun sadarkaa keessanitti (Golden, Silver ykn Bronze) gara Level 1tti ol guddisee dursa 1ffaa kenna.",
+        ladderH: "Sadarkaa Meedaaliyaa Barnootaa (CGPA) fi Sadarkaa Barsiisummaa 5",
+        ladderP: "Barsiisonni qabxii CGPA isaaniitiin gara Golden, Silver fi Bronze tti qoodamu; tokkoon tokkoon isaanii keessatti sadarkaa barsiisummaa 1 hanga 5 qabu.",
+        btnTsubmit: "🎓 Galmee Barsiisummaa Mirkaneessaaf Ergaa ›",
+        vBadge: "Mirkaneessa Nageenyaa",
+        vpTitle: "Barsiisaa Ijoollee Keessanii Akkamitti Filanna?",
+        vpSubtitle: "Barsiisaan gara mana keessanii dhufuu dura qindeessitoota ETHIO 21 biratti ulaagaalee 4 mirkaneeffachuu qaba:",
+        vp1H: "1. Eenyummaa Kaampaasii Mirkanaa'aa",
+        vp1P: "Barataa waggaa 2ffaa fi isaa ol yuunivarsitii beekamaa irraa (AAU, ASTU, Hawassa...) ta'uu isaa fi barataa ta'uu isaa waraqaa kaampaasiitiin mirkaneeffama.",
+        vp2H: "2. Gabaasa Qabxii (CGPA ≥ 3.00)",
+        vp2P: "Gabaasa qabxii yuunivarsitii ilaalla. Barattoota CGPA 3.00 fi isaa ol qabanii fi barnoota barsiisaniin qabxii 'A' fidan qofa ramadna.",
+        vp3H: "3. Waraqaa Fayidaa Ykn Gandaa (Dirqama)",
+        vp3P: "Nageenya ijoollee fi tasgabbii maatii 100% mirkaneessuuf, waraqaan eenyummaa barsiisaa (Fayidaa ykn Gandaa) galmee keenya keessatti qabama.",
+        vp4H: "4. Guyyaa 1 Bilisaan Yaaluu",
+        vp4P: "Barsiisaan gara mana keessanii dhufee guyyaa duraa bilisaan barsiisa. Haala barsiisuu fi amala isaa ilaaltanii yoo itti amantan qofa waliigaltee raawwattu.",
+        btnVaction: "👨‍👩‍👧 Barsiisaa Mirkanaa'aa Amma Gaafadhaa ›",
+        hBadge: "Bilbila Kallattii",
+        hpTitle: "Sarara Bilbilaa Qindeessaa 24/7",
+        hpSubtitle: "Kallattiin garee keenya waliin dubbachuu yoo barbaaddan sarara keenyatti bilbilaa yookiin Telegiraamiin nu qunnamaa.",
+        call1Name: "📞 Sarara Bilbilaa 1 (Ashenafi)",
+        call2Name: "📞 Sarara Bilbilaa 2 (Lammaa)",
+        callBtn1: "Bilbilaa",
+        callBtn2: "Bilbilaa",
+        opsBtn: "Ops Galmoomaa",
+        chBtn: "Chaanaalii",
+        modalClose: "Cufaa / Xumurameera"
+      }
+    };
+
+    let currentLang = 'am';
+
+    function setLang(lang) {
+      if (!translations[lang]) return;
+      currentLang = lang;
+      
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === 'btn-lang-' + lang);
+      });
+
+      const t = translations[lang];
+
+      // Header
+      document.getElementById('i18n-header-sub').innerText = t.headerSub;
+
+      // Home Screen
+      document.getElementById('i18n-hero-badge').innerText = t.heroBadge;
+      document.getElementById('i18n-hero-h2').innerText = t.heroH2;
+      document.getElementById('i18n-hero-p').innerText = t.heroP;
+      document.getElementById('i18n-c1-h').innerText = t.c1H;
+      document.getElementById('i18n-c1-p').innerText = t.c1P;
+      document.getElementById('i18n-c2-h').innerText = t.c2H;
+      document.getElementById('i18n-c2-p').innerText = t.c2P;
+      document.getElementById('i18n-c3-h').innerText = t.c3H;
+      document.getElementById('i18n-c3-p').innerText = t.c3P;
+      document.getElementById('i18n-c4-h').innerText = t.c4H;
+      document.getElementById('i18n-c4-p').innerText = t.c4P;
+
+      document.getElementById('i18n-t1-h').innerText = t.t1H;
+      document.getElementById('i18n-t1-p').innerText = t.t1P;
+      document.getElementById('i18n-t2-h').innerText = t.t2H;
+      document.getElementById('i18n-t2-p').innerText = t.t2P;
+      document.getElementById('i18n-t3-h').innerText = t.t3H;
+      document.getElementById('i18n-t3-p').innerText = t.t3P;
+      document.getElementById('i18n-t4-h').innerText = t.t4H;
+      document.getElementById('i18n-t4-p').innerText = t.t4P;
+      document.getElementById('i18n-home-privacy').innerHTML = t.homePrivacy;
+
+      // Bottom Nav
+      document.getElementById('i18n-tab-home').innerText = t.tabHome;
+      document.getElementById('i18n-tab-parent').innerText = t.tabParent;
+      document.getElementById('i18n-tab-tutor').innerText = t.tabTutor;
+      document.getElementById('i18n-tab-vetting').innerText = t.tabVetting;
+      document.getElementById('i18n-tab-hotline').innerText = t.tabHotline;
+
+      // Back Buttons
+      document.getElementById('i18n-back-p').innerText = t.backP;
+      document.getElementById('i18n-back-t').innerText = t.backT;
+      document.getElementById('i18n-back-v').innerText = t.backV;
+      document.getElementById('i18n-back-h').innerText = t.backH;
+
+      // Parent Screen
+      document.getElementById('i18n-p-badge').innerText = t.pBadge;
+      document.getElementById('i18n-p-title').innerText = t.pTitle;
+      document.getElementById('i18n-p-subtitle').innerText = t.pSubtitle;
+      if (document.getElementById('i18n-f-papplicant-type')) document.getElementById('i18n-f-papplicant-type').innerText = t.fPappType;
+      if (document.getElementById('i18n-opt-app-parent')) document.getElementById('i18n-opt-app-parent').innerText = t.optAppParent;
+      if (document.getElementById('i18n-opt-app-adult')) document.getElementById('i18n-opt-app-adult').innerText = t.optAppAdult;
+      if (document.getElementById('i18n-f-pid-title')) document.getElementById('i18n-f-pid-title').innerText = t.fPidTitle;
+      if (document.getElementById('i18n-f-pid-desc')) document.getElementById('i18n-f-pid-desc').innerText = t.fPidDesc;
+      document.getElementById('i18n-f-pname').innerText = t.fPname;
+      document.getElementById('i18n-f-pphone').innerText = t.fPphone;
+      document.getElementById('i18n-f-parea').innerText = t.fParea;
+      if (document.getElementById('i18n-f-pchild-gender')) document.getElementById('i18n-f-pchild-gender').innerText = t.fPchildGender;
+      if (document.getElementById('i18n-popt-sel-child')) document.getElementById('i18n-popt-sel-child').innerText = t.poptSelChild;
+      if (document.getElementById('i18n-popt-fem-child')) document.getElementById('i18n-popt-fem-child').innerText = t.poptFemChild;
+      if (document.getElementById('i18n-popt-male-child')) document.getElementById('i18n-popt-male-child').innerText = t.poptMaleChild;
+      document.getElementById('i18n-f-pgrade').innerText = t.fPgrade;
+      if (document.getElementById('i18n-f-pgender')) document.getElementById('i18n-f-pgender').innerText = t.fPgender || '';
+      if (document.getElementById('i18n-opt-any')) document.getElementById('i18n-opt-any').innerText = t.optAny || '';
+      if (document.getElementById('i18n-opt-female')) document.getElementById('i18n-opt-female').innerText = t.optFemale || '';
+      if (document.getElementById('i18n-opt-male')) document.getElementById('i18n-opt-male').innerText = t.optMale || '';
+      document.getElementById('i18n-f-psubj').innerText = t.fPsubj;
+      document.getElementById('i18n-btn-psubmit').innerText = t.btnPsubmit;
+
+      // Tutor Screen
+      document.getElementById('i18n-t-badge').innerText = t.tBadge;
+      document.getElementById('i18n-t-title').innerText = t.tTitle;
+      document.getElementById('i18n-t-subtitle').innerText = t.tSubtitle;
+      document.getElementById('i18n-f-tname').innerText = t.fTname;
+      document.getElementById('i18n-f-tphone').innerText = t.fTphone;
+      if (document.getElementById('i18n-f-tgender')) document.getElementById('i18n-f-tgender').innerText = t.fTgender;
+      if (document.getElementById('i18n-topt-sel')) document.getElementById('i18n-topt-sel').innerText = t.toptSel;
+      if (document.getElementById('i18n-topt-male')) document.getElementById('i18n-topt-male').innerText = t.toptMale;
+      if (document.getElementById('i18n-topt-female')) document.getElementById('i18n-topt-female').innerText = t.toptFemale;
+      document.getElementById('i18n-f-tuni').innerText = t.fTuni;
+      document.getElementById('i18n-f-tyear').innerText = t.fTyear;
+      document.getElementById('i18n-f-tcgpa').innerText = t.fTcgpa;
+      document.getElementById('i18n-f-tsubj').innerText = t.fTsubj;
+      document.getElementById('i18n-f-tcid').innerText = t.fTcid;
+      document.getElementById('i18n-box-cid-h').innerText = t.boxCidH;
+      document.getElementById('i18n-box-cid-p').innerText = t.boxCidP;
+      document.getElementById('i18n-f-tgrade').innerText = t.fTgrade;
+      document.getElementById('i18n-box-grade-h').innerText = t.boxGradeH;
+      document.getElementById('i18n-box-grade-p').innerText = t.boxGradeP;
+      document.getElementById('i18n-f-tgovt').innerText = t.fTgovt;
+      document.getElementById('i18n-box-govt-h').innerText = t.boxGovtH;
+      document.getElementById('i18n-box-govt-p').innerText = t.boxGovtP;
+      if (document.getElementById('i18n-t-exam-h')) document.getElementById('i18n-t-exam-h').innerText = t.tExamH;
+      if (document.getElementById('i18n-t-exam-p')) document.getElementById('i18n-t-exam-p').innerText = t.tExamP;
+      document.getElementById('i18n-btn-tsubmit').innerText = t.btnTsubmit;
+
+      // Vetting Screen
+      document.getElementById('i18n-v-badge').innerText = t.vBadge;
+      document.getElementById('i18n-vp-title').innerText = t.vpTitle;
+      document.getElementById('i18n-vp-subtitle').innerText = t.vpSubtitle;
+      if (document.getElementById('i18n-ladder-h')) document.getElementById('i18n-ladder-h').innerText = t.ladderH;
+      if (document.getElementById('i18n-ladder-p')) document.getElementById('i18n-ladder-p').innerText = t.ladderP;
+      document.getElementById('i18n-vp1-h').innerText = t.vp1H;
+      document.getElementById('i18n-vp1-p').innerText = t.vp1P;
+      document.getElementById('i18n-vp2-h').innerText = t.vp2H;
+      document.getElementById('i18n-vp2-p').innerText = t.vp2P;
+      document.getElementById('i18n-vp3-h').innerText = t.vp3H;
+      document.getElementById('i18n-vp3-p').innerText = t.vp3P;
+      document.getElementById('i18n-vp4-h').innerText = t.vp4H;
+      document.getElementById('i18n-vp4-p').innerText = t.vp4P;
+      document.getElementById('i18n-btn-vaction').innerText = t.btnVaction;
+
+      // Hotline Screen
+      document.getElementById('i18n-h-badge').innerText = t.hBadge;
+      document.getElementById('i18n-hp-title').innerText = t.hpTitle;
+      document.getElementById('i18n-hp-subtitle').innerText = t.hpSubtitle;
+      document.getElementById('i18n-call1-name').innerText = t.call1Name;
+      document.getElementById('i18n-call2-name').innerText = t.call2Name;
+      document.getElementById('i18n-call-btn1').innerText = t.callBtn1;
+      document.getElementById('i18n-call-btn2').innerText = t.callBtn2;
+      document.getElementById('i18n-ops-btn').innerText = t.opsBtn;
+      document.getElementById('i18n-ch-btn').innerText = t.chBtn;
+      document.getElementById('i18n-modal-close').innerText = t.modalClose;
+    }
+
+    // Live Image Clarity & Resolution Inspection
+    function handleImageClarityCheck(e, previewId, statusId, clarityId) {
+      const file = e.target.files[0];
+      const preview = document.getElementById(previewId);
+      const status = document.getElementById(statusId);
+      const clarity = document.getElementById(clarityId);
+
+      if (!file) return;
+
+      const url = URL.createObjectURL(file);
+      if (preview) {
+        preview.src = url;
+        preview.style.display = 'inline-block';
+      }
+      if (status) {
+        status.style.display = 'block';
+        status.innerText = `✓ ${file.name.substring(0, 16)} Attached`;
+      }
+
+      // Live image resolution check
+      const img = new Image();
+      img.onload = function() {
+        if (clarity) {
+          clarity.style.display = 'block';
+          if (img.naturalWidth < 600 || img.naturalHeight < 400) {
+            clarity.style.color = '#fbbf24';
+            clarity.innerHTML = `⚠️ <b>Low Resolution (${img.naturalWidth}×${img.naturalHeight}px):</b> Please ensure text & ID numbers are sharp and legible.`;
+          } else {
+            clarity.style.color = '#34d399';
+            clarity.innerHTML = `✓ <b>High Clarity (${img.naturalWidth}×${img.naturalHeight}px):</b> Sharp & visible for verification.`;
+          }
+        }
+      };
+      img.src = url;
+    }
+
+    // Automatic Client-Side Image Compression (Saves 95% bandwidth & zero storage cost)
+    function compressImageFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.75) {
+      return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) {
+          return resolve(file);
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.naturalWidth || img.width;
+            let height = img.naturalHeight || img.height;
+            if (width > maxWidth || height > maxHeight) {
+              if (width > height) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              } else {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              resolve(blob || file);
+            }, 'image/jpeg', quality);
+          };
+          img.onerror = () => resolve(file);
+          img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Send Photo to Telegram Bot / Channel (100% Free Unlimited Storage)
+    async function sendPhotoToTelegramBot(blob, caption) {
+      const botToken = localStorage.getItem('teme_astegni_tg_bot_token');
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id');
+      if (!botToken || !chatId || !blob) return false;
+      try {
+        const formData = new FormData();
+        formData.append('chat_id', chatId);
+        formData.append('caption', (caption || '').substring(0, 1024));
+        formData.append('photo', blob, 'doc_verification.jpg');
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn('Telegram bot upload skipped:', err);
+        return false;
+      }
+    }
+
+    // ID Expiry Date Validator (Minimum 30 days / 1 month remaining validity)
+    function validateIdExpiryDate(inputEl, warnElId) {
+      const warnEl = document.getElementById(warnElId);
+      if (!inputEl || !inputEl.value) {
+        if (warnEl) warnEl.style.display = 'none';
+        return true;
+      }
+      const expDate = new Date(inputEl.value);
+      const today = new Date();
+      // 30 days in milliseconds
+      const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+      const minValidDate = new Date(today.getTime() + thirtyDaysMs);
+
+      if (isNaN(expDate.getTime())) {
+        if (warnEl) warnEl.style.display = 'none';
+        return true;
+      }
+
+      if (expDate < minValidDate) {
+        inputEl.style.borderColor = '#ef4444';
+        if (warnEl) {
+          warnEl.style.display = 'block';
+          warnEl.style.color = '#f87171';
+          warnEl.innerHTML = `⚠️ <b>መታወቂያው ከ 30 ቀናት በታች ይቀረዋል ወይም ጊዜው አልፏል!</b> ID must have at least 1 month (30 days) of remaining validity before expiration.`;
+        }
+        return false;
+      } else {
+        inputEl.style.borderColor = '#10b981';
+        if (warnEl) {
+          warnEl.style.display = 'block';
+          warnEl.style.color = '#34d399';
+          const daysLeft = Math.round((expDate - today) / (24 * 60 * 60 * 1000));
+          warnEl.innerHTML = `✓ <b>ትክክለኛ መታወቂያ:</b> Valid (${daysLeft} days remaining • ≥ 1 Month requirement satisfied).`;
+        }
+        return true;
+      }
+    }
+
+    // Applicant Type Switcher (Parent vs Independent Student 18+)
+    function toggleApplicantType(type) {
+      const nameLabel = document.getElementById('i18n-f-pname');
+      const nameInput = document.getElementById('p_name');
+      const idTitle = document.getElementById('i18n-f-pid-title');
+      const idDesc = document.getElementById('i18n-f-pid-desc');
+      const childGenderField = document.getElementById('p_child_gender') ? document.getElementById('p_child_gender').parentElement : null;
+
+      if (type === 'STUDENT_ADULT') {
+        if (nameLabel) nameLabel.innerHTML = '🎓 Student Full Name (የተማሪው ሙሉ ስም - ዕድሜ 18+) *';
+        if (nameInput) nameInput.placeholder = 'e.g. Dawit Bekele / Meron Hailu';
+        if (idTitle) idTitle.innerHTML = '🆔 Student National / Kebele ID (የተማሪው መታወቂያ) *';
+        if (idDesc) idDesc.innerHTML = 'Independent adult students (18+) must provide a valid National Fayda or Kebele ID (Front & Back) with at least 1 month validity for coordinator verification.';
+        if (childGenderField && childGenderField.querySelector('label')) {
+          childGenderField.querySelector('label').innerHTML = 'Student Gender / Sex (የእኔ ፆታ) *';
+        }
+      } else {
+        if (nameLabel) nameLabel.innerHTML = '👨‍👩‍👧 Parent / Guardian Full Name (የወላጅ ሙሉ ስም) *';
+        if (nameInput) nameInput.placeholder = 'e.g. Dr. Abebe Tadesse / W/ro Selam';
+        if (idTitle) idTitle.innerHTML = '🆔 Household ID Verification (የመታወቂያ ማረጋገጫ) *';
+        if (idDesc) idDesc.innerHTML = 'To protect both your household and our university scholars entering residential homes, please provide a valid National Fayda or Kebele ID. IDs must be clearly readable and have at least 1 month (30 days) of remaining validity.';
+        if (childGenderField && childGenderField.querySelector('label')) {
+          childGenderField.querySelector('label').innerHTML = 'Student Gender (የሚማረው ተማሪ ፆታ) *';
+        }
+      }
+    }
+
+    // Attachment Preview Handlers
+    function handleCampusIdPick(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const preview = document.getElementById('preview-campus-id');
+        const status = document.getElementById('status-campus-id');
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'inline-block';
+        status.style.display = 'block';
+      }
+    }
+
+    function handleGradePick(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const preview = document.getElementById('preview-grade');
+        const status = document.getElementById('status-grade');
+        if (file.type.startsWith('image/')) {
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = 'inline-block';
+        }
+        status.style.display = 'block';
+        status.innerText = `✓ ${file.name} Attached`;
+      }
+    }
+
+    function handleGovtPick(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const preview = document.getElementById('preview-govt');
+        const status = document.getElementById('status-govt');
+        if (preview) {
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = 'inline-block';
+        }
+        if (status) status.style.display = 'block';
+      }
+    }
+
+    // Resilient Universal Clipboard Copier with Fallback
+    function copyToClipboardUniversal(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).catch(() => {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      } catch (err) {}
+    }
+
+    // Submission Handlers
+    function handleParentSubmit(e) {
+      e.preventDefault();
+      const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value || 'PARENT';
+      const name = document.getElementById('p_name').value.trim();
+      const phone = document.getElementById('p_phone').value.trim();
+      const area = document.getElementById('p_area').value.trim();
+      const studentGender = document.getElementById('p_child_gender') ? document.getElementById('p_child_gender').value : '';
+      
+      if (!studentGender) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የሚማረውን ተማሪ ፆታ ይምረጡ።' 
+          : (currentLang === 'or' ? 'Moo saala barataa filadhaa.' : 'Please select the student gender.');
+        alert(msg);
+        document.getElementById('p_child_gender').focus();
+        return;
+      }
+
+      const grade = document.getElementById('p_grade').value;
+
+      const pIdType = document.getElementById('p_id_type')?.value || 'National Fayda ID';
+      const pIdExpiryInput = document.getElementById('p_id_expiry');
+      const pIdExpiry = pIdExpiryInput ? pIdExpiryInput.value : '';
+
+      // Validate ID Expiry (>= 30 days)
+      if (pIdExpiryInput && pIdExpiry && !validateIdExpiryDate(pIdExpiryInput, 'p_id_expiry_warn')) {
+        const msg = (currentLang === 'am') 
+          ? 'የመታወቂያው ጊዜ ከ 30 ቀናት በታች ይቀረዋል ወይም ጊዜው አልፏል! እባክዎ ቢያንስ 1 ወር የሚያገለግል መታወቂያ ያስገቡ።' 
+          : 'ID expires in less than 30 days or is already expired! Please provide an ID with at least 1 month of remaining validity.';
+        alert(msg);
+        pIdExpiryInput.focus();
+        return;
+      }
+
+      // Validate Front & Back ID photos
+      const frontFile = document.getElementById('p_id_front_file')?.files[0];
+      const backFile = document.getElementById('p_id_back_file')?.files[0];
+      if (!frontFile || !backFile) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ የመታወቂያውን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለአስጠኚዎች ደህንነት ግዴታ ናቸው)።'
+          : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child & tutor safety).';
+        alert(msg);
+        document.getElementById('box-p-id-front')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const checkedSubjs = [];
+      document.querySelectorAll('input[name="subj"]:checked').forEach(c => checkedSubjs.push(c.value));
+      const subjs = checkedSubjs.join(', ') || 'General / All';
+
+      // Save offline backup
+      try {
+        const item = { 
+          type: 'PARENT', 
+          applicantType,
+          name, 
+          phone, 
+          area, 
+          studentGender,
+          childGender: studentGender, 
+          grade, 
+          subjs, 
+          idType: pIdType,
+          idExpiry: pIdExpiry,
+          idFrontAttached: !!frontFile,
+          idBackAttached: !!backFile,
+          status: 'Pending', 
+          date: new Date().toISOString() 
+        };
+        const list = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+        list.push(item);
+        localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
+
+        // Asynchronously log to Google Sheets cloud database if configured
+        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+        if (webhookUrl && webhookUrl.startsWith('http')) {
+          fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'addParent', data: item })
+          }).catch(() => {});
+        }
+
+        // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
+        if (frontFile) {
+          compressImageFile(frontFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `🆔 Parent Household ID (Front) • ${name} • ${phone} • ${area}`);
+          });
+        }
+        if (backFile) {
+          compressImageFile(backFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `🆔 Parent Household ID (Back) • ${name} • ${phone} • Exp: ${pIdExpiry}`);
+          });
+        }
+      } catch (err) {}
+
+      // Copy to clipboard
+      const applicantHeader = (applicantType === 'STUDENT_ADULT') 
+        ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
+        : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
+
+      const plainText = `${applicantHeader}\n` +
+                        `👤 Name: ${name} (${applicantType === 'STUDENT_ADULT' ? 'Independent Student 18+' : 'Parent / Guardian'})\n` +
+                        `📞 Phone: ${phone}\n` +
+                        `📍 Location: ${area}\n` +
+                        `🧒 Student Gender (የሚማረው ተማሪ ፆታ): ${studentGender}\n` +
+                        `🎓 Academic Grade: ${grade}\n` +
+                        `📖 Subjects: ${subjs}\n` +
+                        `🆔 Household ID: ${pIdType} (Front & Back Attached • Expires: ${pIdExpiry || 'Verified'})\n` +
+                        `🛡️ Matched via: Teme Astegni Portal`;
+      copyToClipboardUniversal(plainText);
+
+      const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Qophaa\'eera!' : 'Request Successfully Prepared!');
+      const modalDesc = (currentLang === 'am')
+        ? `ውድ <b>${name}</b>፣ ጥያቄዎ ተዘጋጅቶ ኮፒ ተደርጓል። ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት ወይም ክፍያ ሲፈጽሙ የደረሰኝ ስክሪንሾት አብረው ይላኩ።`
+        : (currentLang === 'or'
+          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan qophaa'ee waraabameera. Butoona cuqqaaluun kallattiin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
+          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard. Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and send your payment screenshot for instant verification.`);
+
+      document.getElementById('modal-title').innerText = modalTitle;
+      document.getElementById('modal-desc').innerHTML = modalDesc;
+      document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
+      document.getElementById('dispatch-modal').classList.add('active');
+    }
+
+    function handleTutorSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('t_name').value.trim();
+      const phone = document.getElementById('t_phone').value.trim();
+      const gender = document.getElementById('t_gender').value;
+      const uni = document.getElementById('t_uni').value.trim();
+      const year = document.getElementById('t_year').value;
+      const cgpa = document.getElementById('t_cgpa').value.trim();
+      const subj = document.getElementById('t_subj').value.trim();
+
+      if (!gender) {
+        const msg = (currentLang === 'am') ? 'እባክዎ ፆታዎን ይምረጡ።' : (currentLang === 'or' ? 'Moo saala keessan filadhaa.' : 'Please select your gender.');
+        alert(msg);
+        document.getElementById('t_gender').focus();
+        return;
+      }
+
+      const campusFile = document.getElementById('t_campus_id_file').files[0];
+      const gradeFile = document.getElementById('t_grade_file').files[0];
+
+      // Government ID Front & Back + Expiry (>= 30 days)
+      const govtType = document.getElementById('t_govt_id_type')?.value || 'National Fayda ID';
+      const tIdExpiryInput = document.getElementById('t_id_expiry');
+      const tIdExpiry = tIdExpiryInput ? tIdExpiryInput.value : '';
+
+      if (tIdExpiryInput && tIdExpiry && !validateIdExpiryDate(tIdExpiryInput, 't_id_expiry_warn')) {
+        const msg = (currentLang === 'am') 
+          ? 'የአስጠኚው መታወቂያ ከ 30 ቀናት በታች ይቀረዋል ወይም ጊዜው አልፏል! እባክዎ ቢያንስ 1 ወር የሚያገለግል መታወቂያ ያያይዙ።' 
+          : 'Tutor ID expires in less than 30 days! Please provide an ID with at least 1 month of remaining validity.';
+        alert(msg);
+        tIdExpiryInput.focus();
+        return;
+      }
+
+      const govtFrontFile = document.getElementById('t_govt_front_file')?.files[0];
+      const govtBackFile = document.getElementById('t_govt_back_file')?.files[0];
+
+      if (!govtFrontFile || !govtBackFile) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የመታወቂያዎን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለህፃናት ደህንነት ግዴታ ናቸው)።' 
+          : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child safety).';
+        alert(msg);
+        document.getElementById('box-t-id-front')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Save offline backup
+      try {
+        const examOptIn = document.getElementById('t_exam_optin') ? document.getElementById('t_exam_optin').checked : true;
+        const gVal = parseFloat(cgpa) || 0;
+        const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
+        const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
+
+        const item = { 
+          type: 'TUTOR', 
+          name, phone, gender, uni, year, cgpa, subj, 
+          metalTier: tierName,
+          campusIdAttached: !!campusFile, 
+          gradeReportAttached: !!gradeFile,
+          govtFrontAttached: !!govtFrontFile,
+          govtBackAttached: !!govtBackFile,
+          govtId: `${govtType} (Front & Back)`,
+          idExpiry: tIdExpiry,
+          level: 0,
+          examOptIn: examOptIn,
+          examStatus: examOptIn ? 'Pending Exam' : 'Not Requested',
+          examType: 'None',
+          examScore: 0,
+          status: 'Verified', 
+          date: new Date().toISOString() 
+        };
+        const list = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+        list.push(item);
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
+
+        // Asynchronously log to Google Sheets cloud database if configured
+        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+        if (webhookUrl && webhookUrl.startsWith('http')) {
+          fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'addTutor', data: item })
+          }).catch(() => {});
+        }
+
+        // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
+        if (govtFrontFile) {
+          compressImageFile(govtFrontFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `🎓 Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`);
+          });
+        }
+        if (govtBackFile) {
+          compressImageFile(govtBackFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `🎓 Tutor Govt ID (Back) • ${name} • ${phone} • Exp: ${tIdExpiry}`);
+          });
+        }
+        if (campusFile) {
+          compressImageFile(campusFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `🏛️ Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
+          });
+        }
+      } catch (err) {}
+
+      // Copy formatted text to clipboard
+      const examOptIn = document.getElementById('t_exam_optin') ? document.getElementById('t_exam_optin').checked : true;
+      const gVal = parseFloat(cgpa) || 0;
+      const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
+      const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
+
+      const plainText = `🎓 New Tutor Application (Teme Astegni)\n` +
+                        `👤 Name: ${name}\n` +
+                        `🚻 Gender / Sex: ${gender}\n` +
+                        `📞 Phone: ${phone}\n` +
+                        `🏛️ University: ${uni}\n` +
+                        `📅 Academic Year: ${year}\n` +
+                        `⭐ CGPA: ${cgpa} (${tierEmoji} ${tierName} Tier)\n` +
+                        `🏅 Metal Tier: ${tierEmoji} ${tierName} Tier\n` +
+                        `📖 Subjects: ${subj}\n` +
+                        `🎙️ Communicative Exam: ${examOptIn ? `Requested Voice/Video Exam (Targeting ${tierName} Level 1)` : `Basic ${tierName} (L0)`}\n` +
+                        `📸 Campus ID Photo: ${campusFile ? 'Attached (Ready to send)' : 'Not attached'}\n` +
+                        `📄 Grade Report: ${gradeFile ? 'Attached' : 'Not attached'}\n` +
+                        `🆔 Govt ID (Front & Back): Attached (${govtType} • Expires: ${tIdExpiry || 'Valid'})`;
+      copyToClipboardUniversal(plainText);
+
+      const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Qophaa\'eera!' : 'Application Successfully Prepared!');
+      const modalDesc = (currentLang === 'am')
+        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ ተዘጋጅቶ ኮፒ ተደርጓል። ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት፤ ያዘጋጁትን <b>የካምፓስ መታወቂያ</b>፣ <b>የውጤት ሪፖርት</b> እና <b>የ${govtType} (የፊትና የኋላ) ፎቶ</b> አብረው ያያይዙ።`
+        : (currentLang === 'or'
+          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) qophaa'ee waraabameera. Butoona cuqqaaluun <b>Waraqaa Kaampaasii</b>, <b>Gabaasa Qabxii</b> fi <b>Waraqaa Eenyummaa (Fuula & Dugda)</b> waliin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
+          : `Dear <b>${name}</b>, your application for <b>${tierEmoji} ${tierName} Tier</b> is ready and copied to your clipboard. Tap below to submit your details, along with your <b>Campus Student ID Photo</b>, <b>Grade Report</b>, and <b>${govtType} (Front & Back) Photos</b> directly into <b>Ethio - 21 Astegni Ops</b>.`);
+
+      document.getElementById('modal-title').innerText = modalTitle;
+      document.getElementById('modal-desc').innerHTML = modalDesc;
+      document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
+      document.getElementById('dispatch-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('dispatch-modal').classList.remove('active');
+    }
+
+    // Default to Amharic on initial load
+    document.addEventListener('DOMContentLoaded', () => {
+      setLang('am');
+      showScreen('screen-home');
+    });
+  </script>
+
+</body>
+</html>
