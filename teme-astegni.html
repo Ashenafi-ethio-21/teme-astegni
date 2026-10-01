@@ -2495,7 +2495,7 @@
         list.push(item);
         localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
 
-        // Asynchronously log to Google Sheets cloud database if configured (Ultra-lean index)
+        // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
         if (webhookUrl && webhookUrl.startsWith('http')) {
           fetch(webhookUrl, {
@@ -2505,11 +2505,8 @@
             body: JSON.stringify({ 
               action: 'addParent', 
               data: {
-                trackingId: trackingId,
-                name: name,
-                phone: phone,
-                status: 'Pending',
-                tgTag: tgTag
+                id: trackingId,
+                trackingId: trackingId
               }
             })
           }).catch(() => {});
@@ -2518,12 +2515,12 @@
         // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
         if (frontFile) {
           compressImageFile(frontFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Front) • ${name} • ${phone} • ${area}`);
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Household ID (Front) • ${name} • ${phone} • ${area}`);
           });
         }
         if (backFile) {
           compressImageFile(backFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Back) • ${name} • ${phone} • ${pIdType}`);
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Household ID (Back) • ${name} • ${phone} • ${pIdType}`);
           });
         }
       } catch (err) {}
@@ -2533,16 +2530,19 @@
         ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
 
-      const plainText = `${tgTag} • ${applicantHeader}\n` +
-                        `🏷️ Official ID: ${trackingId}\n` +
+      const plainText = `🏷️ ID: ${trackingId}\n` +
+                        `📌 SEARCH TAG: ${tgTag}\n` +
+                        `━━━━━━━━━━━━━━━━━━━━\n` +
+                        `📋 ${applicantHeader}\n` +
                         `👤 Name: ${name} (${applicantType === 'STUDENT_ADULT' ? 'Independent Student 18+' : 'Parent / Guardian'})\n` +
                         `📞 Phone: ${phone}\n` +
                         `📍 Location: ${area}\n` +
-                        `🧒 Student Gender (የሚማረው ተማሪ ፆታ): ${studentGender}\n` +
+                        `🧒 Student Gender: ${studentGender}\n` +
                         `🎓 Academic Grade: ${grade}\n` +
                         `📖 Subjects: ${subjs}\n` +
                         `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
-                        `🛡️ Matched via: Teme Astegni Portal`;
+                        `━━━━━━━━━━━━━━━━━━━━\n` +
+                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       copyToClipboardUniversal(plainText);
 
       const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Qophaa\'eera!' : 'Request Successfully Prepared!');
@@ -2635,7 +2635,7 @@
         list.push(item);
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
 
-        // Asynchronously log to Google Sheets cloud database if configured (Ultra-lean index)
+        // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
         if (webhookUrl && webhookUrl.startsWith('http')) {
           fetch(webhookUrl, {
@@ -2645,12 +2645,8 @@
             body: JSON.stringify({ 
               action: 'addTutor', 
               data: {
-                trackingId: trackingId,
-                name: name,
-                phone: phone,
-                rankTitle: rankTitle,
-                status: 'Verified',
-                tgTag: tgTag
+                id: trackingId,
+                trackingId: trackingId
               }
             })
           }).catch(() => {});
@@ -2659,17 +2655,17 @@
         // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
         if (govtFrontFile) {
           compressImageFile(govtFrontFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`);
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`);
           });
         }
         if (govtBackFile) {
           compressImageFile(govtBackFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Back) • ${name} • ${phone} • ${govtType}`);
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Govt ID (Back) • ${name} • ${phone} • ${govtType}`);
           });
         }
         if (campusFile) {
           compressImageFile(campusFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🏛️ Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
           });
         }
       } catch (err) {}
@@ -2680,8 +2676,10 @@
       const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
       const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
 
-      const plainText = `${tgTag} • 🎓 New Tutor Application (Teme Astegni)\n` +
-                        `🏷️ Official ID: ${trackingId}\n` +
+      const plainText = `🏷️ ID: ${trackingId}\n` +
+                        `📌 SEARCH TAG: ${tgTag}\n` +
+                        `━━━━━━━━━━━━━━━━━━━━\n` +
+                        `🎓 New University Tutor Application (Teme Astegni)\n` +
                         `👤 Name: ${name}\n` +
                         `🚻 Gender / Sex: ${gender}\n` +
                         `📞 Phone: ${phone}\n` +
@@ -2689,12 +2687,13 @@
                         `📅 Academic Year: ${year}\n` +
                         `⭐ CGPA: ${cgpa} (${tierEmoji} ${tierName} Tier)\n` +
                         `🏅 Metal Tier: ${tierEmoji} ${tierName} Tier\n` +
-                        `📖 Subjects: ${subj}\n` +
+                        `📖 Subjects (Grade A): ${subj}\n` +
                         `🎙️ Communicative Exam: ${examOptIn ? `Requested Voice/Video Exam (Targeting ${tierName} Level 1)` : `Basic ${tierName} (L0)`}\n` +
-                        `📸 Campus ID Photo: ${campusFile ? 'Attached (Ready to send)' : 'Not attached'}\n` +
+                        `📸 Campus ID Photo: ${campusFile ? 'Attached' : 'Not attached'}\n` +
                         `📄 Grade Report: ${gradeFile ? 'Attached' : 'Not attached'}\n` +
                         `🆔 Govt ID (Front & Back): Attached (${govtType} • Verified in Vault)\n` +
-                        `🛡️ Matched via: Teme Astegni Portal`;
+                        `━━━━━━━━━━━━━━━━━━━━\n` +
+                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       copyToClipboardUniversal(plainText);
 
       const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Qophaa\'eera!' : 'Application Successfully Prepared!');
