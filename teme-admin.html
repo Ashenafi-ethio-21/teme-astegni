@@ -1459,6 +1459,7 @@
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
           <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
+          <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.45); color: #f87171; font-weight: 800;" onclick="cleanLegacySheetsNow()">🧹 1-Click Delete Legacy Sheets (Keep Only _ Tabs)</button>
           <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync &amp; Push All Leads to Sheet</button>
           <button class="btn-act" onclick="syncCloudDatabase()">📥 Fetch Latest Records</button>
           <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Updated Apps Script Code</button>
@@ -1911,7 +1912,7 @@ function onOpen(e) {
   SpreadsheetApp.getUi()
     .createMenu('🚀 Teme Astegni')
     .addItem('⚡ Format Sheets to Strict 2 Columns (ID Only)', 'setupCleanArchitecture')
-    .addItem('🧹 Delete Old 8-Column Legacy Sheets', 'cleanLegacyTabs')
+    .addItem('🧹 Delete All Legacy Sheets (Keep Only _ Tabs)', 'cleanLegacyTabs')
     .addItem('✈️ Send Test Alert to Telegram Bot', 'testTelegramNotification')
     .addToUi();
 }
@@ -1920,6 +1921,14 @@ function doGet(e) {
   var action = (e && e.parameter) ? e.parameter.action : '';
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   
+  if (action === 'clean' || action === 'deleteLegacy') {
+    cleanLegacyTabsSilently(ss);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'success', 
+      message: 'All legacy tabs deleted! Only Parents_Index, Tutors_Index, and Matches_Ledger remain.' 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
   if (action === 'format' || action === 'setup') {
     setupCleanArchitectureSilently(ss);
     return ContentService.createTextOutput(JSON.stringify({ 
@@ -2043,7 +2052,7 @@ function doPost(e) {
 function setupCleanArchitecture() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   setupCleanArchitectureSilently(ss);
-  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Strict 2-Column Index Architecture!\n\n- Parents_Index: [Registration Date, Parent ID]\n- Tutors_Index: [Registration Date, Tutor ID]\n- All 8 old columns deleted.');
+  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Strict 2-Column Index Architecture!\n\n- Parents_Index: [Registration Date, Parent ID]\n- Tutors_Index: [Registration Date, Tutor ID]\n- Matches_Ledger: [Timestamp, Parent ID, Tutor ID, Fee, Commission, Status]\n- All old tabs deleted.');
 }
 
 function setupCleanArchitectureSilently(ss) {
@@ -2055,52 +2064,55 @@ function setupCleanArchitectureSilently(ss) {
 
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
-  s.clear();
-  var headers = ['Registration Date', 'Parent ID'];
-  s.appendRow(headers);
-  if (s.getMaxColumns() > 2) {
-    s.deleteColumns(3, s.getMaxColumns() - 2);
+  if (s.getLastRow() === 0) {
+    var headers = ['Registration Date', 'Parent ID'];
+    s.appendRow(headers);
+    if (s.getMaxColumns() > 2) {
+      s.deleteColumns(3, s.getMaxColumns() - 2);
+    }
+    applyModernHeader(s, '#0f172a');
   }
-  applyModernHeader(s, '#0f172a');
   return s;
 }
 
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
-  s.clear();
-  var headers = ['Registration Date', 'Tutor ID'];
-  s.appendRow(headers);
-  if (s.getMaxColumns() > 2) {
-    s.deleteColumns(3, s.getMaxColumns() - 2);
+  if (s.getLastRow() === 0) {
+    var headers = ['Registration Date', 'Tutor ID'];
+    s.appendRow(headers);
+    if (s.getMaxColumns() > 2) {
+      s.deleteColumns(3, s.getMaxColumns() - 2);
+    }
+    applyModernHeader(s, '#065f46');
   }
-  applyModernHeader(s, '#065f46');
   return s;
 }
 
 function createMatchesSheet(ss) {
   var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
-  s.clear();
-  var headers = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
-  s.appendRow(headers);
-  if (s.getMaxColumns() > 6) {
-    s.deleteColumns(7, s.getMaxColumns() - 6);
+  if (s.getLastRow() === 0) {
+    var headers = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
+    s.appendRow(headers);
+    if (s.getMaxColumns() > 6) {
+      s.deleteColumns(7, s.getMaxColumns() - 6);
+    }
+    applyModernHeader(s, '#1e40af');
   }
-  applyModernHeader(s, '#1e40af');
   return s;
 }
 
 function cleanLegacyTabs() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   cleanLegacyTabsSilently(ss);
-  SpreadsheetApp.getUi().alert('🧹 Old legacy sheets (Parents_Requests, Verified_Tutors, Sheet1) cleaned successfully!');
+  SpreadsheetApp.getUi().alert('🧹 All legacy sheets cleaned successfully!\n\nOnly the official sheets with "_" remain:\n• Parents_Index\n• Tutors_Index\n• Matches_Ledger');
 }
 
 function cleanLegacyTabsSilently(ss) {
-  var legacy = ['Parents_Requests', 'Verified_Tutors', 'Parents', 'Tutors', 'Sheet1'];
-  legacy.forEach(function(name) {
-    var old = ss.getSheetByName(name);
-    if (old && ss.getSheets().length > 1) {
-      try { ss.deleteSheet(old); } catch (e) {}
+  var allowed = ['Parents_Index', 'Tutors_Index', 'Matches_Ledger'];
+  var sheets = ss.getSheets();
+  sheets.forEach(function(s) {
+    if (allowed.indexOf(s.getName()) === -1 && ss.getSheets().length > 1) {
+      try { ss.deleteSheet(s); } catch (e) {}
     }
   });
 }
@@ -3808,6 +3820,29 @@ function rowsToJson(sheet) {
         }
       } catch (err) {
         alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Updated Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
+      }
+    }
+
+    async function cleanLegacySheetsNow() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      if (!url) {
+        alert('Please enter and save your Google Apps Script Webhook URL first in Settings.');
+        return;
+      }
+      if (!confirm('This will delete all legacy sheets (like Parents, Tutors, Matches, Sheet1) and keep ONLY Parents_Index, Tutors_Index, and Matches_Ledger. Proceed?')) {
+        return;
+      }
+      try {
+        const res = await fetch(url + '?action=clean');
+        const json = await res.json();
+        alert('🧹 SUCCESS!\n\nAll legacy sheets without "_" deleted!\nOnly Parents_Index, Tutors_Index, and Matches_Ledger remain in your Google Sheet.');
+      } catch (err) {
+        try {
+          fetch(url + '?action=clean', { mode: 'no-cors' });
+          alert('🧹 Purge command sent to Google Sheet! Check your Google Sheet to verify only Parents_Index, Tutors_Index, and Matches_Ledger remain.');
+        } catch (e2) {
+          alert('Could not delete via webhook: ' + err.message);
+        }
       }
     }
 
