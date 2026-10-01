@@ -894,6 +894,21 @@
 
         <form id="parent-form" onsubmit="handleParentSubmit(event)">
           
+          <!-- ASSIGNED OFFICIAL PARENT TRACKING ID BANNER -->
+          <div class="assigned-id-banner" id="parent-assigned-id-banner" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(14, 165, 233, 0.04)); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(56, 189, 248, 0.18); border: 1px solid rgba(56, 189, 248, 0.35); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">🏷️</div>
+              <div>
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #38bdf8; font-weight: 800;" id="i18n-parent-id-title">Official Parent ID / የመለያ ቁጥር</div>
+                <div style="font-size: 1.25rem; font-weight: 900; color: #f8fafc; font-family: monospace; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(56,189,248,0.4);" id="live-parent-tracking-id">AST-P-4821</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; background: rgba(56,189,248,0.18); color: #38bdf8; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; border: 1px solid rgba(56,189,248,0.35); font-family: monospace;" id="live-parent-tg-tag">#AST_P_4821</span>
+              <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; font-weight: 600;">Ethio - 21 Ops Verified</div>
+            </div>
+          </div>
+
           <!-- APPLICANT SELECTION: Parent/Guardian OR Independent Student (18+) -->
           <div class="field" style="background: rgba(56, 189, 248, 0.06); border: 1.5px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
             <label id="i18n-f-papplicant-type" style="font-weight: 850; color: #38bdf8; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">Who is this tutoring request for? (ይህ ጥያቄ ለማን ነው?) *</label>
@@ -1046,6 +1061,21 @@
 
         <form id="tutor-form" onsubmit="handleTutorSubmit(event)">
           
+          <!-- ASSIGNED OFFICIAL TUTOR ID BANNER -->
+          <div class="assigned-id-banner" id="tutor-assigned-id-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.04)); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">🎓</div>
+              <div>
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #34d399; font-weight: 800;" id="i18n-tutor-id-title">Official Tutor ID / የአስተማሪ መለያ ቁጥር</div>
+                <div style="font-size: 1.25rem; font-weight: 900; color: #f8fafc; font-family: monospace; letter-spacing: 0.05em; text-shadow: 0 0 10px rgba(16,185,129,0.4);" id="live-tutor-tracking-id">AST-T-7193</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.18); color: #34d399; padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.35); font-family: monospace;" id="live-tutor-tg-tag">#AST_T_7193</span>
+              <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 0.25rem; font-weight: 600;">Ethio - 21 Ops Verified</div>
+            </div>
+          </div>
+
           <div class="field">
             <label id="i18n-f-tname">Full Name (As on Student ID) *</label>
             <input type="text" id="t_name" required placeholder="e.g. Yohannes Melaku / Hawi Bekele">
@@ -1423,6 +1453,9 @@
       document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.classList.toggle('active', tab.dataset.screen === screenId);
       });
+      if (typeof updateLiveTrackingBanners === 'function') {
+        updateLiveTrackingBanners();
+      }
     }
 
     // 3-LANGUAGE DICTIONARY (AMHARIC / ENGLISH / AFAAN OROMOO)
@@ -1458,6 +1491,8 @@
         backT: "ወደ ዋናው",
         backV: "ወደ ዋናው",
         backH: "ወደ ዋናው",
+        parentIdTitle: "ኦፊሴላዊ የወላጅ መለያ ቁጥር (Parent ID)",
+        tutorIdTitle: "ኦፊሴላዊ የአስተማሪ መለያ ቁጥር (Tutor ID)",
         pBadge: "የወላጆች መጠየቂያ",
         pTitle: "ለልጅዎ ብቁ የዩኒቨርሲቲ አስጠኚ ይዘዙ",
         pSubtitle: "የሚከተሉትን ቀላል መረጃዎች ይሙሉ፤ በአቅራቢያዎ ከሚገኝ ዩኒቨርሲቲ ተማሪ ወዲያውኑ እናገናኝዎታለን።",
@@ -1558,6 +1593,8 @@
         backT: "Back to Menu",
         backV: "Back to Menu",
         backH: "Back to Menu",
+        parentIdTitle: "Official Parent ID",
+        tutorIdTitle: "Official Tutor ID",
         pBadge: "Parent Request",
         pTitle: "Request a Qualified University Tutor",
         pSubtitle: "Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.",
@@ -1658,6 +1695,8 @@
         backT: "Duubatti",
         backV: "Duubatti",
         backH: "Duubatti",
+        parentIdTitle: "Lakkoofsa Eenyummaa Maatii (Parent ID)",
+        tutorIdTitle: "Lakkoofsa Eenyummaa Barsiisaa (Tutor ID)",
         pBadge: "Gaaffii Maatii",
         pTitle: "Barsiisaa Yuunivarsitii Ga'umsa Qabu Gaafadhaa",
         pSubtitle: "Oodeeffannoo armaan gadii guutaa. Yuunivarsitii dhihoo irraa barataa qabxii olaanaa qabu isiniif ramadna.",
@@ -1780,6 +1819,7 @@
       document.getElementById('i18n-back-h').innerText = t.backH;
 
       // Parent Screen
+      if (document.getElementById('i18n-parent-id-title') && t.parentIdTitle) document.getElementById('i18n-parent-id-title').innerText = t.parentIdTitle;
       document.getElementById('i18n-p-badge').innerText = t.pBadge;
       document.getElementById('i18n-p-title').innerText = t.pTitle;
       document.getElementById('i18n-p-subtitle').innerText = t.pSubtitle;
@@ -1804,6 +1844,7 @@
       document.getElementById('i18n-btn-psubmit').innerText = t.btnPsubmit;
 
       // Tutor Screen
+      if (document.getElementById('i18n-tutor-id-title') && t.tutorIdTitle) document.getElementById('i18n-tutor-id-title').innerText = t.tutorIdTitle;
       document.getElementById('i18n-t-badge').innerText = t.tBadge;
       document.getElementById('i18n-t-title').innerText = t.tTitle;
       document.getElementById('i18n-t-subtitle').innerText = t.tSubtitle;
@@ -1863,6 +1904,21 @@
     function generateTrackingId(prefix) {
       const num = Math.floor(1000 + Math.random() * 9000);
       return `AST-${prefix}-${num}`;
+    }
+
+    let currentParentTrackingId = generateTrackingId('P');
+    let currentTutorTrackingId = generateTrackingId('T');
+
+    function updateLiveTrackingBanners() {
+      const pIdEl = document.getElementById('live-parent-tracking-id');
+      const pTagEl = document.getElementById('live-parent-tg-tag');
+      if (pIdEl) pIdEl.innerText = currentParentTrackingId;
+      if (pTagEl) pTagEl.innerText = `#AST_P_${currentParentTrackingId.split('-')[2]}`;
+
+      const tIdEl = document.getElementById('live-tutor-tracking-id');
+      const tTagEl = document.getElementById('live-tutor-tg-tag');
+      if (tIdEl) tIdEl.innerText = currentTutorTrackingId;
+      if (tTagEl) tTagEl.innerText = `#AST_T_${currentTutorTrackingId.split('-')[2]}`;
     }
 
     // Live Image Clarity & Resolution Inspection
@@ -2092,8 +2148,8 @@
       document.querySelectorAll('input[name="subj"]:checked').forEach(c => checkedSubjs.push(c.value));
       const subjs = checkedSubjs.join(', ') || 'General / All';
 
-      // Generate Unique Tracking ID & Telegram Tag
-      const trackingId = generateTrackingId('P');
+      // Use Assigned Unique Tracking ID & Telegram Tag
+      const trackingId = currentParentTrackingId;
       const tgTag = `#AST_P_${trackingId.split('-')[2]}`;
 
       // Save offline backup
@@ -2121,14 +2177,23 @@
         list.push(item);
         localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
 
-        // Asynchronously log to Google Sheets cloud database if configured
+        // Asynchronously log to Google Sheets cloud database if configured (Ultra-lean index)
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
         if (webhookUrl && webhookUrl.startsWith('http')) {
           fetch(webhookUrl, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'addParent', data: item })
+            body: JSON.stringify({ 
+              action: 'addParent', 
+              data: {
+                trackingId: trackingId,
+                name: name,
+                phone: phone,
+                status: 'Pending',
+                tgTag: tgTag
+              }
+            })
           }).catch(() => {});
         }
 
@@ -2151,7 +2216,7 @@
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
 
       const plainText = `${tgTag} • ${applicantHeader}\n` +
-                        `🏷️ Tracking ID: ${trackingId}\n` +
+                        `🏷️ Official ID: ${trackingId}\n` +
                         `👤 Name: ${name} (${applicantType === 'STUDENT_ADULT' ? 'Independent Student 18+' : 'Parent / Guardian'})\n` +
                         `📞 Phone: ${phone}\n` +
                         `📍 Location: ${area}\n` +
@@ -2167,12 +2232,17 @@
         ? `ውድ <b>${name}</b>፣ ጥያቄዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት።`
         : (currentLang === 'or'
           ? `Kabajamoo <b>${name}</b>, gaaffiin keessan qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>.`);
+          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
+
+      // Clear form and cycle fresh ID for next request
+      try { e.target.reset(); } catch (err) {}
+      currentParentTrackingId = generateTrackingId('P');
+      updateLiveTrackingBanners();
     }
 
     function handleTutorSubmit(e) {
@@ -2210,8 +2280,8 @@
         return;
       }
 
-      // Generate Unique Tracking ID & Telegram Tag
-      const trackingId = generateTrackingId('T');
+      // Use Assigned Unique Tracking ID & Telegram Tag
+      const trackingId = currentTutorTrackingId;
       const tgTag = `#AST_T_${trackingId.split('-')[2]}`;
 
       // Save offline backup
@@ -2220,6 +2290,7 @@
         const gVal = parseFloat(cgpa) || 0;
         const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
         const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
+        const rankTitle = `${tierName} Basic (L0)`;
 
         const item = { 
           id: trackingId,
@@ -2228,6 +2299,7 @@
           type: 'TUTOR', 
           name, phone, gender, uni, year, cgpa, subj, 
           metalTier: tierName,
+          rankTitle: rankTitle,
           campusIdAttached: !!campusFile, 
           gradeReportAttached: !!gradeFile,
           govtFrontAttached: !!govtFrontFile,
@@ -2245,14 +2317,24 @@
         list.push(item);
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
 
-        // Asynchronously log to Google Sheets cloud database if configured
+        // Asynchronously log to Google Sheets cloud database if configured (Ultra-lean index)
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
         if (webhookUrl && webhookUrl.startsWith('http')) {
           fetch(webhookUrl, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'addTutor', data: item })
+            body: JSON.stringify({ 
+              action: 'addTutor', 
+              data: {
+                trackingId: trackingId,
+                name: name,
+                phone: phone,
+                rankTitle: rankTitle,
+                status: 'Verified',
+                tgTag: tgTag
+              }
+            })
           }).catch(() => {});
         }
 
@@ -2281,7 +2363,7 @@
       const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
 
       const plainText = `${tgTag} • 🎓 New Tutor Application (Teme Astegni)\n` +
-                        `🏷️ Tracking ID: ${trackingId}\n` +
+                        `🏷️ Official ID: ${trackingId}\n` +
                         `👤 Name: ${name}\n` +
                         `🚻 Gender / Sex: ${gender}\n` +
                         `📞 Phone: ${phone}\n` +
@@ -2302,12 +2384,17 @@
         ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት፤ ያዘጋጁትን <b>የካምፓስ መታወቂያ</b>፣ <b>የውጤት ሪፖርት</b> እና <b>የ${govtType} (የፊትና የኋላ) ፎቶ</b> አብረው ያያይዙ።`
         : (currentLang === 'or'
           ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun <b>Waraqaa Kaampaasii</b>, <b>Gabaasa Qabxii</b> fi <b>Waraqaa Eenyummaa (Fuula & Dugda)</b> waliin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and attach your <b>Campus ID</b>, <b>Grade Report</b>, and <b>Govt ID</b> photos.`);
+          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and attach your <b>Campus ID</b>, <b>Grade Report</b>, and <b>Govt ID</b> photos.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
+
+      // Clear form and cycle fresh ID for next applicant
+      try { e.target.reset(); } catch (err) {}
+      currentTutorTrackingId = generateTrackingId('T');
+      updateLiveTrackingBanners();
     }
 
     function closeModal() {
@@ -2317,6 +2404,7 @@
     // Default to Amharic on initial load
     document.addEventListener('DOMContentLoaded', () => {
       setLang('am');
+      updateLiveTrackingBanners();
       showScreen('screen-home');
     });
   </script>
