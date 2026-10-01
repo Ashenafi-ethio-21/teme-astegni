@@ -1437,15 +1437,18 @@
         </div>
       </div>
 
-      <!-- Expiry Date & Validity Status Box -->
-      <div id="inspect-expiry-box" style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+      <!-- Security Status Box -->
+      <div id="inspect-expiry-box" style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <span style="font-size: 0.75rem; color: #cbd5e1; font-weight: 700;">Document Expiry Date:</span>
-            <div style="font-size: 0.95rem; font-weight: 850; color: #fff;" id="inspect-expiry-date">2027-11-20</div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.1rem;">🛡️</span>
+            <div>
+              <span style="font-size: 0.75rem; color: #cbd5e1; font-weight: 700;">Document Status:</span>
+              <div style="font-size: 0.88rem; font-weight: 850; color: #fff;">Official Government / Campus ID</div>
+            </div>
           </div>
-          <div id="inspect-expiry-status" style="font-size: 0.8rem; font-weight: 800; color: #34d399; background: rgba(16, 185, 129, 0.2); padding: 0.3rem 0.65rem; border-radius: 8px;">
-            ✓ Valid (&gt; 1 Month Remaining)
+          <div id="inspect-expiry-status" style="font-size: 0.78rem; font-weight: 800; color: #34d399; background: rgba(16, 185, 129, 0.2); padding: 0.3rem 0.65rem; border-radius: 8px;">
+            ✓ Active &amp; Verified in Vault
           </div>
         </div>
       </div>
@@ -2218,8 +2221,7 @@ function rowsToJson(sheet) {
             <div class="detail-item"><span class="detail-label">📍 Location:</span> ${escapeHtml(p.area)}</div>
             <div class="detail-item"><span class="detail-label">🧒 Student Gender:</span> <span class="tag-badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: 700; font-size: 0.75rem;">${escapeHtml(p.studentGender || p.childGender || 'Student')}</span></div>
             <div class="detail-item"><span class="detail-label">🎓 Grade Level:</span> ${escapeHtml(p.grade)}</div>
-            <div class="detail-item"><span class="detail-label">🆔 Household ID:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(p.idType || 'National Fayda / Kebele')}</span> (Front &amp; Back)</div>
-            <div class="detail-item"><span class="detail-label">📅 ID Expiry:</span> ${escapeHtml(p.idExpiry || 'Active Valid')} ${checkExpiryBadgeHtml(p.idExpiry)}</div>
+            <div class="detail-item"><span class="detail-label">🆔 Household ID:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(p.idType || 'National Fayda / Kebele')}</span> <span class="tag-badge tag-active" style="font-size:0.65rem; margin-left: 0.35rem;">✓ Vetted in Vault</span></div>
             <div class="detail-item"><span class="detail-label">✈️ Telegram Tag:</span> <span style="color: #24a1de; font-weight: 750;">${escapeHtml(pTgTag)}</span></div>
             <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects:</span> ${escapeHtml(p.subjs)}</div>
           </div>
@@ -2406,8 +2408,7 @@ function rowsToJson(sheet) {
 
           <div class="record-details">
             <div class="detail-item"><span class="detail-label">📞 Phone:</span> ${escapeHtml(t.phone)}</div>
-            <div class="detail-item"><span class="detail-label">🆔 ID Verification:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(t.govtId || 'National Fayda / Kebele')}</span> (Front &amp; Back)</div>
-            <div class="detail-item"><span class="detail-label">📅 ID Expiry:</span> ${escapeHtml(t.idExpiry || 'Active Valid')} ${checkExpiryBadgeHtml(t.idExpiry)}</div>
+            <div class="detail-item"><span class="detail-label">🆔 ID Verification:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(t.govtId || 'National Fayda / Kebele')}</span> <span class="tag-badge tag-active" style="font-size:0.65rem; margin-left: 0.35rem;">✓ Vetted in Vault</span></div>
             <div class="detail-item"><span class="detail-label">🏅 Metal Tier:</span> <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name} (CGPA ${escapeHtml(t.cgpa)})</span></div>
             <div class="detail-item"><span class="detail-label">🎖️ Progression Rank:</span> ${tier.emoji} ${tier.name} ${levelTitle} (${l}/5)</div>
             <div class="detail-item"><span class="detail-label">🎙️ Teaching Clarity:</span> ${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
@@ -2662,10 +2663,6 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-name').innerText = record.name;
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'}`;
         document.getElementById('inspect-doc-type').innerText = record.idType || 'National Fayda / Kebele';
-        
-        const expiry = record.idExpiry || 'Active Valid (ያልተገደበ)';
-        document.getElementById('inspect-expiry-date').innerText = expiry;
-        updateInspectExpiryStatus(expiry);
 
         const frontImg = document.getElementById('inspect-img-front');
         const emptyFront = document.getElementById('inspect-empty-front');
@@ -2690,10 +2687,6 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-name').innerText = record.name;
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa})`;
         document.getElementById('inspect-doc-type').innerText = record.govtId || 'National Fayda / Kebele (Front & Back)';
-        
-        const expiry = record.idExpiry || 'Active Valid (ያልተገደበ)';
-        document.getElementById('inspect-expiry-date').innerText = expiry;
-        updateInspectExpiryStatus(expiry);
 
         const frontImg = document.getElementById('inspect-img-front');
         const emptyFront = document.getElementById('inspect-empty-front');
