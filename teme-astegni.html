@@ -1805,6 +1805,12 @@
       document.getElementById('i18n-modal-close').innerText = t.modalClose;
     }
 
+    // Unique Tracking ID Generator (Index Pointer Architecture)
+    function generateTrackingId(prefix) {
+      const num = Math.floor(1000 + Math.random() * 9000);
+      return `AST-${prefix}-${num}`;
+    }
+
     // Live Image Clarity & Resolution Inspection
     function handleImageClarityCheck(e, previewId, statusId, clarityId) {
       const file = e.target.files[0];
@@ -2082,9 +2088,16 @@
       document.querySelectorAll('input[name="subj"]:checked').forEach(c => checkedSubjs.push(c.value));
       const subjs = checkedSubjs.join(', ') || 'General / All';
 
+      // Generate Unique Tracking ID & Telegram Tag
+      const trackingId = generateTrackingId('P');
+      const tgTag = `#AST_P_${trackingId.split('-')[2]}`;
+
       // Save offline backup
       try {
         const item = { 
+          id: trackingId,
+          trackingId: trackingId,
+          tgTag: tgTag,
           type: 'PARENT', 
           applicantType,
           name, 
@@ -2119,22 +2132,23 @@
         // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
         if (frontFile) {
           compressImageFile(frontFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `🆔 Parent Household ID (Front) • ${name} • ${phone} • ${area}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Front) • ${name} • ${phone} • ${area}`);
           });
         }
         if (backFile) {
           compressImageFile(backFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `🆔 Parent Household ID (Back) • ${name} • ${phone} • Exp: ${pIdExpiry}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Back) • ${name} • ${phone} • Exp: ${pIdExpiry}`);
           });
         }
       } catch (err) {}
 
-      // Copy to clipboard
+      // Copy to clipboard with Tracking Tag
       const applicantHeader = (applicantType === 'STUDENT_ADULT') 
         ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
 
-      const plainText = `${applicantHeader}\n` +
+      const plainText = `${tgTag} • ${applicantHeader}\n` +
+                        `🏷️ Tracking ID: ${trackingId}\n` +
                         `👤 Name: ${name} (${applicantType === 'STUDENT_ADULT' ? 'Independent Student 18+' : 'Parent / Guardian'})\n` +
                         `📞 Phone: ${phone}\n` +
                         `📍 Location: ${area}\n` +
@@ -2147,10 +2161,10 @@
 
       const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Qophaa\'eera!' : 'Request Successfully Prepared!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ ጥያቄዎ ተዘጋጅቶ ኮፒ ተደርጓል። ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት ወይም ክፍያ ሲፈጽሙ የደረሰኝ ስክሪንሾት አብረው ይላኩ።`
+        ? `ውድ <b>${name}</b>፣ ጥያቄዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan qophaa'ee waraabameera. Butoona cuqqaaluun kallattiin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard. Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and send your payment screenshot for instant verification.`);
+          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
+          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
@@ -2204,6 +2218,10 @@
         return;
       }
 
+      // Generate Unique Tracking ID & Telegram Tag
+      const trackingId = generateTrackingId('T');
+      const tgTag = `#AST_T_${trackingId.split('-')[2]}`;
+
       // Save offline backup
       try {
         const examOptIn = document.getElementById('t_exam_optin') ? document.getElementById('t_exam_optin').checked : true;
@@ -2212,6 +2230,9 @@
         const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
 
         const item = { 
+          id: trackingId,
+          trackingId: trackingId,
+          tgTag: tgTag,
           type: 'TUTOR', 
           name, phone, gender, uni, year, cgpa, subj, 
           metalTier: tierName,
@@ -2247,28 +2268,29 @@
         // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
         if (govtFrontFile) {
           compressImageFile(govtFrontFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `🎓 Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`);
           });
         }
         if (govtBackFile) {
           compressImageFile(govtBackFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `🎓 Tutor Govt ID (Back) • ${name} • ${phone} • Exp: ${tIdExpiry}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Back) • ${name} • ${phone} • Exp: ${tIdExpiry}`);
           });
         }
         if (campusFile) {
           compressImageFile(campusFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `🏛️ Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🏛️ Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
           });
         }
       } catch (err) {}
 
-      // Copy formatted text to clipboard
+      // Copy formatted text to clipboard with Tracking Tag
       const examOptIn = document.getElementById('t_exam_optin') ? document.getElementById('t_exam_optin').checked : true;
       const gVal = parseFloat(cgpa) || 0;
       const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
       const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
 
-      const plainText = `🎓 New Tutor Application (Teme Astegni)\n` +
+      const plainText = `${tgTag} • 🎓 New Tutor Application (Teme Astegni)\n` +
+                        `🏷️ Tracking ID: ${trackingId}\n` +
                         `👤 Name: ${name}\n` +
                         `🚻 Gender / Sex: ${gender}\n` +
                         `📞 Phone: ${phone}\n` +
@@ -2285,10 +2307,10 @@
 
       const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Qophaa\'eera!' : 'Application Successfully Prepared!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ ተዘጋጅቶ ኮፒ ተደርጓል። ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት፤ ያዘጋጁትን <b>የካምፓስ መታወቂያ</b>፣ <b>የውጤት ሪፖርት</b> እና <b>የ${govtType} (የፊትና የኋላ) ፎቶ</b> አብረው ያያይዙ።`
+        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት፤ ያዘጋጁትን <b>የካምፓስ መታወቂያ</b>፣ <b>የውጤት ሪፖርት</b> እና <b>የ${govtType} (የፊትና የኋላ) ፎቶ</b> አብረው ያያይዙ።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) qophaa'ee waraabameera. Butoona cuqqaaluun <b>Waraqaa Kaampaasii</b>, <b>Gabaasa Qabxii</b> fi <b>Waraqaa Eenyummaa (Fuula & Dugda)</b> waliin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your application for <b>${tierEmoji} ${tierName} Tier</b> is ready and copied to your clipboard. Tap below to submit your details, along with your <b>Campus Student ID Photo</b>, <b>Grade Report</b>, and <b>${govtType} (Front & Back) Photos</b> directly into <b>Ethio - 21 Astegni Ops</b>.`);
+          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun <b>Waraqaa Kaampaasii</b>, <b>Gabaasa Qabxii</b> fi <b>Waraqaa Eenyummaa (Fuula & Dugda)</b> waliin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
+          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and attach your <b>Campus ID</b>, <b>Grade Report</b>, and <b>Govt ID</b> photos.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
