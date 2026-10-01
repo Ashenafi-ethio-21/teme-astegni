@@ -692,6 +692,60 @@
       cursor: pointer;
     }
 
+    /* MODERN CLASSIC ID DROPDOWN */
+    .modern-classic-select-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .modern-classic-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: linear-gradient(145deg, #111827 0%, #090e17 100%);
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.82rem 2.5rem 0.82rem 1rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .modern-classic-select:hover {
+      border-color: rgba(56, 189, 248, 0.6);
+      background: linear-gradient(145deg, #131d2e 0%, #0b121e 100%);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), 0 0 14px rgba(56, 189, 248, 0.2);
+    }
+    .modern-classic-select:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25), 0 8px 22px rgba(0, 0, 0, 0.45);
+    }
+    .modern-classic-select option {
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 0.88rem;
+      padding: 0.75rem;
+    }
+    .modern-classic-select-wrap .select-chevron {
+      position: absolute;
+      right: 1.1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #38bdf8;
+      font-size: 1rem;
+      font-weight: 800;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .modern-classic-select-wrap:hover .select-chevron {
+      transform: translateY(-50%) scale(1.15);
+      color: #60a5fa;
+    }
+
     /* Small credit */
     .mini-footer {
       text-align: center;
@@ -905,33 +959,32 @@
             </div>
           </div>
 
-          <!-- MANDATORY ID VERIFICATION: Front & Back + Expiry (>= 30 days) -->
+          <!-- MANDATORY ID VERIFICATION: Front & Back -->
           <div class="field" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1.2rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
               <label style="color: #38bdf8; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-pid-title">🆔 Household ID Verification (የመታወቂያ ማረጋገጫ) *</label>
               <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">2-Way Safety Protocol</span>
             </div>
-            <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;" id="i18n-f-pid-desc">
-              To protect both your household and our university scholars entering residential homes, please provide a valid National Fayda or Kebele ID. IDs must be clearly readable and have at least 1 month (30 days) of remaining validity.
+            <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.85rem;" id="i18n-f-pid-desc">
+              To protect both your household and our university scholars entering residential homes, please provide a clear National Fayda, Kebele ID, or Passport (Front &amp; Back).
             </p>
 
-            <!-- ID Type & Expiry Row -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.75rem;">
-              <div>
-                <label style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.25rem;">ID Document Type *</label>
-                <select id="p_id_type" required>
-                  <option value="National Fayda ID" selected>National Fayda ID (ፋይዳ)</option>
-                  <option value="Kebele ID">Kebele Resident ID (ቀበሌ)</option>
-                  <option value="Passport">Passport (ፓስፖርት)</option>
-                  <option value="Driver License">Driver's License (መንጃ ፈቃድ)</option>
+            <!-- Modern Classic ID Type Selection -->
+            <div style="margin-bottom: 0.85rem;">
+              <label style="font-size: 0.76rem; color: #cbd5e1; font-weight: 700; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                <span>ID Document Type (የመታወቂያ ዓይነት) *</span>
+                <span style="color: #38bdf8; font-size: 0.68rem; font-weight: 600;">• Verified Security</span>
+              </label>
+              <div class="modern-classic-select-wrap">
+                <select id="p_id_type" class="modern-classic-select" required>
+                  <option value="National Fayda ID" selected>🪪 National Fayda ID (የኢትዮጵያ ዲጂታል ፋይዳ መታወቂያ)</option>
+                  <option value="Kebele ID">🏛️ Kebele Resident ID (የቀበሌ የነዋሪነት መታወቂያ)</option>
+                  <option value="Passport">🛂 Passport (የኢትዮጵያ ፓስፖርት)</option>
+                  <option value="Driver License">🚗 Driver's License (ህጋዊ የመንጃ ፈቃድ)</option>
                 </select>
-              </div>
-              <div>
-                <label style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.25rem;">ID Validity / Expiry (የሚያበቃበት ቀን)</label>
-                <input type="text" id="p_id_expiry" placeholder="e.g. 2028 ወይም ያልተገደበ (Indefinite)" oninput="validateIdExpiryDate(this, 'p_id_expiry_warn')">
+                <div class="select-chevron">▾</div>
               </div>
             </div>
-            <div id="p_id_expiry_warn" style="font-size: 0.75rem; margin-bottom: 0.75rem; display: none;"></div>
 
             <!-- Front and Back Upload Boxes Grid -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
@@ -1071,25 +1124,26 @@
               <label style="color: #38bdf8; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-tgovt">🆔 National Fayda ID OR Kebele ID • Front &amp; Back (MANDATORY) *</label>
               <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">Child Safety Mandate</span>
             </div>
-            <p style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 0.65rem;" id="i18n-box-govt-p">
-              Both Front and Back photos are required. ID must have at least 1 month (30 days) of remaining validity before expiration.
+            <p style="font-size: 0.74rem; color: #cbd5e1; line-height: 1.4; margin-bottom: 0.85rem;" id="i18n-box-govt-p">
+              Both Front and Back photos of your government ID are required for parent and child safety.
             </p>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.65rem;">
-              <div>
-                <label style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.2rem;">ID Type *</label>
-                <select id="t_govt_id_type">
-                  <option value="National Fayda ID">National Fayda ID</option>
-                  <option value="Kebele ID">Kebele ID</option>
-                  <option value="Passport">Passport</option>
+            <!-- Modern Classic Tutor ID Type Selection -->
+            <div style="margin-bottom: 0.85rem;">
+              <label style="font-size: 0.76rem; color: #cbd5e1; font-weight: 700; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                <span>Official ID Document Type (ህጋዊ የመታወቂያ ዓይነት) *</span>
+                <span style="color: #10b981; font-size: 0.68rem; font-weight: 600;">• Child Safety Vetted</span>
+              </label>
+              <div class="modern-classic-select-wrap">
+                <select id="t_govt_id_type" class="modern-classic-select" required>
+                  <option value="National Fayda ID" selected>🪪 National Fayda ID (የኢትዮጵያ ዲጂታል ፋይዳ መታወቂያ)</option>
+                  <option value="Kebele ID">🏛️ Kebele Resident ID (የቀበሌ የነዋሪነት መታወቂያ)</option>
+                  <option value="Passport">🛂 Passport (የኢትዮጵያ ፓስፖርት)</option>
+                  <option value="Driver License">🚗 Driver's License (ህጋዊ የመንጃ ፈቃድ)</option>
                 </select>
-              </div>
-              <div>
-                <label style="font-size: 0.74rem; color: #94a3b8; font-weight: 700; display: block; margin-bottom: 0.2rem;">ID Validity / Expiry (የሚያበቃበት ቀን)</label>
-                <input type="text" id="t_id_expiry" placeholder="e.g. 2028 ወይም ያልተገደበ (Indefinite)" oninput="validateIdExpiryDate(this, 't_id_expiry_warn')">
+                <div class="select-chevron">▾</div>
               </div>
             </div>
-            <div id="t_id_expiry_warn" style="font-size: 0.75rem; margin-bottom: 0.65rem; display: none;"></div>
 
             <!-- Front and Back Upload Boxes Grid -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
@@ -1908,49 +1962,6 @@
       }
     }
 
-    // Smart ID Validity Validator (Supports Indefinite, Ethiopian Calendar, and Gregorian)
-    function validateIdExpiryDate(inputEl, warnElId) {
-      const warnEl = document.getElementById(warnElId);
-      if (!inputEl) return true;
-      const rawVal = (inputEl.value || '').trim();
-      
-      // If empty or explicitly indefinite / active
-      if (!rawVal || rawVal.toLowerCase().includes('ያልተገደበ') || rawVal.toLowerCase().includes('active') || rawVal.toLowerCase().includes('valid') || rawVal.toLowerCase().includes('indefinite')) {
-        inputEl.style.borderColor = '#10b981';
-        if (warnEl) {
-          warnEl.style.display = 'block';
-          warnEl.style.color = '#34d399';
-          warnEl.innerHTML = `✓ <b>ህጋዊ መታወቂያ:</b> Valid / Active ID (ያልተገደበ • Verified via Photo Vault).`;
-        }
-        return true;
-      }
-
-      // Check year format
-      const match = rawVal.match(/\b(20\d\d)\b/);
-      if (match) {
-        const yr = parseInt(match[1], 10);
-        // Ethiopian calendar (2015-2023) or current/future Gregorian (>= 2024)
-        if (yr >= 2015) {
-          inputEl.style.borderColor = '#10b981';
-          if (warnEl) {
-            warnEl.style.display = 'block';
-            warnEl.style.color = '#34d399';
-            warnEl.innerHTML = `✓ <b>ትክክለኛ መታወቂያ:</b> Valid ID recorded (${rawVal} • ህጋዊ ማስረጃ ተቀብሏል).`;
-          }
-          return true;
-        }
-      }
-
-      // Fallback: always accept uploaded document for coordinator inspection
-      inputEl.style.borderColor = '#10b981';
-      if (warnEl) {
-        warnEl.style.display = 'block';
-        warnEl.style.color = '#34d399';
-        warnEl.innerHTML = `✓ <b>ማስረጃ ተመዝግቧል:</b> Document submitted for coordinator verification.`;
-      }
-      return true;
-    }
-
     // Applicant Type Switcher (Parent vs Independent Student 18+)
     function toggleApplicantType(type) {
       const nameLabel = document.getElementById('i18n-f-pname');
@@ -2064,11 +2075,6 @@
       const grade = document.getElementById('p_grade').value;
 
       const pIdType = document.getElementById('p_id_type')?.value || 'National Fayda ID';
-      const pIdExpiryInput = document.getElementById('p_id_expiry');
-      const pIdExpiry = pIdExpiryInput ? pIdExpiryInput.value : '';
-
-      // Parent ID Expiry (Graceful, never falsely blocks valid Ethiopian or Indefinite IDs)
-      const finalPIdExpiry = (pIdExpiry && pIdExpiry.trim()) ? pIdExpiry.trim() : 'Active Valid (ያልተገደበ)';
 
       // Validate Front & Back ID photos
       const frontFile = document.getElementById('p_id_front_file')?.files[0];
@@ -2106,7 +2112,6 @@
           grade, 
           subjs, 
           idType: pIdType,
-          idExpiry: pIdExpiry,
           idFrontAttached: !!frontFile,
           idBackAttached: !!backFile,
           status: 'Pending', 
@@ -2135,7 +2140,7 @@
         }
         if (backFile) {
           compressImageFile(backFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Back) • ${name} • ${phone} • Exp: ${pIdExpiry}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🆔 Household ID (Back) • ${name} • ${phone} • ${pIdType}`);
           });
         }
       } catch (err) {}
@@ -2153,7 +2158,7 @@
                         `🧒 Student Gender (የሚማረው ተማሪ ፆታ): ${studentGender}\n` +
                         `🎓 Academic Grade: ${grade}\n` +
                         `📖 Subjects: ${subjs}\n` +
-                        `🆔 Household ID: ${pIdType} (Front & Back Attached • Expires: ${pIdExpiry || 'Verified'})\n` +
+                        `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
                         `🛡️ Matched via: Teme Astegni Portal`;
       copyToClipboardUniversal(plainText);
 
@@ -2190,13 +2195,8 @@
       const campusFile = document.getElementById('t_campus_id_file').files[0];
       const gradeFile = document.getElementById('t_grade_file').files[0];
 
-      // Government ID Front & Back + Expiry (>= 30 days)
+      // Government ID Front & Back
       const govtType = document.getElementById('t_govt_id_type')?.value || 'National Fayda ID';
-      const tIdExpiryInput = document.getElementById('t_id_expiry');
-      const tIdExpiry = tIdExpiryInput ? tIdExpiryInput.value : '';
-
-      // Tutor ID Expiry (Graceful, never falsely blocks valid Ethiopian or Indefinite IDs)
-      const finalTIdExpiry = (tIdExpiry && tIdExpiry.trim()) ? tIdExpiry.trim() : 'Active Valid (ያልተገደበ)';
 
       const govtFrontFile = document.getElementById('t_govt_front_file')?.files[0];
       const govtBackFile = document.getElementById('t_govt_back_file')?.files[0];
@@ -2233,7 +2233,6 @@
           govtFrontAttached: !!govtFrontFile,
           govtBackAttached: !!govtBackFile,
           govtId: `${govtType} (Front & Back)`,
-          idExpiry: finalTIdExpiry,
           level: 0,
           examOptIn: examOptIn,
           examStatus: examOptIn ? 'Pending Exam' : 'Not Requested',
@@ -2265,7 +2264,7 @@
         }
         if (govtBackFile) {
           compressImageFile(govtBackFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Back) • ${name} • ${phone} • Exp: ${finalTIdExpiry}`);
+            sendPhotoToTelegramBot(blob, `${tgTag} 🎓 Tutor Govt ID (Back) • ${name} • ${phone} • ${govtType}`);
           });
         }
         if (campusFile) {
@@ -2294,7 +2293,7 @@
                         `🎙️ Communicative Exam: ${examOptIn ? `Requested Voice/Video Exam (Targeting ${tierName} Level 1)` : `Basic ${tierName} (L0)`}\n` +
                         `📸 Campus ID Photo: ${campusFile ? 'Attached (Ready to send)' : 'Not attached'}\n` +
                         `📄 Grade Report: ${gradeFile ? 'Attached' : 'Not attached'}\n` +
-                        `🆔 Govt ID (Front & Back): Attached (${govtType} • Expires: ${finalTIdExpiry || 'Active Valid'})\n` +
+                        `🆔 Govt ID (Front & Back): Attached (${govtType} • Verified in Vault)\n` +
                         `🛡️ Matched via: Teme Astegni Portal`;
       copyToClipboardUniversal(plainText);
 
