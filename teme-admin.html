@@ -1431,12 +1431,27 @@
           <input type="url" id="webhook-url-input" class="form-ctrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
         </div>
 
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
           <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
+          <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync &amp; Push All Leads to Sheet</button>
           <button class="btn-act" onclick="syncCloudDatabase()">📥 Fetch Latest Records</button>
           <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Updated Apps Script Code</button>
+        </div>
+
+        <!-- QUICK PUSH SINGLE ID DIRECTLY -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-top: 0.75rem;">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.35rem;">🎯 Quick Push Single ID to Google Sheet:</div>
+          <p style="font-size: 0.74rem; color: #94a3b8; margin-bottom: 0.6rem;">If a tutor or parent signed up and their ID is missing from Google Sheet, enter the ID below and push it with 1 click:</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <input type="text" id="manual-push-id-input" class="form-ctrl" style="flex: 1; min-width: 160px;" placeholder="e.g. AST-T-1024 or AST-P-2048">
+            <select id="manual-push-type-select" class="form-ctrl" style="width: 170px;">
+              <option value="addTutor">🎓 Tutors_Index</option>
+              <option value="addParent">👨‍👩‍👧 Parents_Index</option>
+            </select>
+            <button class="btn-act btn-act-primary" onclick="pushSingleIdToGoogleSheet()">⚡ Push ID Now</button>
+          </div>
         </div>
       </div>
 
@@ -1902,6 +1917,30 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify(output))
       .setMimeType(ContentService.MimeType.JSON);
   }
+
+  if (action === 'addTutor' || action === 'addTutorId') {
+    var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
+    var trackingId = (e && e.parameter) ? (e.parameter.id || e.parameter.trackingId || '') : '';
+    if (trackingId) {
+      tSheet.appendRow([new Date(), trackingId]);
+      formatLastRow(tSheet, '#065f46');
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_T_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'addParent' || action === 'addParentId') {
+    var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
+    var trackingId = (e && e.parameter) ? (e.parameter.id || e.parameter.trackingId || '') : '';
+    if (trackingId) {
+      pSheet.appendRow([new Date(), trackingId]);
+      formatLastRow(pSheet, '#0f172a');
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_P_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+    }
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   
   return ContentService.createTextOutput(JSON.stringify({ 
     status: 'OK', 
@@ -1911,13 +1950,24 @@ function doGet(e) {
 
 function doPost(e) {
   try {
-    var postData = JSON.parse(e.postData.contents);
+    var postData;
+    if (e && e.postData && e.postData.contents) {
+      try {
+        postData = JSON.parse(e.postData.contents);
+      } catch (parseErr) {
+        postData = e.parameter || {};
+      }
+    } else if (e && e.parameter) {
+      postData = e.parameter;
+    } else {
+      postData = {};
+    }
     var action = postData.action;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
     if (action === 'addParent') {
       var sheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
-      var d = postData.data;
+      var d = postData.data || postData;
       var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
@@ -1929,7 +1979,7 @@ function doPost(e) {
     } 
     else if (action === 'addTutor') {
       var sheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
-      var d = postData.data;
+      var d = postData.data || postData;
       var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
@@ -1941,7 +1991,7 @@ function doPost(e) {
     }
     else if (action === 'addMatch') {
       var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
-      var d = postData.data;
+      var d = postData.data || postData;
       var newRow = [
         new Date(),
         d.parentId || d.parentName || '',
@@ -2651,6 +2701,7 @@ function rowsToJson(sheet) {
               <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
               <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
             </select>
+            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push to Sheet</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
             <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ Vault (${escapeHtml(pTgTag)})</a>
             <button class="btn-act btn-act-primary" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
@@ -2842,6 +2893,7 @@ function rowsToJson(sheet) {
               <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
               <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
             </select>
+            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push to Sheet</button>
             <button class="btn-act btn-act-primary" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Teaching Exam</button>
@@ -3732,6 +3784,151 @@ function rowsToJson(sheet) {
         }
       } catch (err) {
         alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Updated Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
+      }
+    }
+
+    async function pushSingleTutorToSheet(tutorId) {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      if (!url) {
+        alert('Please configure your Google Apps Script Webhook URL first in Database settings.');
+        switchView('view-database');
+        return;
+      }
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'addTutor',
+            data: { id: tutorId, trackingId: tutorId }
+          })
+        });
+        const sep = url.includes('?') ? '&' : '?';
+        fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(tutorId)}`, { mode: 'no-cors' }).catch(() => {});
+        alert(`✅ Tutor ID ${tutorId} successfully sent to Google Sheet (Tutors_Index)!`);
+      } catch (err) {
+        alert('Error sending to Google Sheet: ' + err.message);
+      }
+    }
+
+    async function pushSingleParentToSheet(parentId) {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      if (!url) {
+        alert('Please configure your Google Apps Script Webhook URL first in Database settings.');
+        switchView('view-database');
+        return;
+      }
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'addParent',
+            data: { id: parentId, trackingId: parentId }
+          })
+        });
+        const sep = url.includes('?') ? '&' : '?';
+        fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(parentId)}`, { mode: 'no-cors' }).catch(() => {});
+        alert(`✅ Parent ID ${parentId} successfully sent to Google Sheet (Parents_Index)!`);
+      } catch (err) {
+        alert('Error sending to Google Sheet: ' + err.message);
+      }
+    }
+
+    async function pushLocalRecordsToGoogleSheet() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      if (!url) {
+        alert('Please configure your Google Apps Script Webhook URL first in the field above.');
+        return;
+      }
+      const tutors = getTutors();
+      const parents = getParents();
+      if (tutors.length === 0 && parents.length === 0) {
+        alert('No registered tutors or parents found in local storage to push.');
+        return;
+      }
+      const btn = document.getElementById('btn-push-sheet');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Pushing to Sheet...';
+      }
+
+      let tSuccess = 0;
+      let pSuccess = 0;
+
+      for (const t of tutors) {
+        const id = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
+        if (!id) continue;
+        try {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'addTutor', data: { id: id, trackingId: id } })
+          });
+          const sep = url.includes('?') ? '&' : '?';
+          fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(id)}`, { mode: 'no-cors' }).catch(() => {});
+          tSuccess++;
+          await new Promise(r => setTimeout(r, 350));
+        } catch(e) {}
+      }
+
+      for (const p of parents) {
+        const id = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
+        if (!id) continue;
+        try {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'addParent', data: { id: id, trackingId: id } })
+          });
+          const sep = url.includes('?') ? '&' : '?';
+          fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(id)}`, { mode: 'no-cors' }).catch(() => {});
+          pSuccess++;
+          await new Promise(r => setTimeout(r, 350));
+        } catch(e) {}
+      }
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerText = '📤 Sync & Push All Leads to Sheet';
+      }
+      alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed to Google Sheet Cloud Ledger:\n• ${tSuccess} Tutor ID(s) to Tutors_Index\n• ${pSuccess} Parent ID(s) to Parents_Index\n\nPlease check your Google Sheet now!`);
+    }
+
+    async function pushSingleIdToGoogleSheet() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      const manualId = (document.getElementById('manual-push-id-input')?.value || '').trim();
+      const type = document.getElementById('manual-push-type-select')?.value || 'addTutor';
+      if (!url) {
+        alert('Please enter and save your Google Apps Script Webhook URL first in Settings.');
+        return;
+      }
+      if (!manualId) {
+        alert('Please enter a Tutor or Parent ID (e.g. AST-T-1024 or AST-P-2048).');
+        return;
+      }
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: type,
+            data: { id: manualId, trackingId: manualId }
+          })
+        });
+        const sep = url.includes('?') ? '&' : '?';
+        fetch(`${url}${sep}action=${type}&id=${encodeURIComponent(manualId)}`, { mode: 'no-cors' }).catch(() => {});
+        alert(`✅ ID ${manualId} has been sent to Google Sheet! Check your ${type === 'addTutor' ? 'Tutors_Index' : 'Parents_Index'} tab.`);
+        if (document.getElementById('manual-push-id-input')) {
+          document.getElementById('manual-push-id-input').value = '';
+        }
+      } catch (err) {
+        alert('Failed to send: ' + err.message);
       }
     }
 
