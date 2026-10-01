@@ -1461,8 +1461,8 @@
           <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
           <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.45); color: #f87171; font-weight: 800;" onclick="cleanLegacySheetsNow()">🧹 1-Click Delete Legacy Sheets (Keep Only _ Tabs)</button>
           <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync &amp; Push All Leads to Sheet</button>
-          <button class="btn-act" onclick="syncCloudDatabase()">📥 Fetch Latest Records</button>
           <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Updated Apps Script Code</button>
+          <button class="btn-act" style="background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.35); color: #cbd5e1;" onclick="purgeDemoDataNow()">🗑️ Clear Demo Data (Start Fresh for Real Users)</button>
         </div>
 
         <!-- QUICK PUSH SINGLE ID DIRECTLY -->
@@ -4281,189 +4281,56 @@ function rowsToJson(sheet) {
     }
 
     // ==========================================
-    // SEED DATA INITIALIZATION
+    // ==========================================
+    // SEED & DEMO DATA MANAGEMENT (100% REAL MODE)
     // ==========================================
     function initializeSeedData() {
       if (!localStorage.getItem('astegni_parent_leads')) {
-        const seedParents = [
-          {
-            type: 'PARENT',
-            trackingId: 'AST-P-1042',
-            tgTag: '#AST_P_1042',
-            name: 'ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)',
-            phone: '0911223344',
-            area: 'ሳሪስ / ካዲስኮ (Saris, AAU Campus nearby)',
-            studentGender: 'Male',
-            childGender: 'Male',
-            grade: 'Grade 9',
-            subjs: 'Physics, Mathematics',
-            idType: 'National Fayda ID',
-            idExpiry: 'Active Valid (ያልተገደበ)',
-            status: 'Pending',
-            date: new Date(Date.now() - 3600000 * 2).toISOString()
-          },
-          {
-            type: 'PARENT',
-            trackingId: 'AST-P-2051',
-            tgTag: '#AST_P_2051',
-            name: 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)',
-            phone: '0922446688',
-            area: 'ገርጂ / መብራት ኃይል (Gerji)',
-            studentGender: 'Female',
-            childGender: 'Female',
-            grade: 'Grade 7',
-            subjs: 'English, General Science',
-            idType: 'Kebele ID',
-            idExpiry: 'Active Valid (ያልተገደበ)',
-            status: 'Trial Scheduled',
-            date: new Date(Date.now() - 3600000 * 8).toISOString()
-          }
-        ];
-        localStorage.setItem('astegni_parent_leads', JSON.stringify(seedParents));
+        localStorage.setItem('astegni_parent_leads', JSON.stringify([]));
       }
-
       if (!localStorage.getItem('astegni_tutor_leads')) {
-        const seedTutors = [
-          {
-            type: 'TUTOR',
-            trackingId: 'AST-T-8419',
-            tgTag: '#AST_T_8419',
-            name: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
-            phone: '0944112233',
-            gender: 'ሴት (Female)',
-            uni: 'AAU (Tikur Anbessa Medical)',
-            year: '4th Year (Medicine)',
-            cgpa: '3.88',
-            subj: 'Biology, Chemistry, English',
-            govtId: 'Kebele ID: Verified',
-            idExpiry: 'Active Valid (ያልተገደበ)',
-            level: 5,
-            examStatus: 'passed',
-            examType: 'Physical / Video Demo',
-            examScore: 97,
-            examClarity: 'Exceptional (A+)',
-            examNotes: 'Conducted live in-person teaching demonstration. Exceptional patience, clinical precision, and warm pedagogical rapport.',
-            date: new Date(Date.now() - 3600000 * 24).toISOString()
-          },
-          {
-            type: 'TUTOR',
-            trackingId: 'AST-T-7204',
-            tgTag: '#AST_T_7204',
-            name: 'ናትናኤል አለማየሁ (Natnael A.)',
-            phone: '0911559900',
-            gender: 'ወንድ (Male)',
-            uni: 'AAU (4 Kilo Science & Tech)',
-            year: '3rd Year (Electrical Eng.)',
-            cgpa: '3.78',
-            subj: 'Physics, Mathematics',
-            govtId: 'National Fayda ID: Verified',
-            idExpiry: 'Active Valid (ያልተገደበ)',
-            level: 3,
-            examStatus: 'passed',
-            examType: 'Video Call',
-            examScore: 92,
-            examClarity: 'Strong (A)',
-            examNotes: 'Passed live video teaching exam. Strong visual explanations for calculus and kinematics.',
-            date: new Date(Date.now() - 3600000 * 18).toISOString()
-          },
-          {
-            type: 'TUTOR',
-            trackingId: 'AST-T-5190',
-            tgTag: '#AST_T_5190',
-            name: 'ዮሐንስ መላኩ (Yohannes M.)',
-            phone: '0933778899',
-            gender: 'ወንድ (Male)',
-            uni: 'ASTU (Adama Science & Tech)',
-            year: '2nd Year (Software Eng.)',
-            cgpa: '3.65',
-            subj: 'Mathematics, ICT, English',
-            govtId: 'National Fayda ID: Verified',
-            idExpiry: 'Active Valid (ያልተገደበ)',
-            level: 1,
-            examStatus: 'passed',
-            examType: 'Voice Call',
-            examScore: 89,
-            examClarity: 'Strong (A)',
-            examNotes: 'Passed voice call interview. Fluent in Amharic & English, very courteous tone.',
-            date: new Date(Date.now() - 3600000 * 8).toISOString()
-          },
-          {
-            type: 'TUTOR',
-            name: 'ጴጥሮስ ኃይሌ (Petros H.)',
-            phone: '0955223344',
-            gender: 'ወንድ (Male)',
-            uni: 'AAU (5 Kilo Technology)',
-            year: '2nd Year (Civil Eng.)',
-            cgpa: '3.42',
-            subj: 'General Math, Technical Drawing',
-            govtId: 'Kebele ID: Attached',
-            level: 0,
-            examStatus: 'Pending Exam',
-            examType: 'None',
-            examScore: 0,
-            examNotes: 'Registered applicant; requested free voice/video call evaluation.',
-            date: new Date(Date.now() - 3600000 * 3).toISOString()
-          },
-          {
-            type: 'TUTOR',
-            name: 'ዳዊት ግርማ (Dawit Girma)',
-            phone: '0977441122',
-            gender: 'ወንድ (Male)',
-            uni: 'AAU (College of Natural Sciences)',
-            year: '3rd Year (Statistics)',
-            cgpa: '3.25',
-            subj: 'Basic Mathematics, Geography',
-            govtId: 'National Fayda ID: Verified',
-            level: 1,
-            examStatus: 'passed',
-            examType: 'Voice Call',
-            examScore: 86,
-            examClarity: 'Strong (A)',
-            examNotes: 'Passed voice call teaching exam. Very calm, encouraging pedagogical manner.',
-            date: new Date(Date.now() - 3600000 * 5).toISOString()
-          }
-        ];
-        localStorage.setItem('astegni_tutor_leads', JSON.stringify(seedTutors));
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify([]));
       }
-
       if (!localStorage.getItem('astegni_matches')) {
-        const seedMatches = [
-          {
-            id: 'M-' + Date.now(),
-            parentName: 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)',
-            parentPhone: '0922446688',
-            tutorName: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
-            tutorPhone: '0944112233',
-            monthlyFee: 4000,
-            rate: 25,
-            commission: 1000,
-            status: 'Trial Scheduled',
-            date: new Date().toISOString()
-          }
-        ];
-        localStorage.setItem('astegni_matches', JSON.stringify(seedMatches));
+        localStorage.setItem('astegni_matches', JSON.stringify([]));
       }
-
       if (!localStorage.getItem('astegni_upgrade_ledger')) {
-        const seedUpgrades = [
-          {
-            tutorPhone: '0944112233',
-            tutorName: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
-            fromLevel: 1,
-            toLevel: 4,
-            fee: 150,
-            date: new Date(Date.now() - 3600000 * 12).toISOString()
-          },
-          {
-            tutorPhone: '0911559900',
-            tutorName: 'ናትናኤል አለማየሁ (Natnael A.)',
-            fromLevel: 1,
-            toLevel: 3,
-            fee: 100,
-            date: new Date(Date.now() - 3600000 * 6).toISOString()
-          }
-        ];
-        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify(seedUpgrades));
+        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify([]));
+      }
+      // Purge any old placeholder demo records from local storage
+      purgeSeedPlaceholdersSilently();
+    }
+
+    function purgeSeedPlaceholdersSilently() {
+      try {
+        const seedTrackingIds = ['AST-P-1042', 'AST-P-2051', 'AST-T-8419', 'AST-T-7204', 'AST-T-5190'];
+        const seedNames = ['ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)', 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)', 'ቤተልሔም ሰለሞን (Bethelhem S.)', 'ናትናኤል አለማየሁ (Natnael A.)', 'ዮሐንስ መላኩ (Yohannes M.)', 'ጴጥሮስ ኃይሌ (Petros H.)', 'ዳዊት ግርማ (Dawit Girma)'];
+        
+        const rawParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+        const cleanParents = rawParents.filter(p => !seedTrackingIds.includes(p.trackingId) && !seedTrackingIds.includes(p.id) && !seedNames.includes(p.name));
+        localStorage.setItem('astegni_parent_leads', JSON.stringify(cleanParents));
+
+        const rawTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+        const cleanTutors = rawTutors.filter(t => !seedTrackingIds.includes(t.trackingId) && !seedTrackingIds.includes(t.id) && !seedNames.includes(t.name));
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify(cleanTutors));
+
+        const rawMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+        const cleanMatches = rawMatches.filter(m => !seedNames.includes(m.parentName) && !seedNames.includes(m.tutorName));
+        localStorage.setItem('astegni_matches', JSON.stringify(cleanMatches));
+      } catch (e) {}
+    }
+
+    function purgeDemoDataNow() {
+      if (confirm('Clear all demo/mock placeholder records and reset to 0 for real tutors and parents?')) {
+        localStorage.setItem('astegni_parent_leads', JSON.stringify([]));
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify([]));
+        localStorage.setItem('astegni_matches', JSON.stringify([]));
+        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify([]));
+        renderOverviewDashboard();
+        renderParents();
+        renderTutors();
+        renderMatches();
+        alert('✨ All demo placeholders deleted! System is completely clean and ready for real applicants.');
       }
     }
 
