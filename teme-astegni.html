@@ -2788,11 +2788,10 @@
       const phone = document.getElementById('p_phone').value.trim();
       const area = document.getElementById('p_area').value.trim();
 
-      const nameParts = name.split(/\s+/).filter(Boolean);
-      if (nameParts.length < 2) {
+      if (!name) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። ከመታወቂያዎ ጋር አንድ መሆን አለበት።' 
-          : 'Please enter your Full Legal Name (at least First and Last name). It must match the name on your Government ID.';
+          ? 'እባክዎ ስምዎን ያስገቡ።' 
+          : 'Please enter your name.';
         abortParentValidation(msg, document.getElementById('p_name'));
         return;
       }
@@ -3020,12 +3019,11 @@
       const cgpa = document.getElementById('t_cgpa').value.trim();
       const subj = document.getElementById('t_subj').value.trim();
 
-      // Validate full legal name (at least First and Father's/Last Name)
-      const nameParts = name.split(/\s+/).filter(Boolean);
-      if (nameParts.length < 2) {
+      // Validate name
+      if (!name) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በፋይዳ/ቀበሌ መታወቂያዎ ላይ ካለው ስም ጋር አንድ መሆን አለበት።' 
-          : 'Please enter your Full Legal Name (at least First and Last name). It must exactly match the name on your University Student ID, Grade Report, and Government ID.';
+          ? 'እባክዎ ስምዎን ያስገቡ።' 
+          : 'Please enter your name.';
         abortTutorValidation(msg, document.getElementById('t_name'));
         return;
       }
