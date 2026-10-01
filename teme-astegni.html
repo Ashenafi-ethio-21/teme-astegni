@@ -1334,7 +1334,7 @@
           <p id="i18n-p-subtitle">Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.</p>
         </div>
 
-        <form id="parent-form" onsubmit="handleParentSubmit(event)">
+        <form id="parent-form" novalidate onsubmit="handleParentSubmit(event)">
           
           <!-- ASSIGNED OFFICIAL PARENT TRACKING ID BANNER -->
           <div class="assigned-id-banner" id="parent-assigned-id-banner" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(14, 165, 233, 0.04)); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
@@ -1447,7 +1447,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
               <!-- Front Photo -->
               <div class="file-upload-box" id="box-p-id-front" style="padding: 0.85rem 0.5rem;">
-                <input type="file" id="p_id_front_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-p-front', 'status-p-front', 'p-front-clarity')">
+                <input type="file" id="p_id_front_file" accept="image/*" onchange="handleImageClarityCheck(event, 'preview-p-front', 'status-p-front', 'p-front-clarity')">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">📸</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Front Photo *</div>
                 <div style="font-size: 0.68rem; color: #94a3b8;">የፊት ገጽ (Clear &amp; visible)</div>
@@ -1458,7 +1458,7 @@
 
               <!-- Back Photo -->
               <div class="file-upload-box" id="box-p-id-back" style="padding: 0.85rem 0.5rem;">
-                <input type="file" id="p_id_back_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-p-back', 'status-p-back', 'p-back-clarity')">
+                <input type="file" id="p_id_back_file" accept="image/*" onchange="handleImageClarityCheck(event, 'preview-p-back', 'status-p-back', 'p-back-clarity')">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🔄</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Back Photo *</div>
                 <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (Clear &amp; visible)</div>
@@ -1501,7 +1501,7 @@
           <p id="i18n-t-subtitle">Requirements: Active 2nd Year+ university student with CGPA ≥ 3.00 and verified ID credentials.</p>
         </div>
 
-        <form id="tutor-form" onsubmit="handleTutorSubmit(event)">
+        <form id="tutor-form" novalidate onsubmit="handleTutorSubmit(event)">
           
           <!-- ASSIGNED OFFICIAL TUTOR ID BANNER -->
           <div class="assigned-id-banner" id="tutor-assigned-id-banner" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.04)); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
@@ -1568,7 +1568,7 @@
           <div class="field">
             <label style="color: #34d399; font-weight: 850;" id="i18n-f-tcid">📸 Campus Student ID Photo • MANDATORY *</label>
             <div class="file-upload-box" id="box-campus-id" style="border-color: rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.05);">
-              <input type="file" id="t_campus_id_file" accept="image/*" required onchange="handleCampusIdPick(event)">
+              <input type="file" id="t_campus_id_file" accept="image/*" onchange="handleCampusIdPick(event)">
               <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">🏛️</div>
               <div style="font-size: 0.88rem; font-weight: 800; color: #fff;" id="i18n-box-cid-h">Attach Campus Student ID Photo</div>
               <div style="font-size: 0.74rem; color: #94a3b8;" id="i18n-box-cid-p">Front photo of your university ID card</div>
@@ -1581,7 +1581,7 @@
           <div class="field">
             <label style="color: #facc15; font-weight: 850;" id="i18n-f-tgrade">📄 Grade Report / Portal Screenshot • MANDATORY *</label>
             <div class="file-upload-box" id="box-grade-report" style="border-color: rgba(250, 204, 21, 0.45); background: rgba(250, 204, 21, 0.05);">
-              <input type="file" id="t_grade_file" accept="image/*,.pdf" required onchange="handleGradePick(event)">
+              <input type="file" id="t_grade_file" accept="image/*,.pdf" onchange="handleGradePick(event)">
               <div style="font-size: 1.5rem; margin-bottom: 0.2rem;">📊</div>
               <div style="font-size: 0.88rem; font-weight: 800; color: #fff;" id="i18n-box-grade-h">Attach Portal Screenshot / Grade Report</div>
               <div style="font-size: 0.74rem; color: #94a3b8;" id="i18n-box-grade-p">Verifies CGPA ≥ 3.00 &amp; subject grades</div>
@@ -1607,7 +1607,7 @@
                 <span style="color: #10b981; font-size: 0.68rem; font-weight: 600;">• Child Safety Vetted</span>
               </label>
               <div class="modern-classic-select-wrap">
-                <select id="t_govt_id_type" class="modern-classic-select" required>
+                <select id="t_govt_id_type" class="modern-classic-select">
                   <option value="National Fayda ID" selected>🪪 National Fayda ID (የኢትዮጵያ ዲጂታል ፋይዳ መታወቂያ)</option>
                   <option value="Kebele ID">🏛️ Kebele Resident ID (የቀበሌ የነዋሪነት መታወቂያ)</option>
                   <option value="Passport">🛂 Passport (የኢትዮጵያ ፓስፖርት)</option>
@@ -1621,7 +1621,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
               <!-- Front Photo -->
               <div class="file-upload-box" id="box-t-id-front" style="padding: 0.85rem 0.5rem;">
-                <input type="file" id="t_govt_front_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-t-front', 'status-t-front', 't-front-clarity')">
+                <input type="file" id="t_govt_front_file" accept="image/*" onchange="handleImageClarityCheck(event, 'preview-t-front', 'status-t-front', 't-front-clarity')">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">📸</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Front Photo *</div>
                 <div style="font-size: 0.68rem; color: #94a3b8;">የፊት ገጽ (Clear &amp; visible)</div>
@@ -1632,7 +1632,7 @@
 
               <!-- Back Photo -->
               <div class="file-upload-box" id="box-t-id-back" style="padding: 0.85rem 0.5rem;">
-                <input type="file" id="t_govt_back_file" accept="image/*" required onchange="handleImageClarityCheck(event, 'preview-t-back', 'status-t-back', 't-back-clarity')">
+                <input type="file" id="t_govt_back_file" accept="image/*" onchange="handleImageClarityCheck(event, 'preview-t-back', 'status-t-back', 't-back-clarity')">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🔄</div>
                 <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">ID Back Photo *</div>
                 <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (Clear &amp; visible)</div>
@@ -1662,7 +1662,7 @@
               <br><i>Any mismatch between credential names will result in immediate disqualification and account rejection.</i>
             </p>
             <label class="check-label" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.65rem 0.85rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
-              <input type="checkbox" id="t_name_consistency_confirm" required style="accent-color: #ef4444; width: 20px; height: 20px;">
+              <input type="checkbox" id="t_name_consistency_confirm" style="accent-color: #ef4444; width: 20px; height: 20px;">
               <span style="font-size: 0.78rem; font-weight: 750; color: #fecaca; line-height: 1.4;">
                 I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the EXACT SAME Full Name entered in this form.
               </span>
@@ -2690,6 +2690,23 @@
     // Submission Handlers
     function handleParentSubmit(e) {
       e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]') || document.querySelector('#parent-form button.btn-submit');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Submitting... (በማስገባት ላይ...)</span>';
+      }
+
+      function abortParentValidation(msg, focusEl, scrollEl) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+        alert(msg);
+        if (focusEl) focusEl.focus();
+        if (scrollEl) scrollEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
       const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value || 'PARENT';
       const name = document.getElementById('p_name').value.trim();
       const phone = document.getElementById('p_phone').value.trim();
@@ -2700,8 +2717,15 @@
         const msg = (currentLang === 'am') 
           ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። ከመታወቂያዎ ጋር አንድ መሆን አለበት።' 
           : 'Please enter your Full Legal Name (at least First and Last name). It must match the name on your Government ID.';
-        alert(msg);
-        document.getElementById('p_name').focus();
+        abortParentValidation(msg, document.getElementById('p_name'));
+        return;
+      }
+
+      if (!phone || phone.replace(/\D/g, '').length < 9) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ ትክክለኛ የስልክ ቁጥር ያስገቡ (ምሳሌ፡ 0911223344)።'
+          : 'Please enter a valid Phone Number (e.g. 0911223344).';
+        abortParentValidation(msg, document.getElementById('p_phone'));
         return;
       }
 
@@ -2711,8 +2735,7 @@
         const msg = (currentLang === 'am') 
           ? 'እባክዎ የሚማረውን ተማሪ ፆታ ይምረጡ።' 
           : (currentLang === 'or' ? 'Moo saala barataa filadhaa.' : 'Please select the student gender.');
-        alert(msg);
-        document.getElementById('p_child_gender').focus();
+        abortParentValidation(msg, document.getElementById('p_child_gender'));
         return;
       }
 
@@ -2727,8 +2750,7 @@
         const msg = (currentLang === 'am')
           ? 'እባክዎ የመታወቂያውን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለአስጠኚዎች ደህንነት ግዴታ ናቸው)።'
           : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child & tutor safety).';
-        alert(msg);
-        document.getElementById('box-p-id-front')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        abortParentValidation(msg, null, document.getElementById('box-p-id-front'));
         return;
       }
 
@@ -2837,6 +2859,21 @@
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
 
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+      }
+
+      // Reset image previews
+      const pFrontPrev = document.getElementById('preview-p-front');
+      if (pFrontPrev) { pFrontPrev.src = ''; pFrontPrev.style.display = 'none'; }
+      const pBackPrev = document.getElementById('preview-p-back');
+      if (pBackPrev) { pBackPrev.src = ''; pBackPrev.style.display = 'none'; }
+      const pFrontStat = document.getElementById('status-p-front');
+      if (pFrontStat) pFrontStat.style.display = 'none';
+      const pBackStat = document.getElementById('status-p-back');
+      if (pBackStat) pBackStat.style.display = 'none';
+
       // Clear form and cycle fresh ID for next request
       try { e.target.reset(); } catch (err) {}
       currentParentTrackingId = generateTrackingId('P');
@@ -2845,6 +2882,23 @@
 
     function handleTutorSubmit(e) {
       e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]') || document.querySelector('#tutor-form button.btn-submit');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Submitting... (በማስገባት ላይ...)</span>';
+      }
+
+      function abortTutorValidation(msg, focusEl, scrollEl) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+        alert(msg);
+        if (focusEl) focusEl.focus();
+        if (scrollEl) scrollEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
       const name = document.getElementById('t_name').value.trim();
       const phone = document.getElementById('t_phone').value.trim();
       const gender = document.getElementById('t_gender').value;
@@ -2859,33 +2913,75 @@
         const msg = (currentLang === 'am') 
           ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በፋይዳ/ቀበሌ መታወቂያዎ ላይ ካለው ስም ጋር አንድ መሆን አለበት።' 
           : 'Please enter your Full Legal Name (at least First and Last name). It must exactly match the name on your University Student ID, Grade Report, and Government ID.';
-        alert(msg);
-        document.getElementById('t_name').focus();
+        abortTutorValidation(msg, document.getElementById('t_name'));
+        return;
+      }
+
+      // Validate phone number
+      if (!phone || phone.replace(/\D/g, '').length < 9) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ ትክክለኛ የስልክ ቁጥር (ቴሌብር) ያስገቡ (ምሳሌ፡ 0911223344)።'
+          : 'Please enter a valid Phone Number for Telebirr contact (e.g. 0911223344).';
+        abortTutorValidation(msg, document.getElementById('t_phone'));
         return;
       }
 
       if (!gender) {
         const msg = (currentLang === 'am') ? 'እባክዎ ፆታዎን ይምረጡ።' : (currentLang === 'or' ? 'Moo saala keessan filadhaa.' : 'Please select your gender.');
-        alert(msg);
-        document.getElementById('t_gender').focus();
+        abortTutorValidation(msg, document.getElementById('t_gender'));
         return;
       }
 
-      const campusFile = document.getElementById('t_campus_id_file').files[0];
-      const gradeFile = document.getElementById('t_grade_file').files[0];
+      if (!uni) {
+        const msg = (currentLang === 'am') ? 'እባክዎ ዩኒቨርሲቲዎን ያስገቡ።' : 'Please enter your University name.';
+        abortTutorValidation(msg, document.getElementById('t_uni'));
+        return;
+      }
+
+      // Validate CGPA
+      const gpaNum = parseFloat(cgpa);
+      if (isNaN(gpaNum) || gpaNum < 3.00 || gpaNum > 4.00) {
+        const msg = (currentLang === 'am')
+          ? 'አስጠኚ ለመሆን ዝቅተኛው የውጤት መጠን (CGPA) 3.00 ወይም ከዚያ በላይ መሆን አለበት። እባክዎ ትክክለኛ CGPA ያስገቡ።'
+          : 'Minimum required CGPA is 3.00 or higher. Please enter a valid CGPA between 3.00 and 4.00.';
+        abortTutorValidation(msg, document.getElementById('t_cgpa'));
+        return;
+      }
+
+      if (!subj) {
+        const msg = (currentLang === 'am') ? 'እባክዎ በልበ-ሙሉነት የሚያስተምሯቸውን የትምህርት ዓይነቶች ያስገቡ።' : 'Please specify the subjects you can confidently teach.';
+        abortTutorValidation(msg, document.getElementById('t_subj'));
+        return;
+      }
+
+      const campusFile = document.getElementById('t_campus_id_file')?.files[0];
+      if (!campusFile) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ የካምፓስ ተማሪ መታወቂያዎን ፎቶ ያያይዙ (ግዴታ ነው)።'
+          : 'Please attach your Campus Student ID photo (mandatory).';
+        abortTutorValidation(msg, null, document.getElementById('box-campus-id'));
+        return;
+      }
+
+      const gradeFile = document.getElementById('t_grade_file')?.files[0];
+      if (!gradeFile) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ የውጤት ሪፖርትዎን ወይም የፖርታል ስክሪንሾት ያያይዙ (ግዴታ ነው)።'
+          : 'Please attach your Grade Report or Portal screenshot (mandatory).';
+        abortTutorValidation(msg, null, document.getElementById('box-grade-report'));
+        return;
+      }
 
       // Government ID Front & Back
       const govtType = document.getElementById('t_govt_id_type')?.value || 'National Fayda ID';
-
       const govtFrontFile = document.getElementById('t_govt_front_file')?.files[0];
       const govtBackFile = document.getElementById('t_govt_back_file')?.files[0];
 
       if (!govtFrontFile || !govtBackFile) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ የመታወቂያዎን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለህፃናት ደህንነት ግዴታ ናቸው)።' 
-          : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child safety).';
-        alert(msg);
-        document.getElementById('box-t-id-front')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ? 'እባክዎ የመንግስት መታወቂያዎን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለህፃናት ደህንነት ግዴታ ናቸው)።' 
+          : 'Please upload both FRONT and BACK photos of your Government ID (both are mandatory for child safety).';
+        abortTutorValidation(msg, null, document.getElementById('box-t-id-front'));
         return;
       }
 
@@ -2895,8 +2991,7 @@
         const msg = (currentLang === 'am')
           ? 'እባክዎ በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በመንግስት መታወቂያዎ ላይ ያለው ስም አንድ ዓይነት መሆኑን የሚያረጋግጠውን ሳጥን ምልክት ያድርጉ።'
           : 'Please check the box confirming that your Full Name matches across your Campus ID, Grade Report, and Government ID.';
-        alert(msg);
-        document.getElementById('t_name_consistency_confirm')?.focus();
+        abortTutorValidation(msg, document.getElementById('t_name_consistency_confirm'));
         return;
       }
 
@@ -3030,6 +3125,21 @@
       }
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+      }
+
+      // Reset image previews
+      ['preview-campus-id', 'preview-grade', 'preview-t-front', 'preview-t-back'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = ''; el.style.display = 'none'; }
+      });
+      ['status-campus-id', 'status-grade', 'status-t-front', 'status-t-back', 't-front-clarity', 't-back-clarity'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
 
       // Clear form and cycle fresh ID for next applicant
       try { e.target.reset(); } catch (err) {}
