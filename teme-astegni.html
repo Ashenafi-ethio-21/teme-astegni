@@ -2548,6 +2548,27 @@
       }
     }
 
+    // Send Formatted Applicant Dossier Text to Telegram Bot / Channel
+    async function sendTextMessageToTelegramBot(text) {
+      const botToken = localStorage.getItem('teme_astegni_tg_bot_token');
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id');
+      if (!botToken || !chatId || !text) return false;
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: text
+          })
+        });
+        return res.ok;
+      } catch (err) {
+        console.warn('Telegram bot text message skipped:', err);
+        return false;
+      }
+    }
+
     // Applicant Type Switcher (Parent vs Independent Student 18+)
     function toggleApplicantType(type) {
       const nameLabel = document.getElementById('i18n-f-pname');
@@ -2756,6 +2777,7 @@
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       copyToClipboardUniversal(plainText);
+      sendTextMessageToTelegramBot(plainText);
 
       const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Qophaa\'eera!' : 'Request Successfully Prepared!');
       const modalDesc = (currentLang === 'am')
@@ -2907,6 +2929,7 @@
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       copyToClipboardUniversal(plainText);
+      sendTextMessageToTelegramBot(plainText);
 
       const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Qophaa\'eera!' : 'Application Successfully Prepared!');
       const modalDesc = (currentLang === 'am')
