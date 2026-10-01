@@ -2820,18 +2820,20 @@
                         `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
-      copyToClipboardUniversal(plainText);
       sendTextMessageToTelegramBot(plainText);
 
-      const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Qophaa\'eera!' : 'Request Successfully Prepared!');
+      const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ በቀጥታ ተመዝግቧል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Galmaa\'eera!' : 'Registration Successfully Submitted!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ ጥያቄዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት።`
+        ? `ውድ <b>${name}</b>፣ ጥያቄዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ በመቀላቀል የአስተባባሪዎች ፈጣን ዝመናዎችን እና የሙከራ ትምህርት ቀጠሮዎችን መከታተል ይችላሉ።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your request is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>.`);
+          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan galmaa'eera. Waraabuun (copy/paste) hin barbaachisu!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Gara garee Telegram <b>Ethio - 21 Astegni Ops</b> makamaa.`
+          : `Dear <b>${name}</b>, your request has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to join <b>Ethio - 21 Astegni Ops</b> Telegram Group for live coordinator updates and trial lesson scheduling.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
+      if (document.getElementById('btn-tg-modal-text')) {
+        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '🚀 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ ›' : '🚀 Join Astegni Ops Telegram Group ›';
+      }
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
 
@@ -3012,18 +3014,20 @@
                         `🆔 Govt ID (Front & Back): Attached (${govtType} • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
-      copyToClipboardUniversal(plainText);
       sendTextMessageToTelegramBot(plainText);
 
-      const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ ተዘጋጅቷል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Qophaa\'eera!' : 'Application Successfully Prepared!');
+      const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ በቀጥታ ተመዝግቧል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Galmaa\'eera!' : 'Application Successfully Submitted & Registered!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ ተዘጋጅቶ ኮፒ ተደርጓል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩት፤ ያዘጋጁትን <b>የካምፓስ መታወቂያ</b>፣ <b>የውጤት ሪፖርት</b> እና <b>የ${govtType} (የፊትና የኋላ) ፎቶ</b> አብረው ያያይዙ።`
+        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ በመቀላቀል የአስተባባሪዎች ፈጣን ዝመናዎችን እና የፈተና/የስራ ቀጠሮዎችን መከታተል ይችላሉ።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) qophaa'ee waraabameera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Butoona cuqqaaluun <b>Waraqaa Kaampaasii</b>, <b>Gabaasa Qabxii</b> fi <b>Waraqaa Eenyummaa (Fuula & Dugda)</b> waliin gara <b>Ethio - 21 Astegni Ops</b> ergaa.`
-          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) is ready and copied to your clipboard.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to submit directly into <b>Ethio - 21 Astegni Ops</b>, and attach your <b>Campus ID</b>, <b>Grade Report</b>, and <b>Govt ID</b> photos.`);
+          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) galmaa'eera. Waraabuun (copy/paste) hin barbaachisu!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Gara garee Telegram <b>Ethio - 21 Astegni Ops</b> makamuun odeeffannoo haarawaa hordofaa.`
+          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to join <b>Ethio - 21 Astegni Ops</b> Telegram Group to connect with our coordinators and view your teaching trial schedule.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
+      if (document.getElementById('btn-tg-modal-text')) {
+        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '🚀 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ ›' : '🚀 Join Astegni Ops Telegram Group ›';
+      }
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
 
