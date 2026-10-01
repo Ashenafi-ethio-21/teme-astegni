@@ -777,36 +777,289 @@
       font-weight: 800;
     }
 
-    /* RECORD CARDS */
+    /* ========================================================
+       MODERN & CLASSIC EXECUTIVE RECORD CARDS (TUTORS & PARENTS)
+       ======================================================== */
     .record-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.1rem;
-      margin-bottom: 0.85rem;
-      transition: border-color 0.2s;
+      background: linear-gradient(145deg, rgba(22, 30, 46, 0.9) 0%, rgba(13, 19, 32, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
     }
 
     .record-card:hover {
-      border-color: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6);
     }
 
-    .record-top {
+    /* Tier & Category Left Accent Accents */
+    .record-card.tier-card-golden {
+      border-left: 5px solid #fbbf24;
+      box-shadow: 0 4px 24px -2px rgba(251, 191, 36, 0.12);
+    }
+    .record-card.tier-card-silver {
+      border-left: 5px solid #cbd5e1;
+      box-shadow: 0 4px 24px -2px rgba(203, 213, 225, 0.08);
+    }
+    .record-card.tier-card-bronze {
+      border-left: 5px solid #f97316;
+      box-shadow: 0 4px 24px -2px rgba(249, 115, 22, 0.1);
+    }
+    .record-card.parent-card {
+      border-left: 5px solid #38bdf8;
+      box-shadow: 0 4px 24px -2px rgba(56, 189, 248, 0.1);
+    }
+
+    /* Card Top Header */
+    .record-header-modern {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 0.65rem;
-      gap: 0.5rem;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
     }
 
-    .record-name {
-      font-size: 1.05rem;
-      font-weight: 800;
+    .record-identity {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .record-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 850;
       color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .record-avatar.avatar-golden {
+      border-color: rgba(251, 191, 36, 0.6);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(15, 23, 42, 0.95));
+      color: #fbbf24;
+    }
+    .record-avatar.avatar-silver {
+      border-color: rgba(203, 213, 225, 0.5);
+      background: linear-gradient(135deg, rgba(148, 163, 184, 0.2), rgba(15, 23, 42, 0.95));
+      color: #e2e8f0;
+    }
+    .record-avatar.avatar-bronze {
+      border-color: rgba(249, 115, 22, 0.5);
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.25), rgba(15, 23, 42, 0.95));
+      color: #fdba74;
+    }
+    .record-avatar.avatar-parent {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.95));
+      color: #38bdf8;
+    }
+
+    .record-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .record-fullname {
+      font-size: 1.12rem;
+      font-weight: 850;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .record-subtitle-line {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .record-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Tracking ID Pill */
+    .id-badge-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.74rem;
+      font-weight: 850;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9px;
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      letter-spacing: 0.2px;
+    }
+    .id-badge-pill.id-parent-pill {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    /* Meta Ribbon Bar */
+    .record-meta-ribbon {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Glass Bento Details Grid */
+    .record-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.65rem;
+      margin-bottom: 0.95rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .bento-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .bento-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+    }
+
+    .bento-value {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #f1f5f9;
       display: flex;
       align-items: center;
       gap: 0.4rem;
       flex-wrap: wrap;
+    }
+
+    /* Modern Subject Chips */
+    .subj-pill-list {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .subj-chip {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 750;
+      padding: 0.2rem 0.6rem;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.12);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      transition: all 0.15s ease;
+    }
+
+    .subj-chip-amber {
+      background: rgba(251, 191, 36, 0.12);
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, 0.25);
+    }
+
+    /* Exam notes callout */
+    .record-notes-box {
+      grid-column: 1 / -1;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      font-style: italic;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid rgba(56, 189, 248, 0.5);
+      padding: 0.4rem 0.65rem;
+      border-radius: 4px 8px 8px 4px;
+    }
+
+    /* Segmented Action Footer */
+    .record-actions-modern {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      padding-top: 0.35rem;
+    }
+
+    .actions-left-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .actions-right-group {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-act-match {
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%) !important;
+      border-color: #38bdf8 !important;
+      color: #ffffff !important;
+      font-weight: 850 !important;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-act-match:hover {
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-act-call-modern {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.2)) !important;
+      border: 1px solid rgba(16, 185, 129, 0.45) !important;
+      color: #34d399 !important;
+      font-weight: 850 !important;
+      padding: 0.42rem 0.85rem !important;
+      border-radius: 10px !important;
+    }
+    .btn-act-call-modern:hover {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.38), rgba(5, 150, 105, 0.3)) !important;
+      border-color: #10b981 !important;
+      color: #fff !important;
     }
 
     .tag-badge {
@@ -875,37 +1128,6 @@
     .exam-badge-passed { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
     .exam-badge-pending { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
     .exam-badge-none { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-
-    .record-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 0.5rem;
-      font-size: 0.82rem;
-      color: #cbd5e1;
-      margin-bottom: 0.85rem;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 0.75rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .detail-item {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .detail-label {
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .record-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
 
     .btn-act {
       background: rgba(255, 255, 255, 0.08);
@@ -1353,22 +1575,25 @@
 
     <!-- VIEW 2: PARENTS INBOX -->
     <section id="view-parents" class="view-panel">
-      <div class="toolbar-box">
-        <input type="text" id="parent-search" class="search-input" placeholder="🔍 Search parent name, phone, area, grade..." oninput="filterParents()">
-        <div class="filter-pills">
-          <button class="pill-btn active" onclick="setParentFilter('ALL', this)">All</button>
-          <button class="pill-btn" onclick="setParentFilter('Pending', this)">Pending</button>
-          <button class="pill-btn" onclick="setParentFilter('Trial Scheduled', this)">In Trial</button>
-          <button class="pill-btn" onclick="setParentFilter('Active Contract', this)">Active</button>
+      <div class="toolbar-box" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%; margin-bottom: 0.75rem;">
+          <input type="text" id="parent-search" class="search-input" placeholder="🔍 Search parent name, phone, area, grade, #AST_P..." oninput="filterParents()">
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-act" style="background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Sheet</button>
+            <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
+          </div>
+        </div>
+        <div class="filter-pills" style="gap: 0.5rem; flex-wrap: wrap;">
+          <button class="pill-btn active" onclick="setParentFilter('ALL', this)">All Inquiries</button>
+          <button class="pill-btn" onclick="setParentFilter('Pending', this)">⏳ Pending</button>
+          <button class="pill-btn" onclick="setParentFilter('Trial Scheduled', this)">📅 In Trial</button>
+          <button class="pill-btn" onclick="setParentFilter('Active Contract', this)">✅ Active Contracts</button>
+          <button class="pill-btn" onclick="setParentFilter('Closed', this)">🔒 Closed</button>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-        <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="parent-list-counter">Showing 0 requests</span>
-        <div style="display: flex; gap: 0.5rem;">
-          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Google Sheet</button>
-          <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
-        </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding: 0 0.25rem;">
+        <span style="font-size: 0.82rem; color: #94a3b8; font-weight: 800; letter-spacing: 0.3px;" id="parent-list-counter">Showing 0 requests</span>
       </div>
 
       <div id="parents-cards-container">
@@ -1378,31 +1603,41 @@
 
     <!-- VIEW 3: TUTORS DIRECTORY -->
     <section id="view-tutors" class="view-panel">
-      <div class="toolbar-box">
-        <input type="text" id="tutor-search" class="search-input" placeholder="🔍 Search tutor name, campus, CGPA, subjects..." oninput="filterTutors()">
-        <div class="filter-pills" style="gap: 0.4rem; flex-wrap: wrap;">
+      <div class="toolbar-box" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.1rem; margin-bottom: 1rem;">
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%; margin-bottom: 0.85rem;">
+          <input type="text" id="tutor-search" class="search-input" placeholder="🔍 Search tutor name, campus, CGPA, subjects, #AST_T..." oninput="filterTutors()">
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn-act" style="background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Sheet</button>
+            <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
+          </div>
+        </div>
+
+        <!-- Tier 1 Filters: Academic Metal Tiers -->
+        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Academic Tier & Evaluation</div>
+        <div class="filter-pills" style="gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
           <button class="pill-btn active" onclick="setTutorFilter('ALL', this)">All Scholars</button>
-          <button class="pill-btn" style="border-color: rgba(251, 191, 36, 0.6); color: #fbbf24;" onclick="setTutorFilter('GOLDEN', this)">🥇 Golden Tier (CGPA ≥ 3.75)</button>
-          <button class="pill-btn" style="border-color: rgba(148, 163, 184, 0.6); color: #e2e8f0;" onclick="setTutorFilter('SILVER', this)">🥈 Silver Tier (3.40 - 3.74)</button>
-          <button class="pill-btn" style="border-color: rgba(249, 115, 22, 0.6); color: #fdba74;" onclick="setTutorFilter('BRONZE', this)">🥉 Bronze Tier (3.00 - 3.39)</button>
+          <button class="pill-btn" style="border-color: rgba(251, 191, 36, 0.5); color: #fbbf24;" onclick="setTutorFilter('GOLDEN', this)">🥇 Golden (CGPA ≥ 3.75)</button>
+          <button class="pill-btn" style="border-color: rgba(203, 213, 225, 0.5); color: #e2e8f0;" onclick="setTutorFilter('SILVER', this)">🥈 Silver (3.40 - 3.74)</button>
+          <button class="pill-btn" style="border-color: rgba(249, 115, 22, 0.5); color: #fdba74;" onclick="setTutorFilter('BRONZE', this)">🥉 Bronze (3.00 - 3.39)</button>
+          <button class="pill-btn" style="border-color: rgba(16, 185, 129, 0.5); color: #34d399;" onclick="setTutorFilter('EXAM_PASSED', this)">✅ Exam Passed</button>
+        </div>
+
+        <!-- Tier 2 Filters: 5-Level Rank & Gender -->
+        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Progression Level & Demographics</div>
+        <div class="filter-pills" style="gap: 0.45rem; flex-wrap: wrap;">
           <button class="pill-btn" onclick="setTutorFilter('L5', this)">👑 L5 Master</button>
-          <button class="pill-btn" onclick="setTutorFilter('L4', this)">💎 L4</button>
-          <button class="pill-btn" onclick="setTutorFilter('L3', this)">⭐ L3</button>
-          <button class="pill-btn" onclick="setTutorFilter('L2', this)">⚡ L2</button>
+          <button class="pill-btn" onclick="setTutorFilter('L4', this)">💎 L4 Distinguished</button>
+          <button class="pill-btn" onclick="setTutorFilter('L3', this)">⭐ L3 Senior</button>
+          <button class="pill-btn" onclick="setTutorFilter('L2', this)">⚡ L2 Advanced</button>
           <button class="pill-btn" onclick="setTutorFilter('L1', this)">🎙️ L1 Communicator</button>
           <button class="pill-btn" onclick="setTutorFilter('BASIC', this)">Basic (L0)</button>
-          <button class="pill-btn" onclick="setTutorFilter('EXAM_PASSED', this)">✅ Exam Passed</button>
-          <button class="pill-btn" onclick="setTutorFilter('Female', this)">Female</button>
-          <button class="pill-btn" onclick="setTutorFilter('Male', this)">Male</button>
+          <button class="pill-btn" onclick="setTutorFilter('Female', this)">👩 Female Scholars</button>
+          <button class="pill-btn" onclick="setTutorFilter('Male', this)">👨 Male Scholars</button>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-        <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="tutor-list-counter">Showing 0 verified tutors</span>
-        <div style="display: flex; gap: 0.5rem;">
-          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Google Sheet</button>
-          <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
-        </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding: 0 0.25rem;">
+        <span style="font-size: 0.82rem; color: #94a3b8; font-weight: 800; letter-spacing: 0.3px;" id="tutor-list-counter">Showing 0 verified tutors</span>
       </div>
 
       <div id="tutors-cards-container">
@@ -2644,19 +2879,22 @@ function rowsToJson(sheet) {
 
       recentItems.forEach(p => {
         const div = document.createElement('div');
-        div.className = 'record-card';
+        div.className = 'record-card parent-card';
+        div.style.marginBottom = '0.65rem';
+        div.style.padding = '0.9rem 1.1rem';
         div.innerHTML = `
-          <div class="record-top">
-            <div class="record-name">
-              <span>${escapeHtml(p.name)}</span>
-              <span class="tag-badge ${getStatusBadgeClass(p.status || 'Pending')}">${p.status || 'Pending'}</span>
+          <div class="record-header-modern" style="margin-bottom: 0;">
+            <div class="record-identity">
+              <div class="record-avatar avatar-parent" style="width: 38px; height: 38px; font-size: 1rem;">👨‍👩‍👧</div>
+              <div class="record-titles">
+                <div class="record-fullname" style="font-size: 0.98rem;">${escapeHtml(p.name)}</div>
+                <div class="record-subtitle-line">📍 ${escapeHtml(p.area)} • 🎒 ${escapeHtml(p.grade)} • 🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</div>
+              </div>
             </div>
-            <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call">📞 ${escapeHtml(p.phone)}</a>
-          </div>
-          <div class="record-details">
-            <div class="detail-item"><span class="detail-label">📍 Area:</span> ${escapeHtml(p.area)}</div>
-            <div class="detail-item"><span class="detail-label">🎓 Grade:</span> ${escapeHtml(p.grade)}</div>
-            <div class="detail-item"><span class="detail-label">🧒 Student Gender:</span> <span class="tag-badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: 700;">${escapeHtml(p.studentGender || p.childGender || 'Student')}</span></div>
+            <div class="record-header-actions">
+              <span class="tag-badge ${getStatusBadgeClass(p.status || 'Pending')}">${p.status || 'Pending'}</span>
+              <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call-modern">📞 Call Client</a>
+            </div>
           </div>
         `;
         recentList.appendChild(div);
@@ -2672,7 +2910,7 @@ function rowsToJson(sheet) {
 
       container.innerHTML = '';
 
-        let filtered = parents.filter(p => {
+      let filtered = parents.filter(p => {
         const matchesQuery = !query || 
           p.name.toLowerCase().includes(query) || 
           p.phone.toLowerCase().includes(query) || 
@@ -2691,13 +2929,13 @@ function rowsToJson(sheet) {
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.5rem 1rem; background: rgba(0,0,0,0.25); border: 1px dashed var(--card-border); border-radius: 16px; margin: 1rem 0;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍👩‍👧</div>
-            <div style="font-weight: 850; color: #fff; font-size: 1rem; margin-bottom: 0.35rem;">No Parent Requests on this Device Yet</div>
-            <p style="font-size: 0.78rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.25rem; line-height: 1.5;">
-              When parents or adult students apply on their own phones, their applications dispatch to Telegram &amp; Google Sheets. You can also manually push any Parent ID directly below:
+          <div style="text-align: center; padding: 3rem 1.5rem; background: rgba(15, 23, 42, 0.6); border: 1.5px dashed rgba(56, 189, 248, 0.25); border-radius: 20px; margin: 1.25rem 0;">
+            <div style="font-size: 2.4rem; margin-bottom: 0.6rem;">👨‍👩‍👧</div>
+            <div style="font-weight: 850; color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">No Parent Inquiries in this Filter</div>
+            <p style="font-size: 0.82rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.55;">
+              When parents or adult students apply, their requests dispatch automatically to Telegram &amp; Google Sheets. You can also manually push any Parent ID directly below:
             </p>
-            <div style="max-width: 420px; margin: 0 auto; display: flex; gap: 0.5rem;">
+            <div style="max-width: 440px; margin: 0 auto; display: flex; gap: 0.6rem;">
               <input type="text" id="empty-parent-push-id" class="form-ctrl" placeholder="Enter Parent ID (e.g. AST-P-1024)">
               <button class="btn-act btn-act-primary" onclick="pushCustomParentIdFromEmpty()">⚡ Push to Sheet</button>
             </div>
@@ -2707,53 +2945,84 @@ function rowsToJson(sheet) {
 
       filtered.reverse().forEach((p) => {
         const card = document.createElement('div');
-        card.className = 'record-card';
+        card.className = 'record-card parent-card';
         const currentStatus = p.status || 'Pending';
         const isAdult = p.applicantType === 'STUDENT_ADULT';
-        const applicantBadge = isAdult
-          ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35);">🎓 Student 18+ (Independent)</span>`
-          : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35);">👨‍👩‍👧 Parent Lead</span>`;
         const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
         const pTgTag = p.tgTag || ('#AST_P_' + (p.phone || '').slice(-4));
 
+        const subjectsArray = (p.subjs || 'General / All').split(',').map(s => s.trim()).filter(Boolean);
+        const subjChipsHtml = subjectsArray.map(s => `<span class="subj-chip">${escapeHtml(s)}</span>`).join('');
+
         card.innerHTML = `
-          <div class="record-top">
-            <div>
-              <div class="record-name">
-                <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 850; border: 1px solid rgba(56, 189, 248, 0.35);">🏷️ ${escapeHtml(pTrackingId)}</span>
-                ${escapeHtml(p.name)}
-                ${applicantBadge}
-                <span class="tag-badge ${getStatusBadgeClass(currentStatus)}">${currentStatus}</span>
-              </div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
-                📅 Received: ${new Date(p.date).toLocaleString()}
+          <!-- Top Header -->
+          <div class="record-header-modern">
+            <div class="record-identity">
+              <div class="record-avatar avatar-parent">${isAdult ? '🎓' : '👨‍👩‍👧'}</div>
+              <div class="record-titles">
+                <div class="record-fullname">
+                  ${escapeHtml(p.name)}
+                  ${isAdult 
+                    ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-size: 0.65rem;">🎓 Adult Student 18+</span>`
+                    : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-size: 0.65rem;">👨‍👩‍👧 Parent Lead</span>`}
+                </div>
+                <div class="record-subtitle-line">
+                  <span>📍 ${escapeHtml(p.area)}</span>
+                  <span>•</span>
+                  <span>📅 ${new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
               </div>
             </div>
-            <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call">📞 Call Client</a>
+
+            <div class="record-header-actions">
+              <span class="id-badge-pill id-parent-pill">🏷️ ${escapeHtml(pTrackingId)}</span>
+              <span class="tag-badge ${getStatusBadgeClass(currentStatus)}">${currentStatus}</span>
+              <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call-modern">📞 Call Client</a>
+            </div>
           </div>
 
-          <div class="record-details">
-            <div class="detail-item"><span class="detail-label">📞 Phone:</span> ${escapeHtml(p.phone)}</div>
-            <div class="detail-item"><span class="detail-label">📍 Location:</span> ${escapeHtml(p.area)}</div>
-            <div class="detail-item"><span class="detail-label">🧒 Student Gender:</span> <span class="tag-badge" style="background: rgba(56,189,248,0.15); color: #38bdf8; font-weight: 700; font-size: 0.75rem;">${escapeHtml(p.studentGender || p.childGender || 'Student')}</span></div>
-            <div class="detail-item"><span class="detail-label">🎓 Grade Level:</span> ${escapeHtml(p.grade)}</div>
-            <div class="detail-item"><span class="detail-label">🆔 Household ID:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(p.idType || 'National Fayda / Kebele')}</span> <span class="tag-badge tag-active" style="font-size:0.65rem; margin-left: 0.35rem;">✓ Vetted in Vault</span></div>
-            <div class="detail-item"><span class="detail-label">✈️ Telegram Tag:</span> <span style="color: #24a1de; font-weight: 750;">${escapeHtml(pTgTag)}</span></div>
-            <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects:</span> ${escapeHtml(p.subjs)}</div>
+          <!-- Meta Ribbon Bar -->
+          <div class="record-meta-ribbon">
+            <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
+            <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
+            <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
+            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" style="text-decoration:none;" class="tag-badge" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ ${escapeHtml(pTgTag)}</a>
           </div>
 
-          <div class="record-actions">
-            <select class="status-dropdown" onchange="updateParentStatus('${escapeHtml(p.phone)}', this.value)">
-              <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending (በመጠባበቅ)</option>
-              <option value="Trial Scheduled" ${currentStatus === 'Trial Scheduled' ? 'selected' : ''}>📅 Trial Scheduled (በሙከራ)</option>
-              <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
-              <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
-            </select>
-            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push to Sheet</button>
-            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
-            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ Vault (${escapeHtml(pTgTag)})</a>
-            <button class="btn-act btn-act-primary" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
-            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️ Remove</button>` : ''}
+          <!-- Bento Grid Details -->
+          <div class="record-bento-grid">
+            <div class="bento-item" style="grid-column: 1 / -1;">
+              <span class="bento-label">📖 Requested Subjects</span>
+              <div class="subj-pill-list">${subjChipsHtml}</div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">📞 Direct Phone</span>
+              <div class="bento-value">${escapeHtml(p.phone)}</div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">📍 Neighborhood / City</span>
+              <div class="bento-value">${escapeHtml(p.area)}</div>
+            </div>
+          </div>
+
+          <!-- Segmented Actions Footer -->
+          <div class="record-actions-modern">
+            <div class="actions-left-group">
+              <select class="status-dropdown" onchange="updateParentStatus('${escapeHtml(p.phone)}', this.value)">
+                <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending (በመጠባበቅ)</option>
+                <option value="Trial Scheduled" ${currentStatus === 'Trial Scheduled' ? 'selected' : ''}>📅 Trial Scheduled (በሙከራ)</option>
+                <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
+                <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
+              </select>
+              <button class="btn-act btn-act-match" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
+            </div>
+
+            <div class="actions-right-group">
+              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
+              <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ Vault</a>
+              <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push</button>
+              ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️</button>` : ''}
+            </div>
           </div>
         `;
         container.appendChild(card);
@@ -2890,17 +3159,17 @@ function rowsToJson(sheet) {
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 2.5rem 1rem; background: rgba(0,0,0,0.25); border: 1px dashed var(--card-border); border-radius: 16px; margin: 1rem 0;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎓</div>
-            <div style="font-weight: 850; color: #fff; font-size: 1rem; margin-bottom: 0.35rem;">No Tutors Registered on this Device Yet</div>
-            <p style="font-size: 0.78rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.25rem; line-height: 1.5;">
-              When university students apply on their own phones, their applications dispatch to Telegram &amp; Google Sheets. You can share the official link or manually push any Tutor ID directly below:
+          <div style="text-align: center; padding: 3rem 1.5rem; background: rgba(15, 23, 42, 0.6); border: 1.5px dashed rgba(251, 191, 36, 0.25); border-radius: 20px; margin: 1.25rem 0;">
+            <div style="font-size: 2.4rem; margin-bottom: 0.6rem;">🎓</div>
+            <div style="font-weight: 850; color: #fff; font-size: 1.1rem; margin-bottom: 0.4rem;">No Tutors Found in this Filter</div>
+            <p style="font-size: 0.82rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.5rem; line-height: 1.55;">
+              When university students apply, their applications dispatch to Telegram &amp; Google Sheets. You can share the official link or manually push any Tutor ID directly below:
             </p>
             <div style="display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
               <button class="btn-act btn-act-primary" onclick="copyTutorShareLinkWithWebhook()">📋 Copy Public Tutor Application Link</button>
               <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="switchView('view-database')">☁️ Open Google Sheet Cloud Database</button>
             </div>
-            <div style="max-width: 420px; margin: 0 auto; display: flex; gap: 0.5rem;">
+            <div style="max-width: 440px; margin: 0 auto; display: flex; gap: 0.6rem;">
               <input type="text" id="empty-tutor-push-id" class="form-ctrl" placeholder="Enter Tutor ID (e.g. AST-T-1024)">
               <button class="btn-act btn-act-primary" onclick="pushCustomTutorIdFromEmpty()">⚡ Push to Sheet</button>
             </div>
@@ -2910,59 +3179,99 @@ function rowsToJson(sheet) {
 
       filtered.forEach((t) => {
         const card = document.createElement('div');
-        card.className = 'record-card';
         const tier = getTutorMetalTier(t.cgpa);
+        const tierCardClass = tier.code === 'GOLDEN' ? 'tier-card-golden' : (tier.code === 'SILVER' ? 'tier-card-silver' : 'tier-card-bronze');
+        const avatarClass = tier.code === 'GOLDEN' ? 'avatar-golden' : (tier.code === 'SILVER' ? 'avatar-silver' : 'avatar-bronze');
+        card.className = `record-card ${tierCardClass}`;
+
         const l = Number(t.level) || 0;
         const levelTitle = l === 5 ? 'Level 5 Master' : (l === 4 ? 'Level 4 Distinguished' : (l === 3 ? 'Level 3 Senior' : (l === 2 ? 'Level 2 Advanced' : (l === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
         const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
         const tTgTag = t.tgTag || ('#AST_T_' + (t.phone || '').slice(-4));
+        const initial = (t.name || 'T').trim().charAt(0).toUpperCase();
+
+        const subjectsArray = (t.subj || 'General').split(',').map(s => s.trim()).filter(Boolean);
+        const subjChipsHtml = subjectsArray.map(s => `<span class="subj-chip subj-chip-amber">${escapeHtml(s)}</span>`).join('');
 
         card.innerHTML = `
-          <div class="record-top">
-            <div>
-              <div class="record-name">
-                <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 850; border: 1px solid rgba(16, 185, 129, 0.35);">🏷️ ${escapeHtml(tTrackingId)}</span>
-                ${escapeHtml(t.name)}
-                ${getLevelBadgeHtml(t.level, t.cgpa)}
-                <span class="tag-badge tag-active">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
-                <span class="tag-badge tag-trial">${escapeHtml(t.gender || 'Verified')}</span>
-              </div>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                <span>🏛️ ${escapeHtml(t.uni)} • ${escapeHtml(t.year)}</span>
-                <span>•</span>
-                ${getExamBadgeHtml(t)}
-                <span>•</span>
-                <span style="color: #38bdf8; font-weight: 750;">${getDispatchPriorityText(t.level, t.cgpa)}</span>
+          <!-- Top Header -->
+          <div class="record-header-modern">
+            <div class="record-identity">
+              <div class="record-avatar ${avatarClass}">${initial}</div>
+              <div class="record-titles">
+                <div class="record-fullname">
+                  ${escapeHtml(t.name)}
+                  <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name}</span>
+                </div>
+                <div class="record-subtitle-line">
+                  <span>🏛️ ${escapeHtml(t.uni)}</span>
+                  <span>•</span>
+                  <span>📅 ${escapeHtml(t.year)}</span>
+                  <span>•</span>
+                  <span>🚻 ${escapeHtml(t.gender || 'Scholar')}</span>
+                </div>
               </div>
             </div>
-            <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call">📞 Call Astegni</a>
+
+            <div class="record-header-actions">
+              <span class="id-badge-pill">🏷️ ${escapeHtml(tTrackingId)}</span>
+              <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call-modern">📞 Call Astegni</a>
+            </div>
           </div>
 
-          <div class="record-details">
-            <div class="detail-item"><span class="detail-label">📞 Phone:</span> ${escapeHtml(t.phone)}</div>
-            <div class="detail-item"><span class="detail-label">🆔 ID Verification:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(t.govtId || 'National Fayda / Kebele')}</span> <span class="tag-badge tag-active" style="font-size:0.65rem; margin-left: 0.35rem;">✓ Vetted in Vault</span></div>
-            <div class="detail-item"><span class="detail-label">🏅 Metal Tier:</span> <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name} (CGPA ${escapeHtml(t.cgpa)})</span></div>
-            <div class="detail-item"><span class="detail-label">🎖️ Progression Rank:</span> ${tier.emoji} ${tier.name} ${levelTitle} (${l}/5)</div>
-            <div class="detail-item"><span class="detail-label">🎙️ Teaching Clarity:</span> ${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
-            <div class="detail-item"><span class="detail-label">✈️ Telegram Tag:</span> <span style="color: #24a1de; font-weight: 750;">${escapeHtml(tTgTag)}</span></div>
-            <div class="detail-item"><span class="detail-label">🚀 Dispatch Queue:</span> <span style="color: #38bdf8; font-weight: 750;">${getDispatchPriorityText(t.level, t.cgpa)}</span></div>
-            <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects (Grade A):</span> ${escapeHtml(t.subj)}</div>
-            ${t.examNotes ? `<div class="detail-item" style="grid-column: 1 / -1; font-style: italic; color: #94a3b8;"><span class="detail-label">📝 Exam Notes:</span> "${escapeHtml(t.examNotes)}"</div>` : ''}
+          <!-- Meta Badges Ribbon -->
+          <div class="record-meta-ribbon">
+            <span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 850;">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
+            ${getLevelBadgeHtml(t.level, t.cgpa)}
+            ${getExamBadgeHtml(t)}
+            <span class="tag-badge tag-active">🛡️ Fayda/Campus Verified</span>
+            <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">🚀 ${getDispatchPriorityText(t.level, t.cgpa)}</span>
           </div>
 
-          <div class="record-actions">
-            <select class="status-dropdown" onchange="updateTutorStatus('${escapeHtml(t.phone)}', this.value)">
-              <option value="Verified" ${(t.status || 'Verified') === 'Verified' ? 'selected' : ''}>✅ Verified (ንቁ)</option>
-              <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
-              <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
-            </select>
-            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push to Sheet</button>
-            <button class="btn-act btn-act-primary" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
-            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
-            <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Teaching Exam</button>
-            <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Upgrade Level</button>
-            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(tTgTag)} in Telegram">✈️ Vault (${escapeHtml(tTgTag)})</a>
-            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️ Remove</button>` : ''}
+          <!-- Bento Grid Details -->
+          <div class="record-bento-grid">
+            <div class="bento-item" style="grid-column: 1 / -1;">
+              <span class="bento-label">📖 Subjects (Grade A Mastery)</span>
+              <div class="subj-pill-list">${subjChipsHtml}</div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">📞 Direct Phone</span>
+              <div class="bento-value">${escapeHtml(t.phone)}</div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">🎙️ Teaching Clarity</span>
+              <div class="bento-value">${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">🆔 ID Verification</span>
+              <div class="bento-value">${escapeHtml(t.govtId || 'National Fayda / Kebele')} <span class="tag-badge tag-active" style="font-size:0.62rem;">✓ Vault</span></div>
+            </div>
+            <div class="bento-item">
+              <span class="bento-label">✈️ Telegram Tag</span>
+              <div class="bento-value"><a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" style="color: #24a1de; text-decoration: none; font-weight: 750;">${escapeHtml(tTgTag)}</a></div>
+            </div>
+            ${t.examNotes ? `<div class="record-notes-box">📝 <b>Evaluation Notes:</b> "${escapeHtml(t.examNotes)}"</div>` : ''}
+          </div>
+
+          <!-- Segmented Actions Footer -->
+          <div class="record-actions-modern">
+            <div class="actions-left-group">
+              <select class="status-dropdown" onchange="updateTutorStatus('${escapeHtml(t.phone)}', this.value)">
+                <option value="Verified" ${(t.status || 'Verified') === 'Verified' ? 'selected' : ''}>✅ Verified (ንቁ)</option>
+                <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
+                <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
+              </select>
+              <button class="btn-act btn-act-match" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
+            </div>
+
+            <div class="actions-right-group">
+              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
+              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Exam</button>
+              <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Level</button>
+              <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(tTgTag)} in Telegram">✈️ Vault</a>
+              <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push</button>
+              ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️</button>` : ''}
+            </div>
           </div>
         `;
         container.appendChild(card);
@@ -4309,8 +4618,8 @@ function rowsToJson(sheet) {
 
     function setParentFilter(filter, btn) {
       currentParentFilter = filter;
-      btn.parentElement.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('#view-parents .pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
       renderParents();
     }
 
@@ -4318,8 +4627,8 @@ function rowsToJson(sheet) {
 
     function setTutorFilter(filter, btn) {
       currentTutorFilter = filter;
-      btn.parentElement.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('#view-tutors .pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
       renderTutors();
     }
 
