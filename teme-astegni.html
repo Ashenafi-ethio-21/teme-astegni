@@ -2548,10 +2548,15 @@
       });
     }
 
+    // Global Configuration Fallbacks (Can be initialized or loaded dynamically)
+    window.TEME_DEFAULT_WEBHOOK_URL = window.TEME_DEFAULT_WEBHOOK_URL || '';
+    window.TEME_DEFAULT_TG_BOT_TOKEN = window.TEME_DEFAULT_TG_BOT_TOKEN || '';
+    window.TEME_DEFAULT_TG_CHAT_ID = window.TEME_DEFAULT_TG_CHAT_ID || '';
+
     // Send Photo to Telegram Bot / Channel (100% Free Unlimited Storage)
     async function sendPhotoToTelegramBot(blob, caption) {
-      const botToken = localStorage.getItem('teme_astegni_tg_bot_token');
-      const chatId = localStorage.getItem('teme_astegni_tg_chat_id');
+      const botToken = localStorage.getItem('teme_astegni_tg_bot_token') || window.TEME_DEFAULT_TG_BOT_TOKEN;
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id') || window.TEME_DEFAULT_TG_CHAT_ID;
       if (!botToken || !chatId || !blob) return false;
       try {
         const formData = new FormData();
@@ -2571,8 +2576,8 @@
 
     // Send Formatted Applicant Dossier Text to Telegram Bot / Channel
     async function sendTextMessageToTelegramBot(text) {
-      const botToken = localStorage.getItem('teme_astegni_tg_bot_token');
-      const chatId = localStorage.getItem('teme_astegni_tg_chat_id');
+      const botToken = localStorage.getItem('teme_astegni_tg_bot_token') || window.TEME_DEFAULT_TG_BOT_TOKEN;
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id') || window.TEME_DEFAULT_TG_CHAT_ID;
       if (!botToken || !chatId || !text) return false;
       try {
         const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -2761,12 +2766,13 @@
         localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
 
         // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
-        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
         if (webhookUrl && webhookUrl.startsWith('http')) {
+          // Channel 1: POST
           fetch(webhookUrl, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ 
               action: 'addParent', 
               data: {
@@ -2775,6 +2781,12 @@
               }
             })
           }).catch(() => {});
+
+          // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
+          try {
+            const sep = webhookUrl.includes('?') ? '&' : '?';
+            fetch(`${webhookUrl}${sep}action=addParent&id=${encodeURIComponent(trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+          } catch(e) {}
         }
 
         // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
@@ -2925,12 +2937,13 @@
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
 
         // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
-        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
         if (webhookUrl && webhookUrl.startsWith('http')) {
+          // Channel 1: POST
           fetch(webhookUrl, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ 
               action: 'addTutor', 
               data: {
@@ -2939,6 +2952,12 @@
               }
             })
           }).catch(() => {});
+
+          // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
+          try {
+            const sep = webhookUrl.includes('?') ? '&' : '?';
+            fetch(`${webhookUrl}${sep}action=addTutor&id=${encodeURIComponent(trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+          } catch(e) {}
         }
 
         // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
