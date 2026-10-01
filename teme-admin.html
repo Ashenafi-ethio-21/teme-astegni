@@ -929,6 +929,7 @@
         </div>
 
         <button type="submit" class="btn-auth-submit">Unlock Operations Portal ›</button>
+        <button type="button" class="btn-auth-submit" onclick="directFounderUnlock()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin-top: 0.6rem;">⚡ Instant Founder Access (ፈጣን መግቢያ)</button>
         <div id="login-error" class="auth-error">የተሳሳተ ኢሜይል ወይም ሚስጥር ቃል ነው። እባክዎ እንደገና ይሞክሩ።</div>
       </form>
 
@@ -1887,19 +1888,44 @@ function rowsToJson(sheet) {
     }
 
     function setSessionUser(user) {
+      try {
+        localStorage.setItem('teme_active_user', JSON.stringify(user));
+      } catch (err) {}
       sessionStorage.setItem('teme_session_user', JSON.stringify(user));
     }
 
     function getSessionUser() {
+      try {
+        const local = localStorage.getItem('teme_active_user');
+        if (local) return JSON.parse(local);
+      } catch (err) {}
       return JSON.parse(sessionStorage.getItem('teme_session_user') || 'null');
     }
 
     function lockPortal() {
+      try {
+        localStorage.removeItem('teme_active_user');
+      } catch (err) {}
       sessionStorage.removeItem('teme_session_user');
       document.getElementById('main-content').style.display = 'none';
       document.getElementById('admin-bottom-nav').style.display = 'none';
       document.getElementById('login-pass').value = '';
       document.getElementById('screen-login').style.display = 'flex';
+    }
+
+    function directFounderUnlock() {
+      const defaultOwner = {
+        role: 'owner',
+        name: 'Ashenafi (Ethio-21 Founder)',
+        email: 'ashenafitobe@gmail.com',
+        permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+      };
+      setSessionUser(defaultOwner);
+      document.getElementById('screen-login').style.display = 'none';
+      if (document.getElementById('screen-owner-setup')) {
+        document.getElementById('screen-owner-setup').style.display = 'none';
+      }
+      launchDashboard();
     }
 
     // ==========================================
@@ -3322,23 +3348,30 @@ function rowsToJson(sheet) {
         document.getElementById('tg-chat-id-input').value = savedTgChat;
       }
 
-      const owner = localStorage.getItem('teme_astegni_owner');
-      if (!owner) {
-        // First run: No owner exists yet! Render Owner Setup Wizard
-        document.getElementById('screen-owner-setup').style.display = 'flex';
-        document.getElementById('screen-login').style.display = 'none';
-        document.getElementById('main-content').style.display = 'none';
-      } else {
-        // Owner exists: Check session auth
-        const sessionUser = getSessionUser();
-        if (sessionUser) {
-          launchDashboard();
-        } else {
-          document.getElementById('screen-login').style.display = 'flex';
-          document.getElementById('screen-owner-setup').style.display = 'none';
-          document.getElementById('main-content').style.display = 'none';
-        }
+      // Check for active or saved session user
+      let activeUser = getSessionUser();
+      if (!activeUser) {
+        // Automatically initialize Default Founder/Owner session so it NEVER asks again
+        const defaultOwner = {
+          role: 'owner',
+          name: 'Ashenafi (Ethio-21 Founder)',
+          email: 'ashenafitobe@gmail.com',
+          permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+        };
+        setSessionUser(defaultOwner);
+        activeUser = defaultOwner;
       }
+
+      // Ensure setup and login overlays are completely hidden
+      if (document.getElementById('screen-owner-setup')) {
+        document.getElementById('screen-owner-setup').style.display = 'none';
+      }
+      if (document.getElementById('screen-login')) {
+        document.getElementById('screen-login').style.display = 'none';
+      }
+
+      // Directly launch operations dashboard
+      launchDashboard();
     });
   </script>
 </body>
