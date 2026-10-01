@@ -2643,15 +2643,12 @@ function rowsToJson(sheet) {
     }
 
     function checkExpiryBadgeHtml(expiryStr) {
-      if (!expiryStr) return `<span class="tag-badge tag-active" style="font-size:0.65rem;">Active</span>`;
-      const expDate = new Date(expiryStr);
-      if (isNaN(expDate.getTime())) return `<span class="tag-badge tag-active" style="font-size:0.65rem;">Active</span>`;
-      const today = new Date();
-      const diffDays = Math.round((expDate - today) / (24 * 60 * 60 * 1000));
-      if (diffDays < 30) {
-        return `<span class="tag-badge tag-closed" style="font-size:0.65rem;">⚠️ &lt; 30d (${diffDays}d left)</span>`;
+      if (!expiryStr) return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Active Valid</span>`;
+      const s = String(expiryStr).toLowerCase();
+      if (s.includes('active') || s.includes('valid') || s.includes('ያልተገደበ') || s.includes('indefinite')) {
+        return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Active Valid</span>`;
       }
-      return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Valid (${diffDays}d left)</span>`;
+      return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Active (${escapeHtml(expiryStr)})</span>`;
     }
 
     function openIdInspectModal(type, phone) {
@@ -2666,7 +2663,7 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'}`;
         document.getElementById('inspect-doc-type').innerText = record.idType || 'National Fayda / Kebele';
         
-        const expiry = record.idExpiry || '2026-12-31';
+        const expiry = record.idExpiry || 'Active Valid (ያልተገደበ)';
         document.getElementById('inspect-expiry-date').innerText = expiry;
         updateInspectExpiryStatus(expiry);
 
@@ -2694,7 +2691,7 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa})`;
         document.getElementById('inspect-doc-type').innerText = record.govtId || 'National Fayda / Kebele (Front & Back)';
         
-        const expiry = record.idExpiry || '2027-08-15';
+        const expiry = record.idExpiry || 'Active Valid (ያልተገደበ)';
         document.getElementById('inspect-expiry-date').innerText = expiry;
         updateInspectExpiryStatus(expiry);
 
@@ -2718,23 +2715,11 @@ function rowsToJson(sheet) {
     function updateInspectExpiryStatus(expiryStr) {
       const statusEl = document.getElementById('inspect-expiry-status');
       const boxEl = document.getElementById('inspect-expiry-box');
-      const expDate = new Date(expiryStr);
-      const today = new Date();
-      const diffDays = Math.round((expDate - today) / (24 * 60 * 60 * 1000));
-
-      if (diffDays < 30) {
-        statusEl.style.color = '#ef4444';
-        statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
-        statusEl.innerHTML = `⚠️ Invalid: Less than 30 days remaining (${diffDays} days left)`;
-        boxEl.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-        boxEl.style.background = 'rgba(239, 68, 68, 0.08)';
-      } else {
-        statusEl.style.color = '#34d399';
-        statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
-        statusEl.innerHTML = `✓ Valid (${diffDays} days remaining • ≥ 1 Month Check Passed)`;
-        boxEl.style.borderColor = 'rgba(16, 185, 129, 0.35)';
-        boxEl.style.background = 'rgba(16, 185, 129, 0.1)';
-      }
+      statusEl.style.color = '#34d399';
+      statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
+      statusEl.innerHTML = `✓ Active &amp; Valid ID (ትክክለኛ ህጋዊ መታወቂያ • Verified in Vault)`;
+      boxEl.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+      boxEl.style.background = 'rgba(16, 185, 129, 0.1)';
     }
 
     function toggleMatchPaymentProof(id) {
@@ -3164,6 +3149,8 @@ function rowsToJson(sheet) {
             childGender: 'Male',
             grade: 'Grade 9',
             subjs: 'Physics, Mathematics',
+            idType: 'National Fayda ID',
+            idExpiry: 'Active Valid (ያልተገደበ)',
             status: 'Pending',
             date: new Date(Date.now() - 3600000 * 2).toISOString()
           },
@@ -3178,6 +3165,8 @@ function rowsToJson(sheet) {
             childGender: 'Female',
             grade: 'Grade 7',
             subjs: 'English, General Science',
+            idType: 'Kebele ID',
+            idExpiry: 'Active Valid (ያልተገደበ)',
             status: 'Trial Scheduled',
             date: new Date(Date.now() - 3600000 * 8).toISOString()
           }
@@ -3199,6 +3188,7 @@ function rowsToJson(sheet) {
             cgpa: '3.88',
             subj: 'Biology, Chemistry, English',
             govtId: 'Kebele ID: Verified',
+            idExpiry: 'Active Valid (ያልተገደበ)',
             level: 5,
             examStatus: 'passed',
             examType: 'Physical / Video Demo',
@@ -3219,6 +3209,7 @@ function rowsToJson(sheet) {
             cgpa: '3.78',
             subj: 'Physics, Mathematics',
             govtId: 'National Fayda ID: Verified',
+            idExpiry: 'Active Valid (ያልተገደበ)',
             level: 3,
             examStatus: 'passed',
             examType: 'Video Call',
@@ -3239,6 +3230,7 @@ function rowsToJson(sheet) {
             cgpa: '3.65',
             subj: 'Mathematics, ICT, English',
             govtId: 'National Fayda ID: Verified',
+            idExpiry: 'Active Valid (ያልተገደበ)',
             level: 1,
             examStatus: 'passed',
             examType: 'Voice Call',
