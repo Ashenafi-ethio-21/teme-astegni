@@ -1434,7 +1434,9 @@
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
+          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
           <button class="btn-act" onclick="syncCloudDatabase()">📥 Fetch Latest Records</button>
+          <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Updated Apps Script Code</button>
         </div>
       </div>
 
@@ -1834,20 +1836,37 @@
 
       <div class="code-box" id="apps-script-code-box">/**
  * Teme Astegni (ተሜ አስጠኚ) - 100% Free Cloud Database Engine
- * Ultra-Lean Index Pointer Architecture (ID-Only Storage)
+ * Ultra-Lean Index Pointer Architecture (Strict 2-Column ID-Only Storage)
  * Primary Owner: ashenafitobe@gmail.com
  * Organization: Ethio 21 Technologies
  * Cost: 100% FREE FOREVER (Google Sheets API & Apps Script)
  */
 
+function onOpen(e) {
+  SpreadsheetApp.getUi()
+    .createMenu('🚀 Teme Astegni')
+    .addItem('⚡ Format Sheets to Strict 2 Columns (ID Only)', 'setupCleanArchitecture')
+    .addItem('🧹 Delete Old 8-Column Legacy Sheets', 'cleanLegacyTabs')
+    .addItem('✈️ Send Test Alert to Telegram Bot', 'testTelegramNotification')
+    .addToUi();
+}
+
 function doGet(e) {
   var action = (e && e.parameter) ? e.parameter.action : '';
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   
+  if (action === 'format' || action === 'setup') {
+    setupCleanArchitectureSilently(ss);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'success', 
+      message: 'Google Sheet automatically reformatted to strict 2-column index (Parents_Index & Tutors_Index)!' 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
   if (action === 'getData') {
-    var pSheet = ss.getSheetByName('Parents_Index') || ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
-    var tSheet = ss.getSheetByName('Tutors_Index') || ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
-    var mSheet = ss.getSheetByName('Matches_Ledger') || ss.getSheetByName('Matches') || createMatchesSheet(ss);
+    var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
+    var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
+    var mSheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
     
     var parents = rowsToJson(pSheet);
     var tutors = rowsToJson(tSheet);
@@ -1858,8 +1877,10 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
   
-  return ContentService.createTextOutput(JSON.stringify({ status: 'OK', message: 'Teme Astegni ID-Only Cloud API Active' }))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify({ 
+    status: 'OK', 
+    message: 'Teme Astegni ID-Only Cloud API Active' 
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
@@ -1869,34 +1890,36 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
     if (action === 'addParent') {
-      var sheet = ss.getSheetByName('Parents_Index') || ss.getSheetByName('Parents_Requests') || createParentsSheet(ss);
+      var sheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
       var d = postData.data;
+      var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
-        d.trackingId || d.id || ''
+        trackingId
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#0f172a');
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_P_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm') + '\n\n🔍 Search this ID in Ethio - 21 Astegni Ops to view complete file.');
     } 
     else if (action === 'addTutor') {
-      var sheet = ss.getSheetByName('Tutors_Index') || ss.getSheetByName('Verified_Tutors') || createTutorsSheet(ss);
+      var sheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
       var d = postData.data;
+      var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
-        d.trackingId || d.id || ''
+        trackingId
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#065f46');
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_T_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm') + '\n\n🔍 Search this ID in Ethio - 21 Astegni Ops to view verified documents.');
     }
     else if (action === 'addMatch') {
-      var sheet = ss.getSheetByName('Matches_Ledger') || ss.getSheetByName('Matches') || createMatchesSheet(ss);
+      var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
       var d = postData.data;
       var newRow = [
         new Date(),
-        d.parentName || '',
-        d.parentPhone || '',
-        d.tutorName || '',
-        d.tutorPhone || '',
+        d.parentId || d.parentName || '',
+        d.tutorId || d.tutorName || '',
         d.monthlyFee || '',
         d.commission || '',
         d.status || 'Active'
@@ -1913,31 +1936,93 @@ function doPost(e) {
   }
 }
 
+function setupCleanArchitecture() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  setupCleanArchitectureSilently(ss);
+  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Strict 2-Column Index Architecture!\n\n- Parents_Index: [Registration Date, Parent ID]\n- Tutors_Index: [Registration Date, Tutor ID]\n- All 8 old columns deleted.');
+}
+
+function setupCleanArchitectureSilently(ss) {
+  createParentsSheet(ss);
+  createTutorsSheet(ss);
+  createMatchesSheet(ss);
+  cleanLegacyTabsSilently(ss);
+}
+
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
-  var headers = ['Date', 'Parent ID'];
   s.clear();
+  var headers = ['Registration Date', 'Parent ID'];
   s.appendRow(headers);
+  if (s.getMaxColumns() > 2) {
+    s.deleteColumns(3, s.getMaxColumns() - 2);
+  }
   applyModernHeader(s, '#0f172a');
   return s;
 }
 
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
-  var headers = ['Date', 'Tutor ID'];
   s.clear();
+  var headers = ['Registration Date', 'Tutor ID'];
   s.appendRow(headers);
+  if (s.getMaxColumns() > 2) {
+    s.deleteColumns(3, s.getMaxColumns() - 2);
+  }
   applyModernHeader(s, '#065f46');
   return s;
 }
 
 function createMatchesSheet(ss) {
   var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
-  var headers = ['Timestamp', 'Parent Name', 'Parent Phone', 'Tutor Name', 'Tutor Phone', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
   s.clear();
+  var headers = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
   s.appendRow(headers);
+  if (s.getMaxColumns() > 6) {
+    s.deleteColumns(7, s.getMaxColumns() - 6);
+  }
   applyModernHeader(s, '#1e40af');
   return s;
+}
+
+function cleanLegacyTabs() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  cleanLegacyTabsSilently(ss);
+  SpreadsheetApp.getUi().alert('🧹 Old legacy sheets (Parents_Requests, Verified_Tutors, Sheet1) cleaned successfully!');
+}
+
+function cleanLegacyTabsSilently(ss) {
+  var legacy = ['Parents_Requests', 'Verified_Tutors', 'Parents', 'Tutors', 'Sheet1'];
+  legacy.forEach(function(name) {
+    var old = ss.getSheetByName(name);
+    if (old && ss.getSheets().length > 1) {
+      try { ss.deleteSheet(old); } catch (e) {}
+    }
+  });
+}
+
+function sendTelegramNotification(text) {
+  var token = PropertiesService.getScriptProperties().getProperty('TG_BOT_TOKEN') || '';
+  var chatId = PropertiesService.getScriptProperties().getProperty('TG_CHAT_ID') || '';
+  if (!token || !chatId) return;
+  try {
+    var url = 'https://api.telegram.org/bot' + token + '/sendMessage';
+    UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML'
+      }),
+      muteHttpExceptions: true
+    });
+  } catch (e) {}
+}
+
+function testTelegramNotification() {
+  sendTelegramNotification('🚀 <b>Teme Astegni Cloud Test Alert</b>\n\nYour Google Sheet and Telegram Bot integration is online and active.');
+  SpreadsheetApp.getUi().alert('Telegram test alert sent!');
 }
 
 function applyModernHeader(sheet, bgColor) {
@@ -1955,7 +2040,7 @@ function applyModernHeader(sheet, bgColor) {
   for (var c = 1; c <= lastCol; c++) {
     sheet.autoResizeColumn(c);
     var w = sheet.getColumnWidth(c);
-    if (w < 130) sheet.setColumnWidth(c, 130);
+    if (w < 160) sheet.setColumnWidth(c, 160);
     if (w > 320) sheet.setColumnWidth(c, 320);
   }
 }
@@ -3217,6 +3302,25 @@ function rowsToJson(sheet) {
         alert('✅ Google Sheets Cloud Database connected successfully!');
       } catch (err) {
         alert('Could not connect. Ensure deployment access is set to "Anyone" and try again.');
+      }
+    }
+
+    async function formatCloudSheetNow() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || document.getElementById('webhook-url-input').value.trim();
+      if (!url) {
+        alert('Please enter and save your Google Apps Script Webhook URL first in Settings.');
+        return;
+      }
+      try {
+        const res = await fetch(url + '?action=format');
+        const json = await res.json();
+        if (json.status === 'success') {
+          alert('🎉 SUCCESS!\n\nYour Google Sheet has been automatically reformatted to the new Ultra-Lean 2-Column Architecture!\n\n• Parents_Index: [Registration Date, Parent ID]\n• Tutors_Index: [Registration Date, Tutor ID]\n• All old 8 columns and legacy sheets have been deleted.');
+        } else {
+          alert('Response: ' + JSON.stringify(json));
+        }
+      } catch (err) {
+        alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Updated Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
       }
     }
 
