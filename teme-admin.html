@@ -1458,6 +1458,7 @@
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
+          <button class="btn-act" style="background: rgba(14, 165, 233, 0.25); border-color: rgba(14, 165, 233, 0.5); color: #38bdf8; font-weight: 850;" onclick="copyTutorShareLinkWithWebhook()">📋 Copy Tutor Link (With Cloud Sync Built-In)</button>
           <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
           <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.45); color: #f87171; font-weight: 800;" onclick="cleanLegacySheetsNow()">🧹 1-Click Delete Legacy Sheets (Keep Only _ Tabs)</button>
           <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync &amp; Push All Leads to Sheet</button>
@@ -2689,7 +2690,18 @@ function rowsToJson(sheet) {
       document.getElementById('parent-list-counter').innerText = `Showing ${filtered.length} of ${parents.length} requests`;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">No parent inquiries matching this criteria.</div>`;
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2.5rem 1rem; background: rgba(0,0,0,0.25); border: 1px dashed var(--card-border); border-radius: 16px; margin: 1rem 0;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍👩‍👧</div>
+            <div style="font-weight: 850; color: #fff; font-size: 1rem; margin-bottom: 0.35rem;">No Parent Requests on this Device Yet</div>
+            <p style="font-size: 0.78rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.25rem; line-height: 1.5;">
+              When parents or adult students apply on their own phones, their applications dispatch to Telegram &amp; Google Sheets. You can also manually push any Parent ID directly below:
+            </p>
+            <div style="max-width: 420px; margin: 0 auto; display: flex; gap: 0.5rem;">
+              <input type="text" id="empty-parent-push-id" class="form-ctrl" placeholder="Enter Parent ID (e.g. AST-P-1024)">
+              <button class="btn-act btn-act-primary" onclick="pushCustomParentIdFromEmpty()">⚡ Push to Sheet</button>
+            </div>
+          </div>`;
         return;
       }
 
@@ -2877,7 +2889,22 @@ function rowsToJson(sheet) {
       document.getElementById('tutor-list-counter').innerText = `Showing ${filtered.length} of ${tutors.length} verified tutors`;
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">No verified tutors matching this criteria.</div>`;
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2.5rem 1rem; background: rgba(0,0,0,0.25); border: 1px dashed var(--card-border); border-radius: 16px; margin: 1rem 0;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎓</div>
+            <div style="font-weight: 850; color: #fff; font-size: 1rem; margin-bottom: 0.35rem;">No Tutors Registered on this Device Yet</div>
+            <p style="font-size: 0.78rem; color: #94a3b8; max-width: 480px; margin: 0 auto 1.25rem; line-height: 1.5;">
+              When university students apply on their own phones, their applications dispatch to Telegram &amp; Google Sheets. You can share the official link or manually push any Tutor ID directly below:
+            </p>
+            <div style="display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+              <button class="btn-act btn-act-primary" onclick="copyTutorShareLinkWithWebhook()">📋 Copy Public Tutor Application Link</button>
+              <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="switchView('view-database')">☁️ Open Google Sheet Cloud Database</button>
+            </div>
+            <div style="max-width: 420px; margin: 0 auto; display: flex; gap: 0.5rem;">
+              <input type="text" id="empty-tutor-push-id" class="form-ctrl" placeholder="Enter Tutor ID (e.g. AST-T-1024)">
+              <button class="btn-act btn-act-primary" onclick="pushCustomTutorIdFromEmpty()">⚡ Push to Sheet</button>
+            </div>
+          </div>`;
         return;
       }
 
@@ -4007,6 +4034,38 @@ function rowsToJson(sheet) {
         }
       } catch (err) {
         alert('Failed to send: ' + err.message);
+      }
+    }
+
+    function pushCustomTutorIdFromEmpty() {
+      const idInput = document.getElementById('empty-tutor-push-id');
+      const id = (idInput?.value || '').trim();
+      if (!id) { alert('Please enter a Tutor ID (e.g. AST-T-1024)'); return; }
+      pushSingleTutorToSheet(id);
+    }
+
+    function pushCustomParentIdFromEmpty() {
+      const idInput = document.getElementById('empty-parent-push-id');
+      const id = (idInput?.value || '').trim();
+      if (!id) { alert('Please enter a Parent ID (e.g. AST-P-1024)'); return; }
+      pushSingleParentToSheet(id);
+    }
+
+    function copyTutorShareLinkWithWebhook() {
+      const webhookUrl = (document.getElementById('webhook-url-input')?.value || localStorage.getItem('teme_astegni_db_webhook') || '').trim();
+      let base = 'https://ashenafi-ethio-21.github.io/teme-astegni/teme-astegni.html';
+      let shareUrl = base + '#tutor';
+      if (webhookUrl && webhookUrl.startsWith('http')) {
+        shareUrl = `${base}?webhook=${encodeURIComponent(webhookUrl)}#tutor`;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('📋 Official Tutor Link Copied to Clipboard!\n\nLink:\n' + shareUrl + '\n\n✓ Share this with university students across Telegram, Facebook, and WhatsApp. Their applications will automatically register in your Google Sheet (Tutors_Index)!');
+        }).catch(() => {
+          prompt('Copy this official link to share with university students:', shareUrl);
+        });
+      } else {
+        prompt('Copy this official link to share with university students:', shareUrl);
       }
     }
 
