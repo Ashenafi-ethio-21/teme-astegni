@@ -1648,23 +1648,22 @@
             </div>
           </div>
 
-          <!-- Mandatory Credential Name Consistency Check (Single Identity Mandate) -->
-          <div class="field" style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+          <!-- Mandatory Credential Name Consistency Check (Single Identity Guarantee) -->
+          <div class="field" style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-              <span style="font-size: 1.2rem;">⚠️</span>
-              <span style="font-weight: 850; font-size: 0.88rem; color: #f87171;">Strict Name Consistency Requirement (የስም አንድነት ህግ)</span>
+              <span style="font-size: 1.2rem;">🛡️</span>
+              <span style="font-weight: 850; font-size: 0.88rem; color: #34d399;">Single Identity Verification (የስም አንድነት ማረጋገጫ)</span>
             </div>
             <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;">
-              Your <b>Full Legal Name</b> entered above must <b>EXACTLY MATCH</b> the name printed across <b>ALL THREE</b> credentials:
+              Your <b>Full Legal Name</b> must match across all 3 submitted verification credentials:
               <br>• 1. <b>Campus Student ID Card</b>
               <br>• 2. <b>Official Grade Report / Portal</b>
               <br>• 3. <b>National Fayda ID / Kebele Card</b>
-              <br><i>Any mismatch between credential names will result in immediate disqualification and account rejection.</i>
             </p>
-            <label class="check-label" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.65rem 0.85rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
-              <input type="checkbox" id="t_name_consistency_confirm" style="accent-color: #ef4444; width: 20px; height: 20px;">
-              <span style="font-size: 0.78rem; font-weight: 750; color: #fecaca; line-height: 1.4;">
-                I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the EXACT SAME Full Name entered in this form.
+            <label class="check-label" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.65rem 0.85rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
+              <input type="checkbox" id="t_name_consistency_confirm" checked style="accent-color: #10b981; width: 20px; height: 20px;">
+              <span style="font-size: 0.78rem; font-weight: 750; color: #a7f3d0; line-height: 1.4;">
+                ✓ I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the same Full Legal Name.
               </span>
             </label>
           </div>
@@ -2710,14 +2709,14 @@
       const phone = document.getElementById('p_phone').value.trim();
       const area = document.getElementById('p_area').value.trim();
 
-      const nameParts = name.split(/\s+/).filter(Boolean);
-      if (nameParts.length < 2) {
+      if (!name || name.trim().length < 2) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። ከመታወቂያዎ ጋር አንድ መሆን አለበት።' 
-          : 'Please enter your Full Legal Name (at least First and Last name). It must match the name on your Government ID.';
+          ? 'እባክዎ ሙሉ ስምዎን ያስገቡ (ምሳሌ፡ ዮናስ አበበ)።' 
+          : 'Please enter your Full Name (e.g. Yonas Abebe).';
         abortParentValidation(msg, document.getElementById('p_name'));
         return;
       }
+
 
       if (!phone || phone.replace(/\D/g, '').length < 9) {
         const msg = (currentLang === 'am')
@@ -2905,12 +2904,11 @@
       const cgpa = document.getElementById('t_cgpa').value.trim();
       const subj = document.getElementById('t_subj').value.trim();
 
-      // Validate full legal name (at least First and Father's/Last Name)
-      const nameParts = name.split(/\s+/).filter(Boolean);
-      if (nameParts.length < 2) {
+      // Validate name (clean and friendly message without confusing ID alerts)
+      if (!name || name.trim().length < 2) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በፋይዳ/ቀበሌ መታወቂያዎ ላይ ካለው ስም ጋር አንድ መሆን አለበት።' 
-          : 'Please enter your Full Legal Name (at least First and Last name). It must exactly match the name on your University Student ID, Grade Report, and Government ID.';
+          ? 'እባክዎ ሙሉ ስምዎን ያስገቡ (ምሳሌ፡ አቤል ከበደ)።' 
+          : 'Please enter your Full Name (e.g. Abel Kebede).';
         abortTutorValidation(msg, document.getElementById('t_name'));
         return;
       }
@@ -2983,15 +2981,12 @@
         return;
       }
 
-      // Validate Name Consistency Sworn Confirmation
-      const nameConfirm = document.getElementById('t_name_consistency_confirm')?.checked;
-      if (!nameConfirm) {
-        const msg = (currentLang === 'am')
-          ? 'እባክዎ በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በመንግስት መታወቂያዎ ላይ ያለው ስም አንድ ዓይነት መሆኑን የሚያረጋግጠውን ሳጥን ምልክት ያድርጉ።'
-          : 'Please check the box confirming that your Full Name matches across your Campus ID, Grade Report, and Government ID.';
-        abortTutorValidation(msg, document.getElementById('t_name_consistency_confirm'));
-        return;
+      // Auto-confirm Name Consistency checkmark upon valid submission
+      const nameConfirmEl = document.getElementById('t_name_consistency_confirm');
+      if (nameConfirmEl && !nameConfirmEl.checked) {
+        nameConfirmEl.checked = true;
       }
+
 
       // Use Assigned Unique Tracking ID & Telegram Tag
       const trackingId = currentTutorTrackingId;
