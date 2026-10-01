@@ -1815,7 +1815,8 @@
 
       <div class="modal-actions">
         <button type="button" class="btn-modal-sec" onclick="closeModal('modal-id-inspect')">Close Inspector</button>
-        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-modal-primary" style="text-decoration: none; text-align: center;">✈️ Open in Ops Room ›</a>
+        <button type="button" class="btn-act" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);" onclick="confirmIdAuditInTelegram()">🛡️ Approve &amp; Log to Telegram Ops</button>
+        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-modal-primary" id="inspect-tg-vault-link" style="text-decoration: none; text-align: center;">✈️ Open in Ops Room ›</a>
       </div>
     </div>
   </div>
@@ -1926,6 +1927,10 @@ function doPost(e) {
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#1e40af');
+      sendTelegramNotification('🤝 <b>NEW MATCH CREATED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + (d.parentId || '') + '</code>\n🏷️ <b>Tutor ID:</b> <code>' + (d.tutorId || '') + '</code>\n💵 <b>Fee:</b> ' + (d.monthlyFee || '') + ' ETB\n💼 <b>Commission:</b> ' + (d.commission || '') + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+    }
+    else if (action === 'logAdminAction') {
+      sendTelegramNotification(postData.text || '');
     }
     
     return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
@@ -2807,6 +2812,11 @@ function rowsToJson(sheet) {
           </div>
 
           <div class="record-actions">
+            <select class="status-dropdown" onchange="updateTutorStatus('${escapeHtml(t.phone)}', this.value)">
+              <option value="Verified" ${(t.status || 'Verified') === 'Verified' ? 'selected' : ''}>✅ Verified (ንቁ)</option>
+              <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
+              <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
+            </select>
             <button class="btn-act btn-act-primary" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Teaching Exam</button>
@@ -2853,20 +2863,47 @@ function rowsToJson(sheet) {
       tutor.examNotes = notes;
       tutor.examDate = new Date().toISOString();
 
-      if (decision === 'PASS_LEVEL_1') {
+      const isPass = decision === 'PASS_LEVEL_1';
+      if (isPass) {
         tutor.examStatus = 'passed';
         if ((Number(tutor.level) || 0) === 0) {
           tutor.level = 1;
         }
-        alert(`🎉 Congratulations! ${tutor.name} passed the Communicative Exam (${medium}, Score: ${score}%).\nPromoted to ${tier.emoji} ${tier.name} Level 1 with 1st Priority Dispatch!`);
       } else {
         tutor.examStatus = 'retry';
-        alert(`${tutor.name} marked for re-evaluation. Retained at ${tier.emoji} ${tier.name} Level ${tutor.level || 0}.`);
       }
 
       localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
       closeModal('modal-tutor-exam');
       renderAll();
+
+      // Dispatch to Telegram Ops tracing unique ID
+      const tTrackingId = tutor.trackingId || tutor.id || ('AST-T-' + (tutor.phone || '').slice(-4));
+      const tTgTag = tutor.tgTag || ('#AST_T_' + (tutor.phone || '').slice(-4));
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+
+      const msg = 
+        `🎙️ <b>ADMIN ACTION: TUTOR EXAM EVALUATION</b>\n\n` +
+        `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code>\n` +
+        `📌 <b>SEARCH TAG:</b> <code>${tTgTag}</code>\n` +
+        `👤 <b>Tutor Name:</b> ${escapeHtml(tutor.name)}\n` +
+        `📞 <b>Phone:</b> ${escapeHtml(tutor.phone)}\n` +
+        `🎯 <b>Verdict:</b> ${isPass ? '✅ PASSED ➔ Promoted to Level 1 (1st Priority Queue)' : '⏳ RETRY / Re-evaluation Required'}\n` +
+        `📊 <b>Clarity Score:</b> ${score}%\n` +
+        `📱 <b>Medium:</b> ${escapeHtml(medium)} (${escapeHtml(clarity)})\n` +
+        (notes ? `📝 <b>Notes:</b> "${escapeHtml(notes)}"\n` : '') +
+        `👮 <b>Admin Evaluator:</b> ${escapeHtml(adminName)}\n` +
+        `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+        `🔍 <i>Trace this ID in Telegram Ops: ${tTgTag}</i>`;
+
+      dispatchTelegramOpsLog(msg);
+
+      if (isPass) {
+        alert(`🎉 Congratulations! ${tutor.name} passed the Communicative Exam (${medium}, Score: ${score}%).\nPromoted to ${tier.emoji} ${tier.name} Level 1 with 1st Priority Dispatch!\n\nDispatched to Telegram Ops (${tTgTag})`);
+      } else {
+        alert(`${tutor.name} marked for re-evaluation. Retained at ${tier.emoji} ${tier.name} Level ${tutor.level || 0}.\n\nLogged to Telegram Ops (${tTgTag})`);
+      }
     }
 
     // LEVEL UPGRADE HANDLERS (50 ETB FEE)
@@ -2940,10 +2977,11 @@ function rowsToJson(sheet) {
       }
 
       // Record upgrade fee if target is level 2, 3, or 4
+      let totalFee = 0;
       if (targetLevel >= 2 && targetLevel <= 4 && targetLevel > oldLevel) {
         const feePerLevel = 50;
         const levelsJumped = targetLevel - Math.max(oldLevel, 1);
-        const totalFee = Math.max(levelsJumped, 1) * feePerLevel;
+        totalFee = Math.max(levelsJumped, 1) * feePerLevel;
         
         const upgradeHistory = JSON.parse(localStorage.getItem('astegni_upgrade_ledger') || '[]');
         upgradeHistory.push({
@@ -2967,7 +3005,29 @@ function rowsToJson(sheet) {
       localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
       closeModal('modal-level-upgrade');
       renderAll();
-      alert(`🚀 Success! ${tutor.name} has been promoted to ${tier.emoji} ${tier.name} Level ${targetLevel}!`);
+
+      // Dispatch to Telegram Ops tracing unique ID
+      const tTrackingId = tutor.trackingId || tutor.id || ('AST-T-' + (tutor.phone || '').slice(-4));
+      const tTgTag = tutor.tgTag || ('#AST_T_' + (tutor.phone || '').slice(-4));
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+
+      const msg = 
+        `⚡ <b>ADMIN ACTION: TUTOR LEVEL PROMOTION</b>\n\n` +
+        `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code>\n` +
+        `📌 <b>SEARCH TAG:</b> <code>${tTgTag}</code>\n` +
+        `👤 <b>Tutor Name:</b> ${escapeHtml(tutor.name)}\n` +
+        `📞 <b>Phone:</b> ${escapeHtml(tutor.phone)}\n` +
+        `🏅 <b>Metal Tier:</b> ${tier.emoji} ${tier.name} (CGPA: ${escapeHtml(tutor.cgpa)})\n` +
+        `🎖️ <b>Rank Progression:</b> Level ${oldLevel} ➔ <b>Level ${targetLevel}</b>\n` +
+        `💰 <b>Upgrade Fee:</b> ${totalFee > 0 ? totalFee + ' ETB (Telebirr)' : 'Free Promotion'}\n` +
+        `👮 <b>Admin Officer:</b> ${escapeHtml(adminName)}\n` +
+        `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+        `🔍 <i>Trace this ID in Telegram Ops: ${tTgTag}</i>`;
+
+      dispatchTelegramOpsLog(msg);
+
+      alert(`🚀 Success! ${tutor.name} has been promoted to ${tier.emoji} ${tier.name} Level ${targetLevel}!\n\nTelegram Ops notified with Search Tag: ${tTgTag}`);
     }
 
     function renderMatches() {
@@ -3040,17 +3100,30 @@ function rowsToJson(sheet) {
       return `<span class="tag-badge tag-active" style="font-size:0.65rem;">✓ Active (${escapeHtml(expiryStr)})</span>`;
     }
 
+    let currentInspectedRecord = null;
+    let currentInspectedType = null;
+
     function openIdInspectModal(type, phone) {
+      currentInspectedType = type;
       let record = null;
       if (type === 'PARENT') {
         const parents = getParents();
         record = parents.find(p => p.phone === phone);
         if (!record) return;
+        currentInspectedRecord = record;
+        const pTrackingId = record.trackingId || record.id || ('AST-P-' + (record.phone || '').slice(-4));
+        const pTgTag = record.tgTag || ('#AST_P_' + (record.phone || '').slice(-4));
+
         document.getElementById('inspect-role-badge').innerText = (record.applicantType === 'STUDENT_ADULT') ? 'Student 18+ (Independent)' : 'Parent / Household';
         document.getElementById('inspect-role-badge').className = 'tag-badge ' + ((record.applicantType === 'STUDENT_ADULT') ? 'tag-trial' : 'tag-active');
-        document.getElementById('inspect-person-name').innerText = record.name;
-        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'}`;
+        document.getElementById('inspect-person-name').innerText = `${record.name} (${pTrackingId})`;
+        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'} • Telegram Tag: ${pTgTag}`;
         document.getElementById('inspect-doc-type').innerText = record.idType || 'National Fayda / Kebele';
+
+        const vaultBtn = document.getElementById('inspect-tg-vault-link');
+        if (vaultBtn) {
+          vaultBtn.innerText = `✈️ Open Vault (${pTgTag}) ›`;
+        }
 
         const frontImg = document.getElementById('inspect-img-front');
         const emptyFront = document.getElementById('inspect-empty-front');
@@ -3069,12 +3142,21 @@ function rowsToJson(sheet) {
         const tutors = getTutors();
         record = tutors.find(t => t.phone === phone);
         if (!record) return;
+        currentInspectedRecord = record;
         const tier = getTutorMetalTier(record.cgpa);
-        document.getElementById('inspect-role-badge').innerText = `${tier.emoji} ${tier.name} Tutor`;
+        const tTrackingId = record.trackingId || record.id || ('AST-T-' + (record.phone || '').slice(-4));
+        const tTgTag = record.tgTag || ('#AST_T_' + (record.phone || '').slice(-4));
+
+        document.getElementById('inspect-role-badge').innerText = `${tier.emoji} ${tier.name} Tutor (Level ${record.level || 0})`;
         document.getElementById('inspect-role-badge').className = 'tag-badge tag-active';
-        document.getElementById('inspect-person-name').innerText = record.name;
-        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa})`;
+        document.getElementById('inspect-person-name').innerText = `${record.name} (${tTrackingId})`;
+        document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa}) • Tag: ${tTgTag}`;
         document.getElementById('inspect-doc-type').innerText = record.govtId || 'National Fayda / Kebele (Front & Back)';
+
+        const vaultBtn = document.getElementById('inspect-tg-vault-link');
+        if (vaultBtn) {
+          vaultBtn.innerText = `✈️ Open Vault (${tTgTag}) ›`;
+        }
 
         const frontImg = document.getElementById('inspect-img-front');
         const emptyFront = document.getElementById('inspect-empty-front');
@@ -3103,6 +3185,32 @@ function rowsToJson(sheet) {
       boxEl.style.background = 'rgba(16, 185, 129, 0.1)';
     }
 
+    function confirmIdAuditInTelegram() {
+      if (!currentInspectedRecord) return;
+      const r = currentInspectedRecord;
+      const type = currentInspectedType;
+      const trackingId = r.trackingId || r.id || (type === 'PARENT' ? 'AST-P-' + (r.phone || '').slice(-4) : 'AST-T-' + (r.phone || '').slice(-4));
+      const tgTag = r.tgTag || ('#' + trackingId.replace(/-/g, '_'));
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+
+      const msg = 
+        `🛡️ <b>ADMIN ACTION: ID VERIFICATION AUDIT APPROVED</b>\n\n` +
+        `🏷️ <b>${type === 'PARENT' ? 'Parent' : 'Tutor'} ID:</b> <code>${trackingId}</code>\n` +
+        `📌 <b>SEARCH TAG:</b> <code>${tgTag}</code>\n` +
+        `👤 <b>Name:</b> ${escapeHtml(r.name)}\n` +
+        `📞 <b>Phone:</b> ${escapeHtml(r.phone)}\n` +
+        `🆔 <b>Document:</b> ${escapeHtml(r.idType || r.govtId || 'National Fayda / Kebele')}\n` +
+        `✅ <b>Audit Status:</b> Verified Authentic & Legible in Vault\n` +
+        `👮 <b>Auditor:</b> ${escapeHtml(adminName)}\n` +
+        `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+        `🔍 <i>Trace this ID in Telegram Ops: ${tgTag}</i>`;
+
+      dispatchTelegramOpsLog(msg);
+      updateInspectExpiryStatus('Active Verified');
+      alert(`🛡️ ID for ${r.name} (${trackingId}) marked as Verified!\nAudit logged to Telegram Ops under tag ${tgTag}.`);
+    }
+
     function toggleMatchPaymentProof(id) {
       const matches = getMatches();
       const item = matches.find(m => m.id === id);
@@ -3113,7 +3221,31 @@ function rowsToJson(sheet) {
         }
         localStorage.setItem('astegni_matches', JSON.stringify(matches));
         renderAll();
-        alert(`💳 Payment screenshot status updated: ${item.paymentProof ? 'Verified' : 'Pending'}!`);
+
+        const p = getParents().find(x => x.phone === item.parentPhone);
+        const t = getTutors().find(x => x.phone === item.tutorPhone);
+        const pTrackingId = item.parentId || (p && (p.trackingId || p.id)) || ('AST-P-' + (item.parentPhone || '').slice(-4));
+        const pTgTag = item.parentTag || (p && p.tgTag) || ('#AST_P_' + (item.parentPhone || '').slice(-4));
+        const tTrackingId = item.tutorId || (t && (t.trackingId || t.id)) || ('AST-T-' + (item.tutorPhone || '').slice(-4));
+        const tTgTag = item.tutorTag || (t && t.tgTag) || ('#AST_T_' + (item.tutorPhone || '').slice(-4));
+
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `💳 <b>ADMIN ACTION: PAYMENT PROOF AUDIT</b>\n\n` +
+          `🏷️ <b>Parent ID:</b> <code>${pTrackingId}</code> (📌 <code>${pTgTag}</code>)\n` +
+          `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code> (📌 <code>${tTgTag}</code>)\n` +
+          `👨‍👩‍👧 <b>Parent:</b> ${escapeHtml(item.parentName)}\n` +
+          `🎓 <b>Tutor:</b> ${escapeHtml(item.tutorName)}\n` +
+          `💳 <b>Payment Proof:</b> ${item.paymentProof ? '✅ Telebirr Screenshot Verified' : '⏳ Reset to Pending Verification'}\n` +
+          `📊 <b>Match Status:</b> ${item.status}\n` +
+          `👮 <b>Admin Auditor:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace using ${pTgTag} or ${tTgTag} in Telegram Ops</i>`;
+
+        dispatchTelegramOpsLog(msg);
+        alert(`💳 Payment screenshot status updated: ${item.paymentProof ? 'Verified' : 'Pending'}!\nLogged to Telegram Ops.`);
       }
     }
 
@@ -3128,23 +3260,111 @@ function rowsToJson(sheet) {
       const parents = getParents();
       const item = parents.find(p => p.phone === phone);
       if (item) {
+        const oldStatus = item.status || 'Pending';
+        if (oldStatus === newStatus) return;
         item.status = newStatus;
         localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
         renderAll();
+
+        const pTrackingId = item.trackingId || item.id || ('AST-P-' + (item.phone || '').slice(-4));
+        const pTgTag = item.tgTag || ('#AST_P_' + (item.phone || '').slice(-4));
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `📋 <b>ADMIN ACTION: PARENT STATUS UPDATED</b>\n\n` +
+          `🏷️ <b>Parent ID:</b> <code>${pTrackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${pTgTag}</code>\n` +
+          `👤 <b>Parent Name:</b> ${escapeHtml(item.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(item.phone)}\n` +
+          `📍 <b>Location:</b> ${escapeHtml(item.area || 'Addis Ababa')}\n` +
+          `🔄 <b>Status Changed:</b> <code>${escapeHtml(oldStatus)}</code> ➔ <b>${escapeHtml(newStatus)}</b>\n` +
+          `👮 <b>Admin Officer:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace this ID in Telegram Ops: ${pTgTag}</i>`;
+
+        dispatchTelegramOpsLog(msg);
+      }
+    }
+
+    function updateTutorStatus(phone, newStatus) {
+      const tutors = getTutors();
+      const item = tutors.find(t => t.phone === phone);
+      if (item) {
+        const oldStatus = item.status || 'Verified';
+        if (oldStatus === newStatus) return;
+        item.status = newStatus;
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+        renderAll();
+
+        const tTrackingId = item.trackingId || item.id || ('AST-T-' + (item.phone || '').slice(-4));
+        const tTgTag = item.tgTag || ('#AST_T_' + (item.phone || '').slice(-4));
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `📋 <b>ADMIN ACTION: TUTOR STATUS UPDATED</b>\n\n` +
+          `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${tTgTag}</code>\n` +
+          `👤 <b>Tutor Name:</b> ${escapeHtml(item.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(item.phone)}\n` +
+          `🏛️ <b>Campus:</b> ${escapeHtml(item.uni || 'Campus')}\n` +
+          `🔄 <b>Status Changed:</b> <code>${escapeHtml(oldStatus)}</code> ➔ <b>${escapeHtml(newStatus)}</b>\n` +
+          `👮 <b>Admin Officer:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace this ID in Telegram Ops: ${tTgTag}</i>`;
+
+        dispatchTelegramOpsLog(msg);
       }
     }
 
     function deleteParentLead(phone) {
       if (!confirm('Are you sure you want to remove this parent inquiry?')) return;
-      let parents = getParents().filter(p => p.phone !== phone);
-      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+      const parents = getParents();
+      const p = parents.find(x => x.phone === phone);
+      if (p) {
+        const pTrackingId = p.trackingId || p.id || ('AST-P-' + (phone || '').slice(-4));
+        const pTgTag = p.tgTag || ('#AST_P_' + (phone || '').slice(-4));
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `🗑️ <b>ADMIN SECURITY AUDIT: PARENT RECORD DELETED</b>\n\n` +
+          `🏷️ <b>Parent ID:</b> <code>${pTrackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${pTgTag}</code>\n` +
+          `👤 <b>Name:</b> ${escapeHtml(p.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(p.phone)}\n` +
+          `👮 <b>Deleted By:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}`;
+        dispatchTelegramOpsLog(msg);
+      }
+      let filtered = parents.filter(p => p.phone !== phone);
+      localStorage.setItem('astegni_parent_leads', JSON.stringify(filtered));
       renderAll();
     }
 
     function deleteTutorLead(phone) {
       if (!confirm('Are you sure you want to remove this tutor record?')) return;
-      let tutors = getTutors().filter(t => t.phone !== phone);
-      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+      const tutors = getTutors();
+      const t = tutors.find(x => x.phone === phone);
+      if (t) {
+        const tTrackingId = t.trackingId || t.id || ('AST-T-' + (phone || '').slice(-4));
+        const tTgTag = t.tgTag || ('#AST_T_' + (phone || '').slice(-4));
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `🗑️ <b>ADMIN SECURITY AUDIT: TUTOR RECORD DELETED</b>\n\n` +
+          `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${tTgTag}</code>\n` +
+          `👤 <b>Name:</b> ${escapeHtml(t.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(t.phone)}\n` +
+          `👮 <b>Deleted By:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}`;
+        dispatchTelegramOpsLog(msg);
+      }
+      let filtered = tutors.filter(t => t.phone !== phone);
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(filtered));
       renderAll();
     }
 
@@ -3152,16 +3372,55 @@ function rowsToJson(sheet) {
       const matches = getMatches();
       const item = matches.find(m => m.id === id);
       if (item) {
+        const oldStatus = item.status || 'Pending';
+        if (oldStatus === newStatus) return;
         item.status = newStatus;
         localStorage.setItem('astegni_matches', JSON.stringify(matches));
         renderAll();
+
+        const p = getParents().find(x => x.phone === item.parentPhone);
+        const t = getTutors().find(x => x.phone === item.tutorPhone);
+        const pTrackingId = item.parentId || (p && (p.trackingId || p.id)) || ('AST-P-' + (item.parentPhone || '').slice(-4));
+        const pTgTag = item.parentTag || (p && p.tgTag) || ('#AST_P_' + (item.parentPhone || '').slice(-4));
+        const tTrackingId = item.tutorId || (t && (t.trackingId || t.id)) || ('AST-T-' + (item.tutorPhone || '').slice(-4));
+        const tTgTag = item.tutorTag || (t && t.tgTag) || ('#AST_T_' + (item.tutorPhone || '').slice(-4));
+
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+
+        const msg = 
+          `🔄 <b>ADMIN ACTION: MATCH STATUS UPDATED</b>\n\n` +
+          `🏷️ <b>Parent ID:</b> <code>${pTrackingId}</code> (📌 <code>${pTgTag}</code>)\n` +
+          `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code> (📌 <code>${tTgTag}</code>)\n` +
+          `👨‍👩‍👧 <b>Parent:</b> ${escapeHtml(item.parentName)}\n` +
+          `🎓 <b>Tutor:</b> ${escapeHtml(item.tutorName)}\n` +
+          `📊 <b>Status Changed:</b> <code>${escapeHtml(oldStatus)}</code> ➔ <b>${escapeHtml(newStatus)}</b>\n` +
+          `👮 <b>Admin Officer:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace using ${pTgTag} or ${tTgTag} in Telegram Ops</i>`;
+
+        dispatchTelegramOpsLog(msg);
       }
     }
 
     function deleteMatch(id) {
       if (!confirm('Are you sure you want to remove this match record?')) return;
-      let matches = getMatches().filter(m => m.id !== id);
-      localStorage.setItem('astegni_matches', JSON.stringify(matches));
+      const matches = getMatches();
+      const m = matches.find(x => x.id === id);
+      if (m) {
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+        const msg = 
+          `🗑️ <b>ADMIN SECURITY AUDIT: MATCH RECORD DELETED</b>\n\n` +
+          `🆔 <b>Match ID:</b> <code>${id}</code>\n` +
+          `👨‍👩‍👧 <b>Parent:</b> ${escapeHtml(m.parentName)} (${m.parentId || ''})\n` +
+          `🎓 <b>Tutor:</b> ${escapeHtml(m.tutorName)} (${m.tutorId || ''})\n` +
+          `👮 <b>Deleted By:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}`;
+        dispatchTelegramOpsLog(msg);
+      }
+      let filtered = matches.filter(m => m.id !== id);
+      localStorage.setItem('astegni_matches', JSON.stringify(filtered));
       renderAll();
     }
 
@@ -3257,10 +3516,19 @@ function rowsToJson(sheet) {
       const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
       const commission = Math.round(fee * (rate / 100));
 
+      const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
+      const pTgTag = p.tgTag || ('#AST_P_' + (p.phone || '').slice(-4));
+      const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
+      const tTgTag = t.tgTag || ('#AST_T_' + (t.phone || '').slice(-4));
+
       const newMatch = {
         id: 'M-' + Date.now(),
+        parentId: pTrackingId,
+        parentTag: pTgTag,
         parentName: p.name,
         parentPhone: p.phone,
+        tutorId: tTrackingId,
+        tutorTag: tTgTag,
         tutorName: t.name,
         tutorPhone: t.phone,
         monthlyFee: fee,
@@ -3280,6 +3548,50 @@ function rowsToJson(sheet) {
       closeModal('modal-match-maker');
       renderAll();
       switchView('view-matches');
+
+      // Dispatch to Telegram Ops tracing both IDs
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+      const tTier = getTutorMetalTier(t.cgpa);
+
+      const msg = 
+        `🤝 <b>ADMIN ACTION: NEW TUTOR-PARENT MATCH</b>\n\n` +
+        `🏷️ <b>Parent ID:</b> <code>${pTrackingId}</code> (📌 <code>${pTgTag}</code>)\n` +
+        `🏷️ <b>Tutor ID:</b> <code>${tTrackingId}</code> (📌 <code>${tTgTag}</code>)\n` +
+        `👨‍👩‍👧 <b>Parent:</b> ${escapeHtml(p.name)} (${escapeHtml(p.phone)})\n` +
+        `📍 <b>Location:</b> ${escapeHtml(p.area || 'Addis Ababa')} • Grade: ${escapeHtml(p.grade)}\n` +
+        `🎓 <b>Tutor:</b> ${escapeHtml(t.name)} (${escapeHtml(t.phone)})\n` +
+        `🏅 <b>Tutor Rank:</b> ${tTier.emoji} ${tTier.name} Level ${t.level || 0} (${escapeHtml(t.uni)})\n` +
+        `💵 <b>Monthly Fee:</b> ${fee.toLocaleString()} ETB\n` +
+        `💼 <b>Ethio-21 Commission (${rate}%):</b> ${commission.toLocaleString()} ETB\n` +
+        `⏳ <b>Initial Status:</b> 1-Day Trial Pending\n` +
+        `👮 <b>Matchmaker Admin:</b> ${escapeHtml(adminName)}\n` +
+        `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+        `🔍 <i>Trace either ${pTgTag} or ${tTgTag} in Telegram Ops</i>`;
+
+      dispatchTelegramOpsLog(msg);
+
+      // Also forward match to Google Sheet if webhook configured
+      const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'addMatch',
+            data: {
+              parentId: pTrackingId,
+              tutorId: tTrackingId,
+              monthlyFee: fee,
+              commission: commission,
+              status: '1-Day Trial Pending'
+            }
+          })
+        }).catch(e => console.warn(e));
+      }
+
+      alert(`🤝 Match successfully created!\n\nParent: ${p.name} (${pTrackingId})\nTutor: ${t.name} (${tTrackingId})\n\nDispatched to Telegram Ops!`);
     }
 
     // CLOUD DATABASE
@@ -3360,6 +3672,52 @@ function rowsToJson(sheet) {
       } catch (err) {
         alert('Connection error: ' + err.message);
       }
+    }
+
+    // DISPATCH ADMIN ACTION LOG TO TELEGRAM OPS (TRACING UNIQUE ID)
+    async function dispatchTelegramOpsLog(htmlMessage) {
+      const token = localStorage.getItem('teme_astegni_tg_bot_token') || 
+                    (document.getElementById('tg-bot-token-input') ? document.getElementById('tg-bot-token-input').value.trim() : '');
+      const chatId = localStorage.getItem('teme_astegni_tg_chat_id') || 
+                     (document.getElementById('tg-chat-id-input') ? document.getElementById('tg-chat-id-input').value.trim() : '');
+      const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || 
+                         (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+
+      let sentDirectly = false;
+      if (token && chatId) {
+        try {
+          const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: htmlMessage,
+              parse_mode: 'HTML'
+            })
+          });
+          const json = await res.json();
+          sentDirectly = json.ok;
+        } catch (e) {
+          console.warn('Direct Telegram API send error:', e);
+        }
+      }
+
+      // Also forward through Apps Script Webhook if configured
+      if (webhookUrl) {
+        try {
+          fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'logAdminAction',
+              text: htmlMessage
+            })
+          }).catch(e => console.warn(e));
+        } catch (e) {}
+      }
+
+      return sentDirectly;
     }
 
     async function syncCloudDatabase() {
