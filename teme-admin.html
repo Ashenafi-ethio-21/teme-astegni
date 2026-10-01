@@ -1542,23 +1542,24 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
     if (action === 'addParent') {
-      var sheet = ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
+      var sheet = ss.getSheetByName('Parents_Index') || ss.getSheetByName('Parents_Requests') || createParentsSheet(ss);
       var d = postData.data;
       var newRow = [
         new Date(),
+        d.trackingId || d.id || '',
         d.name || '',
         d.phone || '',
         d.area || '',
         d.studentGender || d.childGender || 'Student',
         d.grade || '',
-        d.subjs || '',
-        d.status || 'Pending'
+        d.status || 'Pending',
+        d.tgTag || ''
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#0f172a');
     } 
     else if (action === 'addTutor') {
-      var sheet = ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
+      var sheet = ss.getSheetByName('Tutors_Index') || ss.getSheetByName('Verified_Tutors') || createTutorsSheet(ss);
       var d = postData.data;
       var g = parseFloat(d.cgpa) || 0;
       var tier = g >= 3.75 ? 'Golden' : (g >= 3.40 ? 'Silver' : 'Bronze');
@@ -1566,20 +1567,16 @@ function doPost(e) {
       var rankTitle = tier + (lvl > 0 ? (' Level ' + lvl) : ' Basic (L0)');
       var newRow = [
         new Date(),
+        d.trackingId || d.id || '',
         d.name || '',
         d.phone || '',
         d.gender || '',
         d.uni || '',
-        d.year || '',
         d.cgpa || '',
         tier,
         'Level ' + lvl,
-        rankTitle,
-        d.subj || '',
-        d.examStatus || 'Not Taken',
-        d.examScore ? (d.examScore + '%') : 'N/A',
-        d.govtId || '',
-        d.status || 'Verified'
+        d.status || 'Verified',
+        d.tgTag || ''
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#065f46');
@@ -1610,8 +1607,8 @@ function doPost(e) {
 }
 
 function createParentsSheet(ss) {
-  var s = ss.getSheetByName('Parents_Requests') || ss.insertSheet('Parents_Requests');
-  var headers = ['Timestamp', 'Parent/Student Name', 'Phone Number', 'Neighborhood / Location', 'Student Gender', 'Grade Level', 'Subjects', 'Status'];
+  var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
+  var headers = ['Timestamp', 'Tracking ID', 'Parent/Student Name', 'Phone Number', 'Area / Neighborhood', 'Student Gender', 'Grade Level', 'Status', 'Telegram Tag'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#0f172a');
@@ -1619,8 +1616,8 @@ function createParentsSheet(ss) {
 }
 
 function createTutorsSheet(ss) {
-  var s = ss.getSheetByName('Verified_Tutors') || ss.insertSheet('Verified_Tutors');
-  var headers = ['Timestamp', 'Full Name', 'Phone Number', 'Gender', 'University & Campus', 'Academic Year', 'CGPA', 'Metal Tier', 'Level Rank', 'Full Rank Title', 'Subjects Taught', 'Communicative Exam', 'Exam Score', 'Government ID', 'Status'];
+  var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
+  var headers = ['Timestamp', 'Tracking ID', 'Tutor Full Name', 'Phone Number', 'Gender', 'University / Campus', 'CGPA', 'Metal Tier', 'Level Rank', 'Status', 'Telegram Tag'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#065f46');
@@ -2146,6 +2143,8 @@ function rowsToJson(sheet) {
           p.name.toLowerCase().includes(query) || 
           p.phone.toLowerCase().includes(query) || 
           p.area.toLowerCase().includes(query) ||
+          (p.trackingId && p.trackingId.toLowerCase().includes(query)) ||
+          (p.tgTag && p.tgTag.toLowerCase().includes(query)) ||
           (p.childGender && p.childGender.toLowerCase().includes(query)) ||
           p.grade.toLowerCase().includes(query);
 
@@ -2169,11 +2168,14 @@ function rowsToJson(sheet) {
         const applicantBadge = isAdult
           ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35);">🎓 Student 18+ (Independent)</span>`
           : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35);">👨‍👩‍👧 Parent Lead</span>`;
+        const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
+        const pTgTag = p.tgTag || ('#AST_P_' + (p.phone || '').slice(-4));
 
         card.innerHTML = `
           <div class="record-top">
             <div>
               <div class="record-name">
+                <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 850; border: 1px solid rgba(56, 189, 248, 0.35);">🏷️ ${escapeHtml(pTrackingId)}</span>
                 ${escapeHtml(p.name)}
                 ${applicantBadge}
                 <span class="tag-badge ${getStatusBadgeClass(currentStatus)}">${currentStatus}</span>
@@ -2192,6 +2194,7 @@ function rowsToJson(sheet) {
             <div class="detail-item"><span class="detail-label">🎓 Grade Level:</span> ${escapeHtml(p.grade)}</div>
             <div class="detail-item"><span class="detail-label">🆔 Household ID:</span> <span style="color: #38bdf8; font-weight: 750;">${escapeHtml(p.idType || 'National Fayda / Kebele')}</span> (Front &amp; Back)</div>
             <div class="detail-item"><span class="detail-label">📅 ID Expiry:</span> ${escapeHtml(p.idExpiry || 'Active Valid')} ${checkExpiryBadgeHtml(p.idExpiry)}</div>
+            <div class="detail-item"><span class="detail-label">✈️ Telegram Tag:</span> <span style="color: #24a1de; font-weight: 750;">${escapeHtml(pTgTag)}</span></div>
             <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects:</span> ${escapeHtml(p.subjs)}</div>
           </div>
 
@@ -2203,6 +2206,7 @@ function rowsToJson(sheet) {
               <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
             </select>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
+            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ Vault (${escapeHtml(pTgTag)})</a>
             <button class="btn-act btn-act-primary" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
             ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️ Remove</button>` : ''}
           </div>
@@ -2303,6 +2307,8 @@ function rowsToJson(sheet) {
           t.name.toLowerCase().includes(query) || 
           t.phone.toLowerCase().includes(query) || 
           t.uni.toLowerCase().includes(query) ||
+          (t.trackingId && t.trackingId.toLowerCase().includes(query)) ||
+          (t.tgTag && t.tgTag.toLowerCase().includes(query)) ||
           t.subj.toLowerCase().includes(query);
 
         const lvl = Number(t.level) || 0;
@@ -2348,11 +2354,14 @@ function rowsToJson(sheet) {
         const tier = getTutorMetalTier(t.cgpa);
         const l = Number(t.level) || 0;
         const levelTitle = l === 5 ? 'Level 5 Master' : (l === 4 ? 'Level 4 Distinguished' : (l === 3 ? 'Level 3 Senior' : (l === 2 ? 'Level 2 Advanced' : (l === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
+        const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
+        const tTgTag = t.tgTag || ('#AST_T_' + (t.phone || '').slice(-4));
 
         card.innerHTML = `
           <div class="record-top">
             <div>
               <div class="record-name">
+                <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 850; border: 1px solid rgba(16, 185, 129, 0.35);">🏷️ ${escapeHtml(tTrackingId)}</span>
                 ${escapeHtml(t.name)}
                 ${getLevelBadgeHtml(t.level, t.cgpa)}
                 <span class="tag-badge tag-active">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
@@ -2376,6 +2385,7 @@ function rowsToJson(sheet) {
             <div class="detail-item"><span class="detail-label">🏅 Metal Tier:</span> <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name} (CGPA ${escapeHtml(t.cgpa)})</span></div>
             <div class="detail-item"><span class="detail-label">🎖️ Progression Rank:</span> ${tier.emoji} ${tier.name} ${levelTitle} (${l}/5)</div>
             <div class="detail-item"><span class="detail-label">🎙️ Teaching Clarity:</span> ${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
+            <div class="detail-item"><span class="detail-label">✈️ Telegram Tag:</span> <span style="color: #24a1de; font-weight: 750;">${escapeHtml(tTgTag)}</span></div>
             <div class="detail-item"><span class="detail-label">🚀 Dispatch Queue:</span> <span style="color: #38bdf8; font-weight: 750;">${getDispatchPriorityText(t.level, t.cgpa)}</span></div>
             <div class="detail-item" style="grid-column: 1 / -1;"><span class="detail-label">📖 Subjects (Grade A):</span> ${escapeHtml(t.subj)}</div>
             ${t.examNotes ? `<div class="detail-item" style="grid-column: 1 / -1; font-style: italic; color: #94a3b8;"><span class="detail-label">📝 Exam Notes:</span> "${escapeHtml(t.examNotes)}"</div>` : ''}
@@ -2386,7 +2396,7 @@ function rowsToJson(sheet) {
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
             <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Teaching Exam</button>
             <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Upgrade Level</button>
-            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act">✈️ Send Ops Brief</a>
+            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(tTgTag)} in Telegram">✈️ Vault (${escapeHtml(tTgTag)})</a>
             ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️ Remove</button>` : ''}
           </div>
         `;
@@ -3119,6 +3129,8 @@ function rowsToJson(sheet) {
         const seedParents = [
           {
             type: 'PARENT',
+            trackingId: 'AST-P-1042',
+            tgTag: '#AST_P_1042',
             name: 'ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)',
             phone: '0911223344',
             area: 'ሳሪስ / ካዲስኮ (Saris, AAU Campus nearby)',
@@ -3131,6 +3143,8 @@ function rowsToJson(sheet) {
           },
           {
             type: 'PARENT',
+            trackingId: 'AST-P-2051',
+            tgTag: '#AST_P_2051',
             name: 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)',
             phone: '0922446688',
             area: 'ገርጂ / መብራት ኃይል (Gerji)',
@@ -3149,6 +3163,8 @@ function rowsToJson(sheet) {
         const seedTutors = [
           {
             type: 'TUTOR',
+            trackingId: 'AST-T-8419',
+            tgTag: '#AST_T_8419',
             name: 'ቤተልሔም ሰለሞን (Bethelhem S.)',
             phone: '0944112233',
             gender: 'ሴት (Female)',
@@ -3167,6 +3183,8 @@ function rowsToJson(sheet) {
           },
           {
             type: 'TUTOR',
+            trackingId: 'AST-T-7204',
+            tgTag: '#AST_T_7204',
             name: 'ናትናኤል አለማየሁ (Natnael A.)',
             phone: '0911559900',
             gender: 'ወንድ (Male)',
@@ -3185,6 +3203,8 @@ function rowsToJson(sheet) {
           },
           {
             type: 'TUTOR',
+            trackingId: 'AST-T-5190',
+            tgTag: '#AST_T_5190',
             name: 'ዮሐንስ መላኩ (Yohannes M.)',
             phone: '0933778899',
             gender: 'ወንድ (Male)',
