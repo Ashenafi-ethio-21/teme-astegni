@@ -16,7 +16,325 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- =========================================================================
+       ETHIO 21 PROPRIETARY ANTI-INSPECT & ACTIVE DEVTOOLS DEFENSE SHIELD
+       ========================================================================= -->
+  <script>
+    (function() {
+      'use strict';
+
+      // 1. Root Level Context Menu Disabler (Capture Phase & Direct Handlers)
+      window.oncontextmenu = function(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+        }
+        triggerSecurityToast('🔒 Right-Click Disabled • Protected Admin Environment');
+        return false;
+      };
+      document.oncontextmenu = window.oncontextmenu;
+
+      window.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        triggerSecurityToast('🔒 Right-Click Disabled • Protected Admin Environment');
+        return false;
+      }, true);
+
+      // 2. High-Priority Keyboard Interceptor (Capture Phase)
+      window.addEventListener('keydown', function(e) {
+        // F12 Key
+        if (e.key === 'F12' || e.keyCode === 123) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          triggerSecurityToast('🔒 Developer Tools Blocked • Protected Operations Vault');
+          return false;
+        }
+
+        const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+
+        // Ctrl+Shift+I / J / C (DevTools & Console)
+        if (isCtrlOrMeta && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].indexOf(e.key) !== -1) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          triggerSecurityToast('🔒 Inspector Blocked • Protected Operations Vault');
+          return false;
+        }
+
+        // Ctrl+U (View Source)
+        if (isCtrlOrMeta && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          triggerSecurityToast('🔒 Source Code Viewer Blocked • Viewing Only');
+          return false;
+        }
+
+        // Ctrl+S (Save Page)
+        if (isCtrlOrMeta && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          triggerSecurityToast('🔒 Page Saving Disabled • Viewing Only');
+          return false;
+        }
+
+        // Ctrl+P (Print Page)
+        if (isCtrlOrMeta && (e.key === 'p' || e.key === 'P' || e.keyCode === 80)) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          triggerSecurityToast('🔒 Printing Disabled • Secure Operations Mode');
+          return false;
+        }
+      }, true);
+
+      // 3. Drag Prevention on Logos, Badges and Cards
+      window.addEventListener('dragstart', function(e) {
+        if (e.target.tagName === 'IMG' || e.target.tagName === 'svg') {
+          e.preventDefault();
+          return false;
+        }
+      }, true);
+
+      // 4. Security Toast Notification
+      let toastTimeout = null;
+      function triggerSecurityToast(msg) {
+        let toast = document.getElementById('security-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'security-toast';
+          toast.className = 'security-toast';
+          toast.innerHTML = '<span class="security-toast-icon">🛡️</span><span class="security-toast-text"></span>';
+          if (document.body) {
+            document.body.appendChild(toast);
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              document.body.appendChild(toast);
+            });
+          }
+        }
+        const textSpan = toast ? toast.querySelector('.security-toast-text') : null;
+        if (textSpan) textSpan.textContent = msg || 'Protected by ETHIO 21 Shield';
+        clearTimeout(toastTimeout);
+        if (toast) {
+          toast.classList.add('show');
+          toastTimeout = setTimeout(function() {
+            toast.classList.remove('show');
+          }, 2500);
+        }
+      }
+      window.triggerSecurityToast = triggerSecurityToast;
+
+      // 5. Active DevTools Detection & Shield Lockdown Overlay
+      const threshold = 160;
+
+      function checkDevToolsDimensions() {
+        const widthDiff = window.outerWidth - window.innerWidth > threshold;
+        const heightDiff = window.outerHeight - window.innerHeight > threshold;
+        if (widthDiff || heightDiff) {
+          setLockoutState(true);
+        } else {
+          setLockoutState(false);
+        }
+      }
+
+      function setLockoutState(locked) {
+        let overlay = document.getElementById('devtools-lockout-overlay');
+        if (locked) {
+          if (!overlay && document.body) {
+            overlay = document.createElement('div');
+            overlay.id = 'devtools-lockout-overlay';
+            overlay.className = 'devtools-lockout-overlay';
+            overlay.innerHTML = '<div class="lockout-box"><div class="lockout-shield-badge">🛡️</div><span class="lockout-tag">ETHIO 21 OPERATIONS SHIELD v2.4</span><h2 class="lockout-title">INSPECTOR &amp; DEVTOOLS DETECTED</h2><p class="lockout-desc">The ETHIO 21 Proprietary Operations Shield has locked this session to protect administrative credentials, customer data, and system integrity.</p><div class="lockout-status">🔒 ADMIN SESSION BLURRED &amp; FROZEN</div><p class="lockout-sub">Please close Developer Tools or Inspector window to resume operations.</p></div>';
+            document.body.appendChild(overlay);
+          }
+          if (overlay) overlay.classList.add('active');
+          if (document.body) document.body.classList.add('shield-lockdown-blur');
+        } else {
+          if (overlay) overlay.classList.remove('active');
+          if (document.body) document.body.classList.remove('shield-lockdown-blur');
+        }
+      }
+
+      window.addEventListener('resize', checkDevToolsDimensions);
+      setInterval(checkDevToolsDimensions, 600);
+
+      // 6. Anti-Debugger Trap Loop
+      setInterval(function() {
+        const start = performance.now();
+        (function() {
+          return false;
+        }['constructor']('debugger')['call']());
+        const timeElapsed = performance.now() - start;
+        if (timeElapsed > 100) {
+          setLockoutState(true);
+        }
+      }, 500);
+
+      // 7. Console Watermark & Flush
+      setInterval(function() {
+        console.clear();
+        console.log(
+          '%c🛑 ETHIO 21 PROPRIETARY ADMIN SHIELD',
+          'color: #ef4444; font-size: 24px; font-weight: 900; -webkit-text-stroke: 1px black;'
+        );
+        console.log(
+          '%cAll administrator controls, customer ledgers, and matching systems are protected.\nUnauthorized inspection, tampering, or credential theft is strictly monitored.',
+          'color: #00d2ff; font-size: 12px; font-weight: bold;'
+        );
+      }, 2000);
+
+    })();
+  </script>
+
   <style>
+    /* ETHIO 21 Proprietary Anti-Inspect Security Shield Toast */
+    .security-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(12, 18, 30, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 210, 255, 0.45);
+      color: #f8fafc;
+      padding: 0.85rem 1.5rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 210, 255, 0.35);
+      z-index: 100000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      max-width: 90vw;
+    }
+
+    .security-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .security-toast-icon {
+      color: #00d2ff;
+      display: inline-flex;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    /* ETHIO 21 Shield Lockout Overlay */
+    .devtools-lockout-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(4, 6, 12, 0.96);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      z-index: 2147483647;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      box-sizing: border-box;
+      pointer-events: auto;
+    }
+
+    .devtools-lockout-overlay.active {
+      display: flex !important;
+    }
+
+    body.shield-lockdown-blur > *:not(.devtools-lockout-overlay):not(#security-toast) {
+      filter: blur(28px) grayscale(90%) !important;
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+
+    .lockout-box {
+      background: rgba(15, 23, 42, 0.96);
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 60px rgba(239, 68, 68, 0.45), 0 25px 60px rgba(0, 0, 0, 0.85);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+      color: #fff;
+      animation: lockoutPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes lockoutPulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.35); }
+      50% { box-shadow: 0 0 75px rgba(239, 68, 68, 0.65); }
+    }
+
+    .lockout-shield-badge {
+      font-size: 3.5rem;
+      margin-bottom: 0.75rem;
+      line-height: 1;
+    }
+
+    .lockout-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      margin-bottom: 0.85rem;
+    }
+
+    .lockout-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #ef4444;
+      margin-bottom: 0.75rem;
+    }
+
+    .lockout-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+
+    .lockout-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .lockout-sub {
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -1553,9 +1871,6 @@ function doPost(e) {
         d.trackingId || d.id || '',
         d.name || '',
         d.phone || '',
-        d.area || '',
-        d.studentGender || d.childGender || 'Student',
-        d.grade || '',
         d.status || 'Pending',
         d.tgTag || ''
       ];
@@ -1568,17 +1883,13 @@ function doPost(e) {
       var g = parseFloat(d.cgpa) || 0;
       var tier = g >= 3.75 ? 'Golden' : (g >= 3.40 ? 'Silver' : 'Bronze');
       var lvl = Number(d.level) || 0;
-      var rankTitle = tier + (lvl > 0 ? (' Level ' + lvl) : ' Basic (L0)');
+      var rankTitle = d.rankTitle || (tier + (lvl > 0 ? (' Level ' + lvl) : ' Basic (L0)'));
       var newRow = [
         new Date(),
         d.trackingId || d.id || '',
         d.name || '',
         d.phone || '',
-        d.gender || '',
-        d.uni || '',
-        d.cgpa || '',
-        tier,
-        'Level ' + lvl,
+        rankTitle,
         d.status || 'Verified',
         d.tgTag || ''
       ];
@@ -1612,7 +1923,7 @@ function doPost(e) {
 
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
-  var headers = ['Timestamp', 'Tracking ID', 'Parent/Student Name', 'Phone Number', 'Area / Neighborhood', 'Student Gender', 'Grade Level', 'Status', 'Telegram Tag'];
+  var headers = ['Date', 'Parent ID', 'Full Name', 'Phone Number', 'Status', 'Telegram Tag'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#0f172a');
@@ -1621,7 +1932,7 @@ function createParentsSheet(ss) {
 
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
-  var headers = ['Timestamp', 'Tracking ID', 'Tutor Full Name', 'Phone Number', 'Gender', 'University / Campus', 'CGPA', 'Metal Tier', 'Level Rank', 'Status', 'Telegram Tag'];
+  var headers = ['Date', 'Tutor ID', 'Full Name', 'Phone Number', 'Rank / Level', 'Status', 'Telegram Tag'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#065f46');
@@ -2970,19 +3281,24 @@ function rowsToJson(sheet) {
         if (json.parents && Array.isArray(json.parents)) {
           const currentParents = getParents();
           json.parents.forEach(p => {
-            const phone = p['Phone Number'] || p.Phone;
-            if (!currentParents.some(cp => cp.phone === phone)) {
+            const phone = p['Phone Number'] || p.Phone || '';
+            const parentId = p['Parent ID'] || p['Tracking ID'] || p.id || ('AST-P-' + (phone ? phone.slice(-4) : Math.floor(1000 + Math.random() * 9000)));
+            const tgTag = p['Telegram Tag'] || (`#AST_P_${parentId.split('-')[2] || phone.slice(-4)}`);
+            if (!currentParents.some(cp => (parentId && cp.trackingId === parentId) || (phone && cp.phone === phone))) {
               currentParents.push({
                 type: 'PARENT',
-                name: p['Parent Name'],
+                trackingId: parentId,
+                id: parentId,
+                tgTag: tgTag,
+                name: p['Full Name'] || p['Parent/Student Name'] || p['Parent Name'] || p.Name || 'Parent Lead',
                 phone: phone,
-                area: p['Neighborhood / Location'] || p.Location,
-                childGender: p['Student Gender'] || 'Unspecified',
-                grade: p['Child Grade'] || p.Grade,
-                genderPref: p['Tutor Gender Preference'] || p['Gender Preference'] || 'Any',
-                subjs: p.Subjects,
+                area: p['Area / Neighborhood'] || p['Neighborhood / Location'] || p.Location || 'Addis Ababa (Near Campus)',
+                childGender: p['Student Gender'] || 'Student',
+                studentGender: p['Student Gender'] || 'Student',
+                grade: p['Grade Level'] || p['Child Grade'] || p.Grade || 'Standard',
+                subjs: p.Subjects || 'General / All',
                 status: p.Status || 'Pending',
-                date: p.Timestamp || new Date().toISOString()
+                date: p.Date || p.Timestamp || new Date().toISOString()
               });
             }
           });
@@ -2992,26 +3308,34 @@ function rowsToJson(sheet) {
         if (json.tutors && Array.isArray(json.tutors)) {
           const currentTutors = getTutors();
           json.tutors.forEach(t => {
-            const phone = t['Phone Number'] || t.Phone;
-            if (!currentTutors.some(ct => ct.phone === phone)) {
+            const phone = t['Phone Number'] || t.Phone || '';
+            const tutorId = t['Tutor ID'] || t['Tracking ID'] || t.id || ('AST-T-' + (phone ? phone.slice(-4) : Math.floor(1000 + Math.random() * 9000)));
+            const tgTag = t['Telegram Tag'] || (`#AST_T_${tutorId.split('-')[2] || phone.slice(-4)}`);
+            if (!currentTutors.some(ct => (tutorId && ct.trackingId === tutorId) || (phone && ct.phone === phone))) {
               const cgpaVal = t.CGPA || t['CGPA'] || '3.50';
               const rawLvl = t['Level Rank'] || t['Silver Level Rank'] || t.Level || 0;
               const lvl = typeof rawLvl === 'string' ? (parseInt(rawLvl.replace(/\D/g, '')) || 0) : Number(rawLvl) || 0;
+              const rank = t['Rank / Level'] || t['Rank'] || 'Golden Basic (L0)';
               currentTutors.push({
                 type: 'TUTOR',
-                name: t['Full Name'] || t.Name,
+                trackingId: tutorId,
+                id: tutorId,
+                tgTag: tgTag,
+                name: t['Full Name'] || t['Tutor Full Name'] || t.Name || 'Tutor Scholar',
                 phone: phone,
-                gender: t.Gender || '',
-                uni: t['University & Campus'] || t.University || '',
-                year: t['Academic Year'] || t.Year || '',
+                gender: t.Gender || 'Verified',
+                uni: t['University / Campus'] || t['University & Campus'] || t.University || 'Nearby Campus',
+                year: t['Academic Year'] || t.Year || '2nd Year+',
                 cgpa: cgpaVal,
-                subj: t['Subjects Taught'] || t.Subjects || '',
+                metalTier: rank.includes('Golden') ? 'Golden' : (rank.includes('Silver') ? 'Silver' : 'Bronze'),
+                rankTitle: rank,
+                subj: t['Subjects Taught'] || t.Subjects || 'Academic Curriculum',
                 level: lvl,
-                examStatus: t['Communicative Exam'] || 'Not Taken',
+                examStatus: t['Communicative Exam'] || 'Verified',
                 examScore: t['Exam Score'] ? parseInt(t['Exam Score']) : 0,
-                govtId: t['Government ID'] || '',
+                govtId: t['Government ID'] || 'National Fayda / Kebele',
                 status: t.Status || 'Verified',
-                date: t.Timestamp || new Date().toISOString()
+                date: t.Date || t.Timestamp || new Date().toISOString()
               });
             }
           });
@@ -3034,11 +3358,13 @@ function rowsToJson(sheet) {
         if (parents.length === 0) return alert('No parent records to export.');
         data = parents.map(p => ({
           Date: p.date,
+          Parent_ID: p.trackingId || p.id || '',
+          Telegram_Tag: p.tgTag || '',
           Name: p.name,
           Phone: p.phone,
-          Area: p.area,
+          Area: p.area || '',
           Student_Gender: p.studentGender || p.childGender || 'Student',
-          Grade: p.grade,
+          Grade: p.grade || '',
           Subjects: `"${(p.subjs || '').replace(/"/g, '""')}"`,
           Status: p.status || 'Pending'
         }));
@@ -3050,19 +3376,20 @@ function rowsToJson(sheet) {
           const lvl = Number(t.level) || 0;
           return {
             Date: t.date,
+            Tutor_ID: t.trackingId || t.id || '',
+            Telegram_Tag: t.tgTag || '',
             Name: t.name,
             Phone: t.phone,
-            Gender: t.gender,
-            University: t.uni,
-            Year: t.year,
-            CGPA: t.cgpa,
+            Gender: t.gender || '',
+            University: t.uni || '',
+            Year: t.year || '',
+            CGPA: t.cgpa || '',
             Metal_Tier: tier.name,
             Level_Rank: `Level ${lvl}`,
-            Combined_Rank: `${tier.name} Level ${lvl}`,
+            Combined_Rank: t.rankTitle || `${tier.name} Level ${lvl}`,
             Communicative_Exam: t.examStatus || 'Not Taken',
-            Exam_Score: t.examScore ? `${t.examScore}%` : 'N/A',
             Subjects: `"${(t.subj || '').replace(/"/g, '""')}"`,
-            Government_ID: t.govtId
+            Status: t.status || 'Verified'
           };
         });
       }
