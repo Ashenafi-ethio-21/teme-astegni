@@ -1822,14 +1822,19 @@
   <div id="modal-script-code" class="app-modal">
     <div class="modal-sheet" style="max-width: 600px;">
       <h2>📜 Google Apps Script Webhook Code</h2>
-      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
-        <span class="tag-badge tag-active">⚡ 100% Free Forever ($0.00 / Zero Ongoing Costs)</span>
-        <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">✨ Auto-Styled Modern Sheets</span>
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="tag-badge tag-active">⚡ 100% Free Forever ($0.00 / Zero Costs)</span>
+        <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">🏷️ Ultra-Lean ID-Only Index</span>
+        <span class="tag-badge" style="background: rgba(36, 161, 222, 0.15); color: #24a1de;">✈️ Telegram Ops Integration</span>
       </div>
-      <p>Log into Google with <b>ashenafitobe@gmail.com</b>, open your Sheet, go to <b>Extensions ➔ Apps Script</b>, and paste this automation script:</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.8rem;">
+        <b>Index Pointer Architecture:</b> The Google Sheet records <b>ONLY the Unique ID &amp; Registration Date</b> to use virtually 0% storage capacity. All complete applicant details, phone numbers, and verified ID documents are sent to <b>Ethio - 21 Astegni Ops</b>. Operators simply search the unique ID in Telegram to view the applicant's complete file.
+      </p>
+      <p>Log into Google with <b>ashenafitobe@gmail.com</b>, open your Sheet, go to <b>Extensions ➔ Apps Script</b>, and paste this script:</p>
 
       <div class="code-box" id="apps-script-code-box">/**
  * Teme Astegni (ተሜ አስጠኚ) - 100% Free Cloud Database Engine
+ * Ultra-Lean Index Pointer Architecture (ID-Only Storage)
  * Primary Owner: ashenafitobe@gmail.com
  * Organization: Ethio 21 Technologies
  * Cost: 100% FREE FOREVER (Google Sheets API & Apps Script)
@@ -1840,8 +1845,8 @@ function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   
   if (action === 'getData') {
-    var pSheet = ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
-    var tSheet = ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
+    var pSheet = ss.getSheetByName('Parents_Index') || ss.getSheetByName('Parents_Requests') || ss.getSheetByName('Parents') || createParentsSheet(ss);
+    var tSheet = ss.getSheetByName('Tutors_Index') || ss.getSheetByName('Verified_Tutors') || ss.getSheetByName('Tutors') || createTutorsSheet(ss);
     var mSheet = ss.getSheetByName('Matches_Ledger') || ss.getSheetByName('Matches') || createMatchesSheet(ss);
     
     var parents = rowsToJson(pSheet);
@@ -1853,7 +1858,7 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
   
-  return ContentService.createTextOutput(JSON.stringify({ status: 'OK', message: 'Teme Astegni Modern Cloud API Active' }))
+  return ContentService.createTextOutput(JSON.stringify({ status: 'OK', message: 'Teme Astegni ID-Only Cloud API Active' }))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -1868,11 +1873,7 @@ function doPost(e) {
       var d = postData.data;
       var newRow = [
         new Date(),
-        d.trackingId || d.id || '',
-        d.name || '',
-        d.phone || '',
-        d.status || 'Pending',
-        d.tgTag || ''
+        d.trackingId || d.id || ''
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#0f172a');
@@ -1880,18 +1881,9 @@ function doPost(e) {
     else if (action === 'addTutor') {
       var sheet = ss.getSheetByName('Tutors_Index') || ss.getSheetByName('Verified_Tutors') || createTutorsSheet(ss);
       var d = postData.data;
-      var g = parseFloat(d.cgpa) || 0;
-      var tier = g >= 3.75 ? 'Golden' : (g >= 3.40 ? 'Silver' : 'Bronze');
-      var lvl = Number(d.level) || 0;
-      var rankTitle = d.rankTitle || (tier + (lvl > 0 ? (' Level ' + lvl) : ' Basic (L0)'));
       var newRow = [
         new Date(),
-        d.trackingId || d.id || '',
-        d.name || '',
-        d.phone || '',
-        rankTitle,
-        d.status || 'Verified',
-        d.tgTag || ''
+        d.trackingId || d.id || ''
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#065f46');
@@ -1923,7 +1915,7 @@ function doPost(e) {
 
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
-  var headers = ['Date', 'Parent ID', 'Full Name', 'Phone Number', 'Status', 'Telegram Tag'];
+  var headers = ['Date', 'Parent ID'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#0f172a');
@@ -1932,7 +1924,7 @@ function createParentsSheet(ss) {
 
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
-  var headers = ['Date', 'Tutor ID', 'Full Name', 'Phone Number', 'Rank / Level', 'Status', 'Telegram Tag'];
+  var headers = ['Date', 'Tutor ID'];
   s.clear();
   s.appendRow(headers);
   applyModernHeader(s, '#065f46');
