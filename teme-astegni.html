@@ -1368,17 +1368,17 @@
 
           <div class="field">
             <label id="i18n-f-pname">Parent / Guardian Full Name (የወላጅ ሙሉ ስም) *</label>
-            <input type="text" id="p_name" required placeholder="e.g. Dr. Abebe Tadesse / W/ro Selam">
+            <input type="text" id="p_name" required>
           </div>
 
           <div class="field">
             <label id="i18n-f-pphone">Phone Number (Calls &amp; Telebirr) *</label>
-            <input type="tel" id="p_phone" required placeholder="09xxxxxxxx / 07xxxxxxxx">
+            <input type="tel" id="p_phone" required>
           </div>
 
           <div class="field">
             <label id="i18n-f-parea">Residential Neighborhood &amp; City (Near Campus) *</label>
-            <input type="text" id="p_area" required placeholder="e.g. 4 Kilo, 6 Kilo, Bole, Ferensay, Adama, Hawassa...">
+            <input type="text" id="p_area" required>
           </div>
 
           <!-- STUDENT GENDER SECTION (The student who will be tutored) -->
@@ -1520,13 +1520,13 @@
 
           <div class="field">
             <label id="i18n-f-tname">Full Name (As on Student ID) *</label>
-            <input type="text" id="t_name" required placeholder="e.g. Yohannes Melaku / Hawi Bekele">
+            <input type="text" id="t_name" required>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
             <div class="field">
               <label id="i18n-f-tphone">Phone Number (Telebirr) *</label>
-              <input type="tel" id="t_phone" required placeholder="09xxxxxxxx">
+              <input type="tel" id="t_phone" required>
             </div>
             <div class="field">
               <label id="i18n-f-tgender">Gender / Sex (ፆታ) *</label>
@@ -1540,7 +1540,7 @@
 
           <div class="field">
             <label id="i18n-f-tuni">University &amp; Campus Name *</label>
-            <input type="text" id="t_uni" required placeholder="e.g. AAU 4 Kilo, AAU 5 Kilo, ASTU, Hawassa Main...">
+            <input type="text" id="t_uni" required>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
@@ -1555,13 +1555,13 @@
             </div>
             <div class="field">
               <label id="i18n-f-tcgpa">CGPA (≥ 3.00) *</label>
-              <input type="number" id="t_cgpa" step="0.01" min="3.00" max="4.00" required placeholder="e.g. 3.65">
+              <input type="number" id="t_cgpa" step="0.01" min="3.00" max="4.00" required>
             </div>
           </div>
 
           <div class="field">
             <label id="i18n-f-tsubj">Subjects You Can Confidently Teach (Grade 'A') *</label>
-            <input type="text" id="t_subj" required placeholder="e.g. Mathematics, Physics, Chemistry, English...">
+            <input type="text" id="t_subj" required>
           </div>
 
           <!-- Mandatory Attachment 1: Campus ID -->
@@ -2605,7 +2605,6 @@
 
       if (type === 'STUDENT_ADULT') {
         if (nameLabel) nameLabel.innerHTML = '🎓 Student Full Name (የተማሪው ሙሉ ስም - ዕድሜ 18+) *';
-        if (nameInput) nameInput.placeholder = 'e.g. Dawit Bekele / Meron Hailu';
         if (idTitle) idTitle.innerHTML = '🆔 Student National / Kebele ID (የተማሪው መታወቂያ) *';
         if (idDesc) idDesc.innerHTML = 'Independent adult students (18+) must provide a valid National Fayda or Kebele ID (Front & Back) with at least 1 month validity for coordinator verification.';
         if (childGenderField && childGenderField.querySelector('label')) {
@@ -2613,7 +2612,6 @@
         }
       } else {
         if (nameLabel) nameLabel.innerHTML = '👨‍👩‍👧 Parent / Guardian Full Name (የወላጅ ሙሉ ስም) *';
-        if (nameInput) nameInput.placeholder = 'e.g. Dr. Abebe Tadesse / W/ro Selam';
         if (idTitle) idTitle.innerHTML = '🆔 Household ID Verification (የመታወቂያ ማረጋገጫ) *';
         if (idDesc) idDesc.innerHTML = 'To protect both your household and our university scholars entering residential homes, please provide a valid National Fayda or Kebele ID. IDs must be clearly readable and have at least 1 month (30 days) of remaining validity.';
         if (childGenderField && childGenderField.querySelector('label')) {
