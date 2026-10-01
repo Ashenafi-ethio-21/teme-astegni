@@ -3149,11 +3149,24 @@
       document.getElementById('dispatch-modal').classList.remove('active');
     }
 
-    // Default to Amharic on initial load
+    // Default to Amharic on initial load & handle deep-linking
     document.addEventListener('DOMContentLoaded', () => {
       setLang('am');
       updateLiveTrackingBanners();
-      showScreen('screen-home');
+
+      const hash = (window.location.hash || '').toLowerCase();
+      const search = (window.location.search || '').toLowerCase();
+      if (hash.includes('tutor') || search.includes('tutor')) {
+        showScreen('screen-tutor');
+      } else if (hash.includes('parent') || search.includes('parent')) {
+        showScreen('screen-parent');
+      } else if (hash.includes('vetting') || search.includes('vetting')) {
+        showScreen('screen-vetting');
+      } else if (hash.includes('hotline') || search.includes('hotline') || hash.includes('phone')) {
+        showScreen('screen-hotline');
+      } else {
+        showScreen('screen-home');
+      }
     });
   </script>
 
