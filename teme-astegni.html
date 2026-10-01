@@ -857,7 +857,7 @@
       line-height: 1.45;
     }
 
-    /* Hotline Cards */
+    /* Phone & Contact Cards */
     .hotline-item {
       background: #151d2f;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -884,6 +884,130 @@
       border-radius: 10px;
       font-size: 0.82rem;
       font-weight: 800;
+    }
+
+    /* Dedicated High-Visibility Phone Station Cards */
+    .phone-station-card {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.09), #151d2f);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 18px;
+      padding: 1.25rem;
+      margin-bottom: 1.1rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    .phone-station-top {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+    .phone-station-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: rgba(251, 191, 36, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      flex-shrink: 0;
+    }
+    .phone-station-meta {
+      flex: 1;
+    }
+    .phone-station-role {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .phone-station-status {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      display: inline-block;
+      animation: pulseGreen 1.8s infinite;
+    }
+    @keyframes pulseGreen {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #10b981; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .phone-display-box {
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 0.95rem;
+      text-align: center;
+      margin-bottom: 0.95rem;
+    }
+    .phone-big-number {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: #fbbf24;
+      letter-spacing: 0.08em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      line-height: 1.2;
+    }
+    .phone-int-number {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-top: 0.3rem;
+      font-family: monospace;
+    }
+    .phone-actions-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .phone-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    .phone-action-btn.btn-call {
+      background: #10b981;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    .phone-action-btn.btn-call:hover {
+      background: #059669;
+    }
+    .phone-action-btn.btn-copy {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .phone-action-btn.btn-copy:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .phone-action-btn.btn-sms {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .phone-action-btn.btn-sms:hover {
+      background: rgba(56, 189, 248, 0.2);
     }
 
     /* Fixed Bottom Navigation Bar */
@@ -1147,12 +1271,12 @@
           <div class="card-arrow">›</div>
         </div>
 
-        <!-- Card 4: 24/7 Hotline & Telegram Ops -->
+        <!-- Card 4: 24/7 Phone & Telegram Ops -->
         <div class="action-card card-hotline" onclick="showScreen('screen-hotline')">
           <div class="card-left">
             <div class="card-icon-bubble">📞</div>
             <div class="card-info">
-              <h3 id="i18n-c4-h">24/7 Direct Call Hotline</h3>
+              <h3 id="i18n-c4-h">24/7 Direct Phone Calls</h3>
               <p id="i18n-c4-p">Call our coordinators directly or chat on Telegram</p>
             </div>
           </div>
@@ -1644,7 +1768,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- SCREEN 5: 24/7 HOTLINE & TELEGRAM OPS      -->
+    <!-- SCREEN 5: 24/7 PHONE & DIRECT CONTACT      -->
     <!-- ========================================== -->
     <div id="screen-hotline" class="app-screen">
       
@@ -1652,45 +1776,93 @@
         <button class="btn-back" onclick="showScreen('screen-home')">
           <span>‹</span> <span id="i18n-back-h">Back to Menu</span>
         </button>
-        <span style="font-size: 0.8rem; color: #fbbf24; font-weight: 750;" id="i18n-h-badge">Direct Contact</span>
+        <span style="font-size: 0.8rem; color: #fbbf24; font-weight: 750;" id="i18n-h-badge">Direct Phone Lines</span>
       </div>
 
       <div class="form-card" style="border-color: rgba(251, 191, 36, 0.25);">
         <div class="form-header">
-          <h2 id="i18n-hp-title">24/7 Direct Coordination Hotline</h2>
-          <p id="i18n-hp-subtitle">Prefer speaking to our matching team directly? Call our hotlines or reach our Telegram operations room anytime.</p>
+          <h2 id="i18n-hp-title">24/7 Direct Phone & Coordinators</h2>
+          <p id="i18n-hp-subtitle">Prefer speaking to our matching team directly? Call our direct phone numbers or reach our Telegram operations room anytime.</p>
         </div>
 
-        <a href="tel:+251945399808" class="hotline-item">
-          <div>
-            <div style="font-size: 0.95rem; font-weight: 800;" id="i18n-call1-name">📞 Call Hotline 1 (Ashenafi)</div>
-            <div style="font-size: 0.8rem; color: #94a3b8;">0945 39 98 08 • Immediate Assistance</div>
+        <!-- Phone Station 1: Ashenafi -->
+        <div class="phone-station-card">
+          <div class="phone-station-top">
+            <div class="phone-station-avatar">👨‍💼</div>
+            <div class="phone-station-meta">
+              <div class="phone-station-role" id="i18n-call1-name">Ashenafi (Lead Coordinator)</div>
+              <div class="phone-station-status"><span class="pulse-dot"></span> <span id="i18n-p1-status">Online 24/7 • Immediate Assistance</span></div>
+            </div>
           </div>
-          <span class="hotline-btn-pill" id="i18n-call-btn1">Call Now</span>
-        </a>
-
-        <a href="tel:+251960064466" class="hotline-item">
-          <div>
-            <div style="font-size: 0.95rem; font-weight: 800;" id="i18n-call2-name">📞 Call Hotline 2 (Lemma)</div>
-            <div style="font-size: 0.8rem; color: #94a3b8;">0960 06 44 66 • Secondary Coordinator</div>
+          
+          <div class="phone-display-box">
+            <div class="phone-big-number">0945 39 98 08</div>
+            <div class="phone-int-number">+251 945 399 808</div>
           </div>
-          <span class="hotline-btn-pill" id="i18n-call-btn2">Call Now</span>
-        </a>
 
-        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="hotline-item" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.06);">
-          <div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #38bdf8;">✈️ Ethio - 21 Astegni Ops</div>
-            <div style="font-size: 0.8rem; color: #94a3b8;">Private Telegram Operations Room</div>
+          <div class="phone-actions-row">
+            <a href="tel:+251945399808" class="phone-action-btn btn-call">
+              <span>📞</span> <span id="i18n-call-btn1">Call Now</span>
+            </a>
+            <button type="button" class="phone-action-btn btn-copy" onclick="copyPhoneNumber('0945399808', this)">
+              <span>📋</span> <span class="copy-label">Copy</span>
+            </button>
+            <a href="sms:+251945399808" class="phone-action-btn btn-sms">
+              <span>💬</span> <span>SMS</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Phone Station 2: Lemma -->
+        <div class="phone-station-card">
+          <div class="phone-station-top">
+            <div class="phone-station-avatar">👨‍💼</div>
+            <div class="phone-station-meta">
+              <div class="phone-station-role" id="i18n-call2-name">Lemma (Operations Coordinator)</div>
+              <div class="phone-station-status"><span class="pulse-dot"></span> <span id="i18n-p2-status">Online 24/7 • Tutor Dispatch & Vetting</span></div>
+            </div>
+          </div>
+          
+          <div class="phone-display-box">
+            <div class="phone-big-number">0960 06 44 66</div>
+            <div class="phone-int-number">+251 960 064 466</div>
+          </div>
+
+          <div class="phone-actions-row">
+            <a href="tel:+251960064466" class="phone-action-btn btn-call">
+              <span>📞</span> <span id="i18n-call-btn2">Call Now</span>
+            </a>
+            <button type="button" class="phone-action-btn btn-copy" onclick="copyPhoneNumber('0960064466', this)">
+              <span>📋</span> <span class="copy-label">Copy</span>
+            </button>
+            <a href="sms:+251960064466" class="phone-action-btn btn-sms">
+              <span>💬</span> <span>SMS</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Telegram Ops Group -->
+        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="hotline-item" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08); margin-top: 1.2rem;">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="font-size: 1.8rem;">✈️</div>
+            <div>
+              <div style="font-size: 0.98rem; font-weight: 800; color: #38bdf8;">Ethio - 21 Astegni Ops</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;" id="i18n-ops-desc">Live Dispatch & ID Lookup Operations Room</div>
+            </div>
           </div>
           <span class="hotline-btn-pill" style="background: #0284c7;" id="i18n-ops-btn">Join Ops</span>
         </a>
 
+        <!-- Official Telegram Channel -->
         <a href="https://t.me/teme_astegni" target="_blank" class="hotline-item">
-          <div>
-            <div style="font-size: 0.95rem; font-weight: 800;">📢 @teme_astegni</div>
-            <div style="font-size: 0.8rem; color: #94a3b8;">Official Telegram Channel</div>
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="font-size: 1.8rem;">📢</div>
+            <div>
+              <div style="font-size: 0.98rem; font-weight: 800;">@teme_astegni</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;" id="i18n-ch-desc">Official Announcements & Updates Channel</div>
+            </div>
           </div>
-          <span class="hotline-btn-pill" style="background: rgba(255, 255, 255, 0.1);" id="i18n-ch-btn">View</span>
+          <span class="hotline-btn-pill" style="background: rgba(255, 255, 255, 0.12);" id="i18n-ch-btn">View</span>
         </a>
 
         <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
@@ -1727,7 +1899,7 @@
     </button>
     <button class="nav-tab" data-screen="screen-hotline" onclick="showScreen('screen-hotline')">
       <span class="nav-tab-icon">📞</span>
-      <span id="i18n-tab-hotline">Hotline</span>
+      <span id="i18n-tab-hotline">Phone</span>
     </button>
   </nav>
 
@@ -1868,14 +2040,18 @@
         vp4H: "4. የ 1 ቀን ነጻ የሙከራ ክፍለ-ጊዜ",
         vp4P: "አስጠኚው መጥቶ የመጀመሪያውን ቀን በነጻ ያስተምራል። የልጅዎን ለውጥ እና የአስጠኚውን ስነ-ምግባር አይተው ካመኑበት ብቻ ወርሃዊ ክፍያውን ይፈጽማሉ።",
         btnVaction: "👨‍👩‍👧 አሁኑኑ የተረጋገጠ አስጠኚ ይዘዙ ›",
-        hBadge: "የቀጥታ ስልክ መስመር",
-        hpTitle: "24/7 ቀጥታ የስልክ ጥሪ መስመር",
+        hBadge: "የቀጥታ ስልክ",
+        hpTitle: "24/7 ቀጥታ የስልክ መስመሮች",
         hpSubtitle: "በስልክ ደውለው ወዲያውኑ ማስተባበር ከፈለጉ ወደ ስልክ መስመሮቻችን ይደውሉ ወይም በቴሌግራም ያናግሩን።",
-        call1Name: "📞 የስልክ መስመር 1 (አሸናፊ)",
-        call2Name: "📞 የስልክ መስመር 2 (ለማ)",
-        callBtn1: "ይደውሉ",
-        callBtn2: "ይደውሉ",
-        opsBtn: "ቴሌግራም",
+        call1Name: "አሸናፊ (ዋና አስተባባሪ)",
+        call2Name: "ለማ (ኦፕሬሽንስ አስተባባሪ)",
+        callBtn1: "ይደውሉ (Call)",
+        callBtn2: "ይደውሉ (Call)",
+        p1Status: "በመስመር ላይ 24/7 • ፈጣን ምላሽ",
+        p2Status: "በመስመር ላይ 24/7 • የአስጠኚዎች ቅበላና ስምሪት",
+        opsDesc: "የቀጥታ ስምሪት እና የመለያ (ID) መፈለጊያ ክፍል",
+        chDesc: "ኦፊሴላዊ የቴሌግራም ቻናልና ማስታወቂያዎች",
+        opsBtn: "ቴሌግራም Ops",
         chBtn: "ቻናል",
         modalClose: "ዝጋ / ተጠናቋል"
       },
@@ -1891,7 +2067,7 @@
         c2P: "For active 2nd Year+ students with CGPA ≥ 3.00",
         c3H: "4-Tier Tutor Verification",
         c3P: "How we ensure child safety & academic mastery",
-        c4H: "24/7 Direct Call Hotline",
+        c4H: "24/7 Direct Phone Calls",
         c4P: "Call our coordinators directly or chat on Telegram",
         t1H: "🆔 Verified Identity",
         t1P: "National/Kebele & Student ID permanently on file.",
@@ -1906,7 +2082,7 @@
         tabParent: "Parents",
         tabTutor: "Tutors",
         tabVetting: "Vetting",
-        tabHotline: "Hotline",
+        tabHotline: "Phone",
         backP: "Back to Menu",
         backT: "Back to Menu",
         backV: "Back to Menu",
@@ -1970,13 +2146,17 @@
         vp4H: "4. 1-Day Free In-Home Trial Session",
         vp4P: "The tutor comes to your home and conducts a 1-day free trial lesson. You and your child evaluate their pedagogy and character. You only confirm the monthly agreement if 100% satisfied.",
         btnVaction: "👨‍👩‍👧 Request a Verified Tutor Now ›",
-        hBadge: "Direct Contact",
-        hpTitle: "24/7 Direct Coordination Hotline",
-        hpSubtitle: "Prefer speaking to our matching team directly? Call our hotlines or reach our Telegram operations room anytime.",
-        call1Name: "📞 Call Hotline 1 (Ashenafi)",
-        call2Name: "📞 Call Hotline 2 (Lemma)",
-        callBtn1: "Call",
-        callBtn2: "Call",
+        hBadge: "Direct Phone Lines",
+        hpTitle: "24/7 Direct Phone & Coordinators",
+        hpSubtitle: "Prefer speaking to our matching team directly? Call our direct phone numbers or reach our Telegram operations room anytime.",
+        call1Name: "Ashenafi (Lead Coordinator)",
+        call2Name: "Lemma (Operations Coordinator)",
+        callBtn1: "Call Now",
+        callBtn2: "Call Now",
+        p1Status: "Online 24/7 • Immediate Assistance",
+        p2Status: "Online 24/7 • Tutor Dispatch & Vetting",
+        opsDesc: "Live Dispatch & ID Lookup Operations Room",
+        chDesc: "Official Announcements & Updates Channel",
         opsBtn: "Join Ops",
         chBtn: "Channel",
         modalClose: "Close / Done"
@@ -2073,12 +2253,16 @@
         vp4P: "Barsiisaan gara mana keessanii dhufee guyyaa duraa bilisaan barsiisa. Haala barsiisuu fi amala isaa ilaaltanii yoo itti amantan qofa waliigaltee raawwattu.",
         btnVaction: "👨‍👩‍👧 Barsiisaa Mirkanaa'aa Amma Gaafadhaa ›",
         hBadge: "Bilbila Kallattii",
-        hpTitle: "Sarara Bilbilaa Qindeessaa 24/7",
-        hpSubtitle: "Kallattiin garee keenya waliin dubbachuu yoo barbaaddan sarara keenyatti bilbilaa yookiin Telegiraamiin nu qunnamaa.",
-        call1Name: "📞 Sarara Bilbilaa 1 (Ashenafi)",
-        call2Name: "📞 Sarara Bilbilaa 2 (Lammaa)",
+        hpTitle: "Sarara Bilbilaa Qindeessitootaa 24/7",
+        hpSubtitle: "Kallattiin bilbilaan barsiisaa gaafachuuf ykn odeeffannoo argachuuf lakkoofsota armaan gadiitti bilbilaa.",
+        call1Name: "Ashenafi (Qindeessaa Olaanaa)",
+        call2Name: "Lammaa (Qindeessaa Hojii)",
         callBtn1: "Bilbilaa",
         callBtn2: "Bilbilaa",
+        p1Status: "Tajaajila 24/7 • Deebii Battalaa",
+        p2Status: "Tajaajila 24/7 • Ramaddii fi Mirkaneessa Barsiisotaa",
+        opsDesc: "Kutaa Hojii fi Barbaacha ID Telegiraamii",
+        chDesc: "Chaanaalii Beeksisootaa fi Oduuwwan",
         opsBtn: "Ops Galmoomaa",
         chBtn: "Chaanaalii",
         modalClose: "Cufaa / Xumurameera"
@@ -2205,17 +2389,45 @@
       document.getElementById('i18n-vp4-p').innerText = t.vp4P;
       document.getElementById('i18n-btn-vaction').innerText = t.btnVaction;
 
-      // Hotline Screen
-      document.getElementById('i18n-h-badge').innerText = t.hBadge;
-      document.getElementById('i18n-hp-title').innerText = t.hpTitle;
-      document.getElementById('i18n-hp-subtitle').innerText = t.hpSubtitle;
-      document.getElementById('i18n-call1-name').innerText = t.call1Name;
-      document.getElementById('i18n-call2-name').innerText = t.call2Name;
-      document.getElementById('i18n-call-btn1').innerText = t.callBtn1;
-      document.getElementById('i18n-call-btn2').innerText = t.callBtn2;
-      document.getElementById('i18n-ops-btn').innerText = t.opsBtn;
-      document.getElementById('i18n-ch-btn').innerText = t.chBtn;
-      document.getElementById('i18n-modal-close').innerText = t.modalClose;
+      // Phone Screen
+      if (document.getElementById('i18n-h-badge')) document.getElementById('i18n-h-badge').innerText = t.hBadge;
+      if (document.getElementById('i18n-hp-title')) document.getElementById('i18n-hp-title').innerText = t.hpTitle;
+      if (document.getElementById('i18n-hp-subtitle')) document.getElementById('i18n-hp-subtitle').innerText = t.hpSubtitle;
+      if (document.getElementById('i18n-call1-name')) document.getElementById('i18n-call1-name').innerText = t.call1Name;
+      if (document.getElementById('i18n-call2-name')) document.getElementById('i18n-call2-name').innerText = t.call2Name;
+      if (document.getElementById('i18n-call-btn1')) document.getElementById('i18n-call-btn1').innerText = t.callBtn1;
+      if (document.getElementById('i18n-call-btn2')) document.getElementById('i18n-call-btn2').innerText = t.callBtn2;
+      if (document.getElementById('i18n-p1-status')) document.getElementById('i18n-p1-status').innerText = t.p1Status;
+      if (document.getElementById('i18n-p2-status')) document.getElementById('i18n-p2-status').innerText = t.p2Status;
+      if (document.getElementById('i18n-ops-desc')) document.getElementById('i18n-ops-desc').innerText = t.opsDesc;
+      if (document.getElementById('i18n-ch-desc')) document.getElementById('i18n-ch-desc').innerText = t.chDesc;
+      if (document.getElementById('i18n-ops-btn')) document.getElementById('i18n-ops-btn').innerText = t.opsBtn;
+      if (document.getElementById('i18n-ch-btn')) document.getElementById('i18n-ch-btn').innerText = t.chBtn;
+      if (document.getElementById('i18n-modal-close')) document.getElementById('i18n-modal-close').innerText = t.modalClose;
+    }
+
+    // Copy Phone Number Helper
+    function copyPhoneNumber(num, btn) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(num);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = num;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const label = btn.querySelector('.copy-label') || btn;
+      const originalText = label.innerText;
+      label.innerText = '✓ Copied';
+      btn.style.background = '#10b981';
+      btn.style.borderColor = '#10b981';
+      setTimeout(() => {
+        label.innerText = originalText;
+        btn.style.background = '';
+        btn.style.borderColor = '';
+      }, 2000);
     }
 
     // Unique Tracking ID Generator (Index Pointer Architecture)
