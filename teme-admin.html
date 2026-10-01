@@ -1270,6 +1270,9 @@
       </div>
 
       <div class="header-actions">
+        <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 850; border: 1.5px solid #34d399; box-shadow: 0 4px 14px rgba(16,185,129,0.4); padding: 0.45rem 0.9rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;" onclick="pushLocalRecordsToGoogleSheet()">
+          ☁️ Push All to Google Sheet
+        </button>
         <span id="user-role-badge" class="role-badge role-badge-owner">
           👑 Owner: Ashenafi
         </span>
@@ -1279,6 +1282,21 @@
 
     <!-- VIEW 1: OVERVIEW DASHBOARD -->
     <section id="view-dashboard" class="view-panel active">
+      <!-- GOOGLE SHEETS EXECUTIVE SYNC BANNER -->
+      <div style="background: rgba(16, 185, 129, 0.12); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 14px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.65rem;">
+        <div>
+          <div style="font-size: 0.88rem; font-weight: 850; color: #34d399; display: flex; align-items: center; gap: 0.4rem;">
+            <span>☁️</span> Google Sheet Cloud Ledger Synchronization
+          </div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.15rem;">
+            Push all verified tutors and parent leads from this portal to Google Sheet <code>Tutors_Index</code> &amp; <code>Parents_Index</code>.
+          </div>
+        </div>
+        <button class="btn-act btn-act-primary" style="background: #10b981; border: none; font-weight: 850; padding: 0.5rem 1rem; box-shadow: 0 4px 12px rgba(16,185,129,0.3);" onclick="pushLocalRecordsToGoogleSheet()">
+          ⚡ Push All Leads to Google Sheet Now
+        </button>
+      </div>
+
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-label">Parent Requests</div>
@@ -1345,9 +1363,12 @@
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
         <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="parent-list-counter">Showing 0 requests</span>
-        <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Google Sheet</button>
+          <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
+        </div>
       </div>
 
       <div id="parents-cards-container">
@@ -1376,9 +1397,12 @@
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
         <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;" id="tutor-list-counter">Showing 0 verified tutors</span>
-        <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Google Sheet</button>
+          <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
+        </div>
       </div>
 
       <div id="tutors-cards-container">
@@ -3788,11 +3812,17 @@ function rowsToJson(sheet) {
     }
 
     async function pushSingleTutorToSheet(tutorId) {
-      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      let url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       if (!url) {
-        alert('Please configure your Google Apps Script Webhook URL first in Database settings.');
-        switchView('view-database');
-        return;
+        const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):');
+        if (entered && entered.trim().startsWith('http')) {
+          url = entered.trim();
+          localStorage.setItem('teme_astegni_db_webhook', url);
+          if (document.getElementById('webhook-url-input')) document.getElementById('webhook-url-input').value = url;
+        } else {
+          alert('Google Apps Script Webhook URL is required.');
+          return;
+        }
       }
       try {
         await fetch(url, {
@@ -3813,11 +3843,17 @@ function rowsToJson(sheet) {
     }
 
     async function pushSingleParentToSheet(parentId) {
-      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      let url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       if (!url) {
-        alert('Please configure your Google Apps Script Webhook URL first in Database settings.');
-        switchView('view-database');
-        return;
+        const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):');
+        if (entered && entered.trim().startsWith('http')) {
+          url = entered.trim();
+          localStorage.setItem('teme_astegni_db_webhook', url);
+          if (document.getElementById('webhook-url-input')) document.getElementById('webhook-url-input').value = url;
+        } else {
+          alert('Google Apps Script Webhook URL is required.');
+          return;
+        }
       }
       try {
         await fetch(url, {
@@ -3838,10 +3874,17 @@ function rowsToJson(sheet) {
     }
 
     async function pushLocalRecordsToGoogleSheet() {
-      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      let url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       if (!url) {
-        alert('Please configure your Google Apps Script Webhook URL first in the field above.');
-        return;
+        const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):');
+        if (entered && entered.trim().startsWith('http')) {
+          url = entered.trim();
+          localStorage.setItem('teme_astegni_db_webhook', url);
+          if (document.getElementById('webhook-url-input')) document.getElementById('webhook-url-input').value = url;
+        } else {
+          alert('Google Apps Script Webhook URL is required.');
+          return;
+        }
       }
       const tutors = getTutors();
       const parents = getParents();
