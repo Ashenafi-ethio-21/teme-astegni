@@ -1802,6 +1802,31 @@
         </div>
       </div>
 
+      <!-- Name Consistency Verification Panel (Single User Credential Rule) -->
+      <div id="inspect-name-match-card" style="background: rgba(251, 191, 36, 0.08); border: 1.5px solid rgba(251, 191, 36, 0.35); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+          <div style="font-size: 0.82rem; font-weight: 850; color: #fbbf24;">🔍 Name Consistency &amp; Credential Matching Audit</div>
+          <span class="tag-badge" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24; font-size: 0.65rem;">Single Identity Rule</span>
+        </div>
+        <div style="font-size: 0.74rem; color: #cbd5e1; margin-bottom: 0.5rem;">
+          Target Legal Name: <b id="inspect-target-legal-name" style="color: #38bdf8; font-size: 0.84rem;"></b>
+        </div>
+        <div id="inspect-checks-container" style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.74rem; color: #e2e8f0;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="inspect-check-campus-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+            <span>1. <b>Campus Student ID</b> name matches target legal name</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="inspect-check-grade-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+            <span>2. <b>Grade Report / Portal</b> name matches target legal name</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" id="inspect-check-govt-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+            <span>3. <b>National Fayda / Kebele ID</b> name matches target legal name</span>
+          </label>
+        </div>
+      </div>
+
       <!-- Coordinator Verification Actions -->
       <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 0.85rem; margin-bottom: 1rem;">
         <div style="font-size: 0.8rem; font-weight: 850; color: #38bdf8; margin-bottom: 0.35rem;">🛡️ Coordinator Legibility Audit Checklist:</div>
@@ -3119,6 +3144,22 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-name').innerText = `${record.name} (${pTrackingId})`;
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.area || 'Addis Ababa'} • Telegram Tag: ${pTgTag}`;
         document.getElementById('inspect-doc-type').innerText = record.idType || 'National Fayda / Kebele';
+        document.getElementById('inspect-target-legal-name').innerText = record.name;
+
+        // Parent ID inspection checks
+        const checksEl = document.getElementById('inspect-checks-container');
+        if (checksEl) {
+          checksEl.innerHTML = `
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="inspect-check-govt-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+              <span>1. <b>National Fayda / Kebele ID</b> name matches registered name (<b>${escapeHtml(record.name)}</b>)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="inspect-check-address-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+              <span>2. <b>Residential Address</b> on ID correlates with neighborhood (${escapeHtml(record.area || 'Addis Ababa')})</span>
+            </label>
+          `;
+        }
 
         const vaultBtn = document.getElementById('inspect-tg-vault-link');
         if (vaultBtn) {
@@ -3152,6 +3193,26 @@ function rowsToJson(sheet) {
         document.getElementById('inspect-person-name').innerText = `${record.name} (${tTrackingId})`;
         document.getElementById('inspect-person-meta').innerText = `${record.phone} • ${record.uni} (CGPA: ${record.cgpa}) • Tag: ${tTgTag}`;
         document.getElementById('inspect-doc-type').innerText = record.govtId || 'National Fayda / Kebele (Front & Back)';
+        document.getElementById('inspect-target-legal-name').innerText = record.name;
+
+        // Tutor 3-Credential Name Consistency Checks
+        const checksEl = document.getElementById('inspect-checks-container');
+        if (checksEl) {
+          checksEl.innerHTML = `
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="inspect-check-campus-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+              <span>1. <b>Campus Student ID</b> name matches target legal name (<b>${escapeHtml(record.name)}</b>)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="inspect-check-grade-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+              <span>2. <b>Grade Report / Portal</b> name matches target legal name (<b>${escapeHtml(record.name)}</b>)</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="inspect-check-govt-name" checked style="accent-color: #10b981; width: 16px; height: 16px;">
+              <span>3. <b>National Fayda / Kebele ID</b> name matches target legal name (<b>${escapeHtml(record.name)}</b>)</span>
+            </label>
+          `;
+        }
 
         const vaultBtn = document.getElementById('inspect-tg-vault-link');
         if (vaultBtn) {
@@ -3194,21 +3255,59 @@ function rowsToJson(sheet) {
       const user = getSessionUser();
       const adminName = user ? (user.name || user.role) : 'System Admin';
 
-      const msg = 
-        `🛡️ <b>ADMIN ACTION: ID VERIFICATION AUDIT APPROVED</b>\n\n` +
-        `🏷️ <b>${type === 'PARENT' ? 'Parent' : 'Tutor'} ID:</b> <code>${trackingId}</code>\n` +
-        `📌 <b>SEARCH TAG:</b> <code>${tgTag}</code>\n` +
-        `👤 <b>Name:</b> ${escapeHtml(r.name)}\n` +
-        `📞 <b>Phone:</b> ${escapeHtml(r.phone)}\n` +
-        `🆔 <b>Document:</b> ${escapeHtml(r.idType || r.govtId || 'National Fayda / Kebele')}\n` +
-        `✅ <b>Audit Status:</b> Verified Authentic & Legible in Vault\n` +
-        `👮 <b>Auditor:</b> ${escapeHtml(adminName)}\n` +
-        `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
-        `🔍 <i>Trace this ID in Telegram Ops: ${tgTag}</i>`;
+      // Strict Single-User Credential Check for Tutors
+      if (type === 'TUTOR') {
+        const cCampus = document.getElementById('inspect-check-campus-name')?.checked;
+        const cGrade = document.getElementById('inspect-check-grade-name')?.checked;
+        const cGovt = document.getElementById('inspect-check-govt-name')?.checked;
 
-      dispatchTelegramOpsLog(msg);
-      updateInspectExpiryStatus('Active Verified');
-      alert(`🛡️ ID for ${r.name} (${trackingId}) marked as Verified!\nAudit logged to Telegram Ops under tag ${tgTag}.`);
+        if (!cCampus || !cGrade || !cGovt) {
+          alert(`⚠️ NAME MISMATCH ALERT!\n\nAll three credentials (University ID, Grade Report, and Government ID) must belong to the exact same person and display the name "${r.name}".\n\nPlease verify that the names match before approving.`);
+          return;
+        }
+
+        const msg = 
+          `🛡️ <b>ADMIN ACTION: CREDENTIAL NAMES VERIFIED & APPROVED</b>\n\n` +
+          `🏷️ <b>Tutor ID:</b> <code>${trackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${tgTag}</code>\n` +
+          `👤 <b>Target Legal Name:</b> ${escapeHtml(r.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(r.phone)}\n` +
+          `🏛️ <b>University:</b> ${escapeHtml(r.uni || 'Accredited Campus')}\n` +
+          `🪪 <b>SINGLE-USER CREDENTIAL AUDIT:</b>\n` +
+          `  ✅ Campus Student ID: Exact Name Match ("${escapeHtml(r.name)}")\n` +
+          `  ✅ Grade Report / Portal: Exact Name Match ("${escapeHtml(r.name)}")\n` +
+          `  ✅ National Fayda / Kebele: Exact Name Match ("${escapeHtml(r.name)}")\n` +
+          `✓ 100% Name Consistency Passed across all 3 credentials.\n` +
+          `👮 <b>Auditor:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace this ID in Telegram Ops: ${tgTag}</i>`;
+
+        dispatchTelegramOpsLog(msg);
+        updateInspectExpiryStatus('Active Verified');
+        alert(`🛡️ ID & Credentials for ${r.name} (${trackingId}) Verified!\n\nName Consistency Check Passed (100% Match across Campus ID, Grade Report, and Govt ID).\nAudit logged to Telegram Ops (${tgTag}).`);
+      } else {
+        const cGovt = document.getElementById('inspect-check-govt-name')?.checked;
+        if (!cGovt) {
+          alert(`⚠️ NAME MISMATCH ALERT!\n\nThe Government ID must display the exact name "${r.name}".`);
+          return;
+        }
+
+        const msg = 
+          `🛡️ <b>ADMIN ACTION: PARENT ID VERIFICATION APPROVED</b>\n\n` +
+          `🏷️ <b>Parent ID:</b> <code>${trackingId}</code>\n` +
+          `📌 <b>SEARCH TAG:</b> <code>${tgTag}</code>\n` +
+          `👤 <b>Target Name:</b> ${escapeHtml(r.name)}\n` +
+          `📞 <b>Phone:</b> ${escapeHtml(r.phone)}\n` +
+          `🆔 <b>Document:</b> ${escapeHtml(r.idType || 'National Fayda / Kebele')}\n` +
+          `✅ <b>Audit Status:</b> Verified Authentic & Legible in Vault (Name Matches)\n` +
+          `👮 <b>Auditor:</b> ${escapeHtml(adminName)}\n` +
+          `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
+          `🔍 <i>Trace this ID in Telegram Ops: ${tgTag}</i>`;
+
+        dispatchTelegramOpsLog(msg);
+        updateInspectExpiryStatus('Active Verified');
+        alert(`🛡️ Parent ID for ${r.name} (${trackingId}) marked as Verified!\nAudit logged to Telegram Ops under tag ${tgTag}.`);
+      }
     }
 
     function toggleMatchPaymentProof(id) {
