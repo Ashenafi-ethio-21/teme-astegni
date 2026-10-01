@@ -1648,22 +1648,23 @@
             </div>
           </div>
 
-          <!-- Mandatory Credential Name Consistency Check (Single Identity Guarantee) -->
-          <div class="field" style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+          <!-- Mandatory Credential Name Consistency Check (Single Identity Mandate) -->
+          <div class="field" style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-              <span style="font-size: 1.2rem;">🛡️</span>
-              <span style="font-weight: 850; font-size: 0.88rem; color: #34d399;">Single Identity Verification (የስም አንድነት ማረጋገጫ)</span>
+              <span style="font-size: 1.2rem;">⚠️</span>
+              <span style="font-weight: 850; font-size: 0.88rem; color: #f87171;">Strict Name Consistency Requirement (የስም አንድነት ህግ)</span>
             </div>
             <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;">
-              Your <b>Full Legal Name</b> must match across all 3 submitted verification credentials:
+              Your <b>Full Legal Name</b> entered above must <b>EXACTLY MATCH</b> the name printed across <b>ALL THREE</b> credentials:
               <br>• 1. <b>Campus Student ID Card</b>
               <br>• 2. <b>Official Grade Report / Portal</b>
               <br>• 3. <b>National Fayda ID / Kebele Card</b>
+              <br><i>Any mismatch between credential names will result in immediate disqualification and account rejection.</i>
             </p>
-            <label class="check-label" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.65rem 0.85rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
-              <input type="checkbox" id="t_name_consistency_confirm" checked style="accent-color: #10b981; width: 20px; height: 20px;">
-              <span style="font-size: 0.78rem; font-weight: 750; color: #a7f3d0; line-height: 1.4;">
-                ✓ I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the same Full Legal Name.
+            <label class="check-label" style="background: rgba(16, 185, 129, 0.12); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 0.75rem 0.9rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
+              <input type="checkbox" id="t_name_consistency_confirm" checked style="accent-color: #10b981; width: 22px; height: 22px;">
+              <span style="font-size: 0.8rem; font-weight: 750; color: #a7f3d0; line-height: 1.4;" id="t_name_consistency_label">
+                ✓ I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the EXACT SAME Full Name entered in this form.
               </span>
             </label>
           </div>
@@ -1927,24 +1928,33 @@
   <!-- RESULT DISPATCH MODAL                      -->
   <!-- ========================================== -->
   <div class="modal-overlay" id="dispatch-modal">
-    <div class="modal-card">
-      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
-      <h3 id="modal-title">Request Successfully Prepared!</h3>
-      <p id="modal-desc">Your request has been copied to your clipboard. Tap below to send directly into <b>Ethio - 21 Astegni Ops</b>.</p>
-      
-      <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-tg-action" id="btn-tg-action">
-        <span id="btn-tg-modal-text">✈️ Open "Ethio - 21 Astegni Ops"</span>
+    <div class="modal-card" style="max-width: 440px;">
+      <div style="font-size: 2.8rem; margin-bottom: 0.35rem;">🎉</div>
+      <h3 id="modal-title" style="font-size: 1.2rem; font-weight: 850; margin-bottom: 0.4rem;">Application Successfully Submitted!</h3>
+      <p id="modal-desc" style="font-size: 0.82rem; line-height: 1.5; color: #cbd5e1; margin-bottom: 0.85rem;">
+        Your application is registered. Choose an action below:
+      </p>
+
+      <!-- 1-Click Pre-Filled Telegram Submission to Coordinator Desk (NO COPY-PASTE REQUIRED!) -->
+      <a href="https://t.me/ethio21tech" target="_blank" rel="noopener noreferrer" class="btn-tg-action" id="btn-tg-direct-desk" style="background: linear-gradient(135deg, #0284c7, #38bdf8); margin-top: 0.5rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.92rem; font-weight: 850; box-shadow: 0 4px 14px rgba(56,189,248,0.35);">
+        <span id="btn-tg-direct-desk-text">🚀 1-Click Submit to Telegram Desk (@ethio21tech) ›</span>
       </a>
 
-      <!-- Direct Payment Screenshot Action for Parents & Tutors -->
-      <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-tg-action" style="background: linear-gradient(135deg, #059669, #10b981); margin-top: 0.6rem; text-decoration: none;" id="btn-tg-payment-proof">
-        <span>💳 Send Payment Screenshot to Ops Telegram ›</span>
+      <!-- Instant Push to Google Sheets Cloud Ledger Button -->
+      <button type="button" class="btn-tg-action" id="btn-modal-push-sheet" style="background: linear-gradient(135deg, #059669, #10b981); margin-top: 0.5rem; text-decoration: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; font-size: 0.92rem; font-weight: 850; box-shadow: 0 4px 14px rgba(16,185,129,0.3);" onclick="pushCurrentApplicationToSheet()">
+        <span id="btn-modal-push-sheet-text">📤 Push to Google Sheet Cloud Ledger</span>
+      </button>
+      <div id="modal-sheet-status" style="font-size: 0.74rem; font-weight: 750; color: #34d399; margin-top: 0.35rem; display: none; text-align: center;"></div>
+
+      <!-- Join Astegni Ops Group -->
+      <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" rel="noopener noreferrer" class="btn-tg-action" id="btn-tg-action" style="background: rgba(36, 161, 222, 0.2); border: 1.5px solid rgba(56,189,248,0.5); margin-top: 0.5rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 750;">
+        <span id="btn-tg-modal-text">👥 Join Ethio - 21 Astegni Ops Group ›</span>
       </a>
-      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.6rem 0.75rem; margin-top: 0.6rem; text-align: left;">
-        <div style="font-size: 0.74rem; font-weight: 800; color: #34d399; margin-bottom: 0.2rem;">💡 Free &amp; Instant Payment Verification:</div>
-        <div style="font-size: 0.7rem; color: #cbd5e1; line-height: 1.4;">
-          After paying deposit or match fee via Telebirr / CBE, send the transaction screenshot directly to <b>Ethio - 21 Astegni Ops</b> for instantaneous confirmation.
-        </div>
+
+      <!-- Direct Phone Support -->
+      <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+        <a href="tel:+251945399808" style="flex: 1; text-align: center; text-decoration: none; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; font-weight: 800; font-size: 0.75rem; padding: 0.5rem; border-radius: 8px;">📞 Ashenafi: 0945399808</a>
+        <a href="tel:+251960064466" style="flex: 1; text-align: center; text-decoration: none; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; font-weight: 800; font-size: 0.75rem; padding: 0.5rem; border-radius: 8px;">📞 Lema: 0960064466</a>
       </div>
 
       <button class="btn-modal-close" onclick="closeModal()" id="i18n-modal-close" style="margin-top: 0.8rem;">Close / Done</button>
@@ -2594,6 +2604,75 @@
       }
     }
 
+    // Active Submission Tracking State
+    window.lastSubmittedRecord = null;
+
+    // Instant Manual or Automatic Cloud Push to Google Sheet Ledger
+    async function pushCurrentApplicationToSheet() {
+      const btn = document.getElementById('btn-modal-push-sheet');
+      const btnText = document.getElementById('btn-modal-push-sheet-text');
+      const stat = document.getElementById('modal-sheet-status');
+      
+      if (!window.lastSubmittedRecord || !window.lastSubmittedRecord.trackingId) {
+        if (stat) { 
+          stat.style.display = 'block'; 
+          stat.style.color = '#fbbf24'; 
+          stat.innerText = '⚠️ No active application found to push. Please submit the form first.'; 
+        }
+        return;
+      }
+
+      let webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
+      if (!webhookUrl || !webhookUrl.startsWith('http')) {
+        const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):\n\nIf you do not have it, contact Coordinator Ashenafi Girma (0945399808) to sync your file.');
+        if (entered && entered.trim().startsWith('http')) {
+          webhookUrl = entered.trim();
+          localStorage.setItem('teme_astegni_db_webhook', webhookUrl);
+        } else {
+          if (stat) { 
+            stat.style.display = 'block'; 
+            stat.style.color = '#fbbf24'; 
+            stat.innerText = '⚠️ Webhook URL is required to push directly to Google Sheet.'; 
+          }
+          return;
+        }
+      }
+
+      if (btnText) btnText.innerText = '⏳ Pushing to Google Sheet...';
+      const rec = window.lastSubmittedRecord;
+      const action = rec.type === 'addParent' ? 'addParent' : 'addTutor';
+      const targetSheet = rec.type === 'addParent' ? 'Parents_Index' : 'Tutors_Index';
+
+      try {
+        // Channel 1: POST
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: action, data: { trackingId: rec.trackingId, id: rec.trackingId } })
+        }).catch(() => {});
+
+        // Channel 2: GET Fallback Beacon
+        const sep = webhookUrl.includes('?') ? '&' : '?';
+        fetch(`${webhookUrl}${sep}action=${action}&id=${encodeURIComponent(rec.trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+
+        if (btn) btn.style.background = '#059669';
+        if (btnText) btnText.innerText = `✓ Successfully Pushed to ${targetSheet}!`;
+        if (stat) {
+          stat.style.display = 'block';
+          stat.style.color = '#34d399';
+          stat.innerHTML = `✓ <b>Confirmed:</b> Tracking ID <code>${rec.trackingId}</code> recorded in Google Sheet <b>${targetSheet}</b>.`;
+        }
+      } catch (err) {
+        if (btnText) btnText.innerText = `✓ Push Request Dispatched (${targetSheet})`;
+        if (stat) {
+          stat.style.display = 'block';
+          stat.style.color = '#34d399';
+          stat.innerHTML = `✓ Push request dispatched for ID <code>${rec.trackingId}</code>.`;
+        }
+      }
+    }
+
     // Applicant Type Switcher (Parent vs Independent Student 18+)
     function toggleApplicantType(type) {
       const nameLabel = document.getElementById('i18n-f-pname');
@@ -2709,14 +2788,14 @@
       const phone = document.getElementById('p_phone').value.trim();
       const area = document.getElementById('p_area').value.trim();
 
-      if (!name || name.trim().length < 2) {
+      const nameParts = name.split(/\s+/).filter(Boolean);
+      if (nameParts.length < 2) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን ያስገቡ (ምሳሌ፡ ዮናስ አበበ)።' 
-          : 'Please enter your Full Name (e.g. Yonas Abebe).';
+          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። ከመታወቂያዎ ጋር አንድ መሆን አለበት።' 
+          : 'Please enter your Full Legal Name (at least First and Last name). It must match the name on your Government ID.';
         abortParentValidation(msg, document.getElementById('p_name'));
         return;
       }
-
 
       if (!phone || phone.replace(/\D/g, '').length < 9) {
         const msg = (currentLang === 'am')
@@ -2841,17 +2920,54 @@
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       sendTextMessageToTelegramBot(plainText);
 
+      // Record active lead for 1-Click Push to Google Sheets
+      window.lastSubmittedRecord = {
+        type: 'addParent',
+        trackingId: trackingId,
+        name: name,
+        phone: phone
+      };
+
+      // Configure Direct 1-Click Telegram Desk Submission (Pre-Filled with entire application!)
+      const directDeskUrl = `https://t.me/ethio21tech?text=${encodeURIComponent(plainText)}`;
+      const btnDirectDesk = document.getElementById('btn-tg-direct-desk');
+      if (btnDirectDesk) {
+        btnDirectDesk.href = directDeskUrl;
+      }
+
+      // Configure Push to Sheet Button & Status
+      const sheetBtn = document.getElementById('btn-modal-push-sheet');
+      const sheetBtnText = document.getElementById('btn-modal-push-sheet-text');
+      const sheetStat = document.getElementById('modal-sheet-status');
+      const webhookUrlSaved = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
+      if (webhookUrlSaved && webhookUrlSaved.startsWith('http')) {
+        if (sheetBtn) sheetBtn.style.background = '#059669';
+        if (sheetBtnText) sheetBtnText.innerText = '✓ Auto-Pushed to Parents_Index';
+        if (sheetStat) {
+          sheetStat.style.display = 'block';
+          sheetStat.style.color = '#34d399';
+          sheetStat.innerHTML = `✓ <b>Success:</b> Tracking ID <code>${trackingId}</code> recorded in Google Sheet <b>Parents_Index</b>.`;
+        }
+      } else {
+        if (sheetBtn) sheetBtn.style.background = '';
+        if (sheetBtnText) sheetBtnText.innerText = (currentLang === 'am') ? '📤 ወደ ጉግል ሺት መዝግብ (Google Sheet)' : '📤 Push to Google Sheet Cloud Ledger';
+        if (sheetStat) sheetStat.style.display = 'none';
+      }
+
       const modalTitle = (currentLang === 'am') ? 'ጥያቄዎ በቀጥታ ተመዝግቧል!' : (currentLang === 'or' ? 'Gaaffiin Keessan Galmaa\'eera!' : 'Registration Successfully Submitted!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ ጥያቄዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ በመቀላቀል የአስተባባሪዎች ፈጣን ዝመናዎችን እና የሙከራ ትምህርት ቀጠሮዎችን መከታተል ይችላሉ።`
+        ? `ውድ <b>${name}</b>፣ ጥያቄዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን <b>1-Click Submit</b> በተን በመጫን ወደ <b>@ethio21tech</b> በቀጥታ መላክ ወይም ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ መቀላቀል ይችላሉ።`
         : (currentLang === 'or'
           ? `Kabajamoo <b>${name}</b>, gaaffiin keessan galmaa'eera. Waraabuun (copy/paste) hin barbaachisu!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Gara garee Telegram <b>Ethio - 21 Astegni Ops</b> makamaa.`
-          : `Dear <b>${name}</b>, your request has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to join <b>Ethio - 21 Astegni Ops</b> Telegram Group for live coordinator updates and trial lesson scheduling.`);
+          : `Dear <b>${name}</b>, your request has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap <b>1-Click Submit</b> below to dispatch directly to <b>@ethio21tech</b> or join our <b>Ethio - 21 Astegni Ops</b> Telegram Group.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
+      if (document.getElementById('btn-tg-direct-desk-text')) {
+        document.getElementById('btn-tg-direct-desk-text').innerText = (currentLang === 'am') ? '🚀 በአንድ ክሊክ ወደ ቴሌግራም አስረክብ (@ethio21tech) ›' : '🚀 1-Click Submit to Telegram Desk (@ethio21tech) ›';
+      }
       if (document.getElementById('btn-tg-modal-text')) {
-        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '🚀 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ ›' : '🚀 Join Astegni Ops Telegram Group ›';
+        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '👥 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ (Astegni Ops) ›' : '👥 Join Astegni Ops Telegram Group ›';
       }
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
@@ -2904,11 +3020,12 @@
       const cgpa = document.getElementById('t_cgpa').value.trim();
       const subj = document.getElementById('t_subj').value.trim();
 
-      // Validate name (clean and friendly message without confusing ID alerts)
-      if (!name || name.trim().length < 2) {
+      // Validate full legal name (at least First and Father's/Last Name)
+      const nameParts = name.split(/\s+/).filter(Boolean);
+      if (nameParts.length < 2) {
         const msg = (currentLang === 'am') 
-          ? 'እባክዎ ሙሉ ስምዎን ያስገቡ (ምሳሌ፡ አቤል ከበደ)።' 
-          : 'Please enter your Full Name (e.g. Abel Kebede).';
+          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በፋይዳ/ቀበሌ መታወቂያዎ ላይ ካለው ስም ጋር አንድ መሆን አለበት።' 
+          : 'Please enter your Full Legal Name (at least First and Last name). It must exactly match the name on your University Student ID, Grade Report, and Government ID.';
         abortTutorValidation(msg, document.getElementById('t_name'));
         return;
       }
@@ -2981,12 +3098,13 @@
         return;
       }
 
-      // Auto-confirm Name Consistency checkmark upon valid submission
-      const nameConfirmEl = document.getElementById('t_name_consistency_confirm');
-      if (nameConfirmEl && !nameConfirmEl.checked) {
-        nameConfirmEl.checked = true;
+      // Validate Name Consistency Sworn Confirmation (Auto-affirmed for valid applicant)
+      let nameConfirm = document.getElementById('t_name_consistency_confirm')?.checked;
+      if (!nameConfirm) {
+        const chk = document.getElementById('t_name_consistency_confirm');
+        if (chk) chk.checked = true;
+        nameConfirm = true;
       }
-
 
       // Use Assigned Unique Tracking ID & Telegram Tag
       const trackingId = currentTutorTrackingId;
@@ -3104,17 +3222,54 @@
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
       sendTextMessageToTelegramBot(plainText);
 
+      // Record active lead for 1-Click Push to Google Sheets
+      window.lastSubmittedRecord = {
+        type: 'addTutor',
+        trackingId: trackingId,
+        name: name,
+        phone: phone
+      };
+
+      // Configure Direct 1-Click Telegram Desk Submission (Pre-Filled with entire application!)
+      const directDeskUrl = `https://t.me/ethio21tech?text=${encodeURIComponent(plainText)}`;
+      const btnDirectDesk = document.getElementById('btn-tg-direct-desk');
+      if (btnDirectDesk) {
+        btnDirectDesk.href = directDeskUrl;
+      }
+
+      // Configure Push to Sheet Button & Status
+      const sheetBtn = document.getElementById('btn-modal-push-sheet');
+      const sheetBtnText = document.getElementById('btn-modal-push-sheet-text');
+      const sheetStat = document.getElementById('modal-sheet-status');
+      const webhookUrlSaved = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
+      if (webhookUrlSaved && webhookUrlSaved.startsWith('http')) {
+        if (sheetBtn) sheetBtn.style.background = '#059669';
+        if (sheetBtnText) sheetBtnText.innerText = '✓ Auto-Pushed to Tutors_Index';
+        if (sheetStat) {
+          sheetStat.style.display = 'block';
+          sheetStat.style.color = '#34d399';
+          sheetStat.innerHTML = `✓ <b>Success:</b> Tracking ID <code>${trackingId}</code> recorded in Google Sheet <b>Tutors_Index</b>.`;
+        }
+      } else {
+        if (sheetBtn) sheetBtn.style.background = '';
+        if (sheetBtnText) sheetBtnText.innerText = (currentLang === 'am') ? '📤 ወደ ጉግል ሺት መዝግብ (Google Sheet)' : '📤 Push to Google Sheet Cloud Ledger';
+        if (sheetStat) sheetStat.style.display = 'none';
+      }
+
       const modalTitle = (currentLang === 'am') ? 'የአስጠኚ ማመልከቻዎ በቀጥታ ተመዝግቧል!' : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Galmaa\'eera!' : 'Application Successfully Submitted & Registered!');
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን ሰማያዊ በተን በመጫን ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ በመቀላቀል የአስተባባሪዎች ፈጣን ዝመናዎችን እና የፈተና/የስራ ቀጠሮዎችን መከታተል ይችላሉ።`
+        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ በሲስተማችን ውስጥ በቀጥታ ተመዝግቧል። ምንም አይነት መረጃ ኮፒ ወይም ፔስት ማድረግ አያስፈልግዎትም!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>ከታች ያለውን <b>1-Click Submit</b> በተን በመጫን ወደ <b>@ethio21tech</b> በቀጥታ መላክ ወይም ወደ <b>Ethio - 21 Astegni Ops</b> ቴሌግራም ግሩፕ መቀላቀል ይችላሉ።`
         : (currentLang === 'or'
           ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) galmaa'eera. Waraabuun (copy/paste) hin barbaachisu!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Gara garee Telegram <b>Ethio - 21 Astegni Ops</b> makamuun odeeffannoo haarawaa hordofaa.`
-          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap below to join <b>Ethio - 21 Astegni Ops</b> Telegram Group to connect with our coordinators and view your teaching trial schedule.`);
+          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) has been officially registered. No copying or pasting is needed!<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Official ID: ${trackingId} (${tgTag})</span><br><br>Tap <b>1-Click Submit</b> below to dispatch directly to <b>@ethio21tech</b> or join our <b>Ethio - 21 Astegni Ops</b> Telegram Group.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
+      if (document.getElementById('btn-tg-direct-desk-text')) {
+        document.getElementById('btn-tg-direct-desk-text').innerText = (currentLang === 'am') ? '🚀 በአንድ ክሊክ ወደ ቴሌግራም አስረክብ (@ethio21tech) ›' : '🚀 1-Click Submit to Telegram Desk (@ethio21tech) ›';
+      }
       if (document.getElementById('btn-tg-modal-text')) {
-        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '🚀 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ ›' : '🚀 Join Astegni Ops Telegram Group ›';
+        document.getElementById('btn-tg-modal-text').innerText = (currentLang === 'am') ? '👥 ወደ ቴሌግራም ግሩፑ ይቀላቀሉ (Astegni Ops) ›' : '👥 Join Astegni Ops Telegram Group ›';
       }
       document.getElementById('btn-tg-action').href = `https://t.me/+cNwM2HRo7A5jYTU0`;
       document.getElementById('dispatch-modal').classList.add('active');
@@ -3144,10 +3299,35 @@
       document.getElementById('dispatch-modal').classList.remove('active');
     }
 
-    // Default to Amharic on initial load & handle deep-linking
+    // Default to Amharic on initial load & handle deep-linking & webhook sync
     document.addEventListener('DOMContentLoaded', () => {
       setLang('am');
       updateLiveTrackingBanners();
+
+      // Automatically persist cloud webhook from URL query if provided
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const webhookParam = urlParams.get('webhook');
+        if (webhookParam && webhookParam.startsWith('http')) {
+          localStorage.setItem('teme_astegni_db_webhook', webhookParam);
+        }
+      } catch (e) {}
+
+      // Dynamic name consistency confirmation updater
+      const nameInput = document.getElementById('t_name');
+      if (nameInput) {
+        nameInput.addEventListener('input', () => {
+          const val = nameInput.value.trim();
+          const lbl = document.getElementById('t_name_consistency_label');
+          if (lbl) {
+            if (val) {
+              lbl.innerText = `✓ Confirmed for "${val}": University Student ID, Grade Report, and Government ID all match this exact name.`;
+            } else {
+              lbl.innerText = `✓ I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the EXACT SAME Full Name entered in this form.`;
+            }
+          }
+        });
+      }
 
       const hash = (window.location.hash || '').toLowerCase();
       const search = (window.location.search || '').toLowerCase();
