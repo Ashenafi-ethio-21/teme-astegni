@@ -1648,6 +1648,27 @@
             </div>
           </div>
 
+          <!-- Mandatory Credential Name Consistency Check (Single Identity Mandate) -->
+          <div class="field" style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+              <span style="font-size: 1.2rem;">⚠️</span>
+              <span style="font-weight: 850; font-size: 0.88rem; color: #f87171;">Strict Name Consistency Requirement (የስም አንድነት ህግ)</span>
+            </div>
+            <p style="font-size: 0.76rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;">
+              Your <b>Full Legal Name</b> entered above must <b>EXACTLY MATCH</b> the name printed across <b>ALL THREE</b> credentials:
+              <br>• 1. <b>Campus Student ID Card</b>
+              <br>• 2. <b>Official Grade Report / Portal</b>
+              <br>• 3. <b>National Fayda ID / Kebele Card</b>
+              <br><i>Any mismatch between credential names will result in immediate disqualification and account rejection.</i>
+            </p>
+            <label class="check-label" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.65rem 0.85rem; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;">
+              <input type="checkbox" id="t_name_consistency_confirm" required style="accent-color: #ef4444; width: 20px; height: 20px;">
+              <span style="font-size: 0.78rem; font-weight: 750; color: #fecaca; line-height: 1.4;">
+                I confirm that my University Student ID, Grade Report, and Government ID all belong to me and display the EXACT SAME Full Name entered in this form.
+              </span>
+            </label>
+          </div>
+
           <!-- Communicative Skills Exam Opt-in (Optional for Level 1 & 1st Priority Dispatch) -->
           <div class="field" style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1.25rem;">
             <label class="check-label" style="background: transparent; border: none; padding: 0; color: #fff; cursor: pointer; display: flex; align-items: flex-start; gap: 0.75rem;">
@@ -2668,6 +2689,17 @@
       const name = document.getElementById('p_name').value.trim();
       const phone = document.getElementById('p_phone').value.trim();
       const area = document.getElementById('p_area').value.trim();
+
+      const nameParts = name.split(/\s+/).filter(Boolean);
+      if (nameParts.length < 2) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። ከመታወቂያዎ ጋር አንድ መሆን አለበት።' 
+          : 'Please enter your Full Legal Name (at least First and Last name). It must match the name on your Government ID.';
+        alert(msg);
+        document.getElementById('p_name').focus();
+        return;
+      }
+
       const studentGender = document.getElementById('p_child_gender') ? document.getElementById('p_child_gender').value : '';
       
       if (!studentGender) {
@@ -2807,6 +2839,17 @@
       const cgpa = document.getElementById('t_cgpa').value.trim();
       const subj = document.getElementById('t_subj').value.trim();
 
+      // Validate full legal name (at least First and Father's/Last Name)
+      const nameParts = name.split(/\s+/).filter(Boolean);
+      if (nameParts.length < 2) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ ሙሉ ስምዎን (የራስዎን እና የአባትዎን ስም) ያስገቡ። በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በፋይዳ/ቀበሌ መታወቂያዎ ላይ ካለው ስም ጋር አንድ መሆን አለበት።' 
+          : 'Please enter your Full Legal Name (at least First and Last name). It must exactly match the name on your University Student ID, Grade Report, and Government ID.';
+        alert(msg);
+        document.getElementById('t_name').focus();
+        return;
+      }
+
       if (!gender) {
         const msg = (currentLang === 'am') ? 'እባክዎ ፆታዎን ይምረጡ።' : (currentLang === 'or' ? 'Moo saala keessan filadhaa.' : 'Please select your gender.');
         alert(msg);
@@ -2829,6 +2872,17 @@
           : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child safety).';
         alert(msg);
         document.getElementById('box-t-id-front')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Validate Name Consistency Sworn Confirmation
+      const nameConfirm = document.getElementById('t_name_consistency_confirm')?.checked;
+      if (!nameConfirm) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ በካምፓስ መታወቂያዎ፣ በውጤት ሪፖርትዎ እና በመንግስት መታወቂያዎ ላይ ያለው ስም አንድ ዓይነት መሆኑን የሚያረጋግጠውን ሳጥን ምልክት ያድርጉ።'
+          : 'Please check the box confirming that your Full Name matches across your Campus ID, Grade Report, and Government ID.';
+        alert(msg);
+        document.getElementById('t_name_consistency_confirm')?.focus();
         return;
       }
 
@@ -2857,6 +2911,7 @@
           govtFrontAttached: !!govtFrontFile,
           govtBackAttached: !!govtBackFile,
           govtId: `${govtType} (Front & Back)`,
+          nameConsistencyConfirmed: true,
           level: 0,
           examOptIn: examOptIn,
           examStatus: examOptIn ? 'Pending Exam' : 'Not Requested',
@@ -2902,6 +2957,11 @@
             sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID • ${name} • ${phone} • ${uni}`);
           });
         }
+        if (gradeFile && gradeFile.type && gradeFile.type.startsWith('image/')) {
+          compressImageFile(gradeFile).then(blob => {
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Grade Report / Portal • ${name} • ${phone} • CGPA: ${cgpa}`);
+          });
+        }
       } catch (err) {}
 
       // Copy formatted text to clipboard with Tracking Tag
@@ -2914,7 +2974,12 @@
                         `📌 SEARCH TAG: ${tgTag}\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🎓 New University Tutor Application (Teme Astegni)\n` +
-                        `👤 Name: ${name}\n` +
+                        `👤 Target Legal Name: ${name}\n` +
+                        `🪪 NAME CONSISTENCY AUDIT:\n` +
+                        `  • Campus Student ID: Must Match "${name}"\n` +
+                        `  • Grade Report / Portal: Must Match "${name}"\n` +
+                        `  • National Fayda / Kebele: Must Match "${name}"\n` +
+                        `  • Applicant Sworn Match: Confirmed Exact Match ✓\n` +
                         `🚻 Gender / Sex: ${gender}\n` +
                         `📞 Phone: ${phone}\n` +
                         `🏛️ University: ${uni}\n` +
