@@ -680,6 +680,14 @@
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
 
+    .field select:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: rgba(15, 23, 42, 0.45);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+    }
+
     /* Checkbox Group */
     .checkbox-grid {
       display: grid;
@@ -1560,10 +1568,39 @@
             </div>
           </div>
 
-          <div class="field">
-            <label id="i18n-f-tuni">University &amp; Campus Name *</label>
-            <input type="text" id="t_uni" required>
+          <!-- University & Campus Cascading Selection -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 0.85rem;">
+            <div class="field">
+              <label id="i18n-f-tuni">🏛️ ዩኒቨርሲቲ (University) *</label>
+              <select id="t_uni_select" required onchange="handleUniversityChange()">
+                <option value="" disabled selected>-- ዩኒቨርሲቲ ይምረጡ (Select University) --</option>
+              </select>
+            </div>
+            <div class="field">
+              <label id="i18n-f-tcampus">🏫 ካምፓስ (Campus) *</label>
+              <select id="t_campus_select" required onchange="handleCampusChange()" disabled>
+                <option value="" disabled selected>-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --</option>
+              </select>
+            </div>
           </div>
+
+          <!-- Custom "Other" fields (shown only if "Other" is chosen) -->
+          <div id="t_custom_uni_box" style="display: none; margin-bottom: 0.75rem;">
+            <div class="field">
+              <label style="color: #38bdf8; font-weight: 700;">✍️ የዩኒቨርሲቲ / የኮሌጅ ስም ያስገቡ (Specify University / College) *</label>
+              <input type="text" id="t_custom_uni" placeholder="e.g. Hope University College, MicroLink, Rift Valley, etc." oninput="updateCombinedUni()">
+            </div>
+          </div>
+
+          <div id="t_custom_campus_box" style="display: none; margin-bottom: 0.75rem;">
+            <div class="field">
+              <label style="color: #38bdf8; font-weight: 700;">✍️ የካምፓስ ስም ያስገቡ (Specify Campus Name) *</label>
+              <input type="text" id="t_custom_campus" placeholder="e.g. Bole Campus, Saris Campus, Piassa, etc." oninput="updateCombinedUni()">
+            </div>
+          </div>
+
+          <!-- Hidden input keeping 100% backward compatibility for t_uni -->
+          <input type="hidden" id="t_uni" required>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
             <div class="field">
@@ -2391,6 +2428,468 @@
       `;
     }
 
+    // ==========================================
+    // ETHIOPIAN UNIVERSITIES & CAMPUSES DIRECTORY
+    // ==========================================
+    const ETHIOPIAN_UNIVERSITIES = [
+      {
+        name: "Addis Ababa University (AAU)",
+        campuses: [
+          "4 Kilo Campus (Natural & Computational Sciences)",
+          "5 Kilo Campus (AAiT - Institute of Technology)",
+          "6 Kilo Campus (Main Campus / Social Sciences & Law)",
+          "Tikur Anbessa Campus (Health Sciences / Medicine)",
+          "FBE Campus (College of Business & Economics)",
+          "Commerce Campus (School of Commerce - Mexico)",
+          "EiABC Campus (Architecture & Urban Planning - Lideta)",
+          "Yared School of Music Campus",
+          "Alle School of Fine Arts and Design",
+          "Sefere Selam Campus",
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Addis Ababa Science & Technology University (AASTU)",
+        campuses: [
+          "Main Campus (Kilinto / Akaki Kality)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Adama Science & Technology University (ASTU)",
+        campuses: [
+          "Main Campus (Adama)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Jimma University (JU)",
+        campuses: [
+          "Main Campus",
+          "JiT Campus (Jimma Institute of Technology)",
+          "College of Agriculture & Veterinary Medicine (Kito Furdisa)",
+          "Health Sciences / Referral Hospital Campus",
+          "Business & Economics Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Hawassa University (HU)",
+        campuses: [
+          "Main Campus",
+          "IoT Campus (Institute of Technology)",
+          "College of Medicine & Health Sciences (Referral Campus)",
+          "Agriculture Campus (Awada / Wondo Genet)",
+          "Daye Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Bahir Dar University (BDU)",
+        campuses: [
+          "Poly Campus (BiT - Institute of Technology)",
+          "Peda Campus (Education & Social Sciences)",
+          "Yekatit 12 Campus",
+          "Selam Campus",
+          "Zenzelma Campus (Agriculture)",
+          "Tibebe Ghion Campus (Medicine & Health Sciences)",
+          "Maritime Academy Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "University of Gondar (UoG)",
+        campuses: [
+          "Maraki Campus (Social Sciences & Law)",
+          "Atse Tewodros Campus (Natural & Computational Sciences)",
+          "Atse Fasil Campus (Institute of Technology)",
+          "College of Medicine & Health Sciences (CMHS Campus)",
+          "Tseda Campus (Agriculture)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Haramaya University (HU)",
+        campuses: [
+          "Main Campus (Bate / Haramaya)",
+          "Harar Campus (Health Sciences / Hiwot Fana)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Arba Minch University (AMU)",
+        campuses: [
+          "Main Campus",
+          "Abaya Campus (Institute of Technology)",
+          "Kulfo Campus",
+          "Nech Sar Campus (Health Sciences)",
+          "Chamo Campus (Business & Economics)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Wollo University (WU)",
+        campuses: [
+          "Dessie Main Campus",
+          "Kombolcha Institute of Technology (KIOT)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Debre Birhan University (DBU)",
+        campuses: [
+          "Main Campus",
+          "Health Science Campus",
+          "Asrat Woldeyes Health Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Debre Markos University (DMU)",
+        campuses: [
+          "Main Campus",
+          "Burie Campus",
+          "Medicine & Health Science Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Dire Dawa University (DDU)",
+        campuses: [
+          "Main Campus",
+          "Institute of Technology Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Mekelle University (MU)",
+        campuses: [
+          "Endayesus Campus (Main / Technology)",
+          "Adi Haki Campus (Law & Governance)",
+          "Ayder Campus (College of Health Sciences)",
+          "Kalamino Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Wollega University (WU)",
+        campuses: [
+          "Nekemte Main Campus",
+          "Gimbi Campus",
+          "Shambu Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Ambo University (AU)",
+        campuses: [
+          "Main Campus",
+          "Awaro Campus",
+          "Guder Campus (Agriculture & Biology)",
+          "Woliso Campus (Business & Economics)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Dilla University (DU)",
+        campuses: [
+          "Main Campus",
+          "Odaya Campus (Health Sciences)",
+          "Institute of Technology Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Kotebe University of Education (KUE)",
+        campuses: [
+          "Main Campus (Kotebe, Addis Ababa)",
+          "Menelik II Campus (Health Sciences)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Jigjiga University (JJU)",
+        campuses: [
+          "Main Campus",
+          "Health Science Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Semera University (SU)",
+        campuses: [
+          "Main Campus",
+          "Health Science Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Assosa University (ASU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Gambella University (GMU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Mizan-Tepi University (MTU)",
+        campuses: [
+          "Mizan Main Campus",
+          "Tepi Campus (Engineering & Technology)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Wachemo University (WCU)",
+        campuses: [
+          "Main Campus (Hossana)",
+          "Durame Campus",
+          "Nigist Eleni Mohammed Referral Hospital Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Wolkite University (WKU)",
+        campuses: [
+          "Main Campus (Gubrei)",
+          "Butajira Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Bule Hora University (BHU)",
+        campuses: [
+          "Main Campus",
+          "Institute of Technology Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Oda Bultum University (OBU)",
+        campuses: [
+          "Main Campus (Chiro)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Kebri Dehar University (KDU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Raya University (RU)",
+        campuses: [
+          "Main Campus (Maychew)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Debark University (DKU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Injibara University (IU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Jinka University (JKU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Bonga University (BU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Werabe University (WRU)",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Selale University (SLU)",
+        campuses: [
+          "Main Campus (Fitche)",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "St. Mary's University",
+        campuses: [
+          "Main Campus (Mexico)",
+          "School of Graduate Studies Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Unity University",
+        campuses: [
+          "Gerji Main Campus",
+          "Adama Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Rift Valley University",
+        campuses: [
+          "Gotera / Bole Campus",
+          "Adama Main Campus",
+          "Other Campus / Specify"
+        ]
+      },
+      {
+        name: "Other Ethiopian University / College",
+        campuses: [
+          "Main Campus",
+          "Other Campus / Specify"
+        ]
+      }
+    ];
+
+    function initUniversityDropdown(preselectedUni, preselectedCampus) {
+      const uniSelect = document.getElementById('t_uni_select');
+      const campusSelect = document.getElementById('t_campus_select');
+      if (!uniSelect || !campusSelect) return;
+
+      const promptAm = '-- ዩኒቨርሲቲ ይምረጡ (Select University) --';
+      uniSelect.innerHTML = `<option value="" disabled selected>${promptAm}</option>`;
+      ETHIOPIAN_UNIVERSITIES.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.name;
+        opt.textContent = u.name;
+        uniSelect.appendChild(opt);
+      });
+
+      campusSelect.disabled = true;
+      campusSelect.innerHTML = '<option value="" disabled selected>-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --</option>';
+
+      if (preselectedUni) {
+        uniSelect.value = preselectedUni;
+        handleUniversityChange(preselectedCampus);
+      }
+    }
+
+    function handleUniversityChange(preselectedCampus) {
+      const uniSelect = document.getElementById('t_uni_select');
+      const campusSelect = document.getElementById('t_campus_select');
+      const customUniBox = document.getElementById('t_custom_uni_box');
+      const customCampusBox = document.getElementById('t_custom_campus_box');
+      if (!uniSelect || !campusSelect) return;
+
+      const selectedUni = uniSelect.value;
+      if (selectedUni === 'Other Ethiopian University / College') {
+        if (customUniBox) customUniBox.style.display = 'block';
+        const inp = document.getElementById('t_custom_uni');
+        if (inp) inp.focus();
+      } else {
+        if (customUniBox) {
+          customUniBox.style.display = 'none';
+          const inp = document.getElementById('t_custom_uni');
+          if (inp) inp.value = '';
+        }
+      }
+
+      const uniObj = ETHIOPIAN_UNIVERSITIES.find(u => u.name === selectedUni);
+      campusSelect.innerHTML = '<option value="" disabled selected>-- ካምፓስ ይምረጡ (Select Campus) --</option>';
+
+      if (uniObj && uniObj.campuses && uniObj.campuses.length > 0) {
+        campusSelect.disabled = false;
+        uniObj.campuses.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          campusSelect.appendChild(opt);
+        });
+
+        if (preselectedCampus) {
+          campusSelect.value = preselectedCampus;
+          handleCampusChange();
+        } else {
+          campusSelect.focus();
+        }
+      } else {
+        campusSelect.disabled = false;
+        campusSelect.innerHTML = `
+          <option value="" disabled selected>-- ካምፓስ ይምረጡ (Select Campus) --</option>
+          <option value="Main Campus">Main Campus</option>
+          <option value="Other Campus / Specify">Other Campus / Specify</option>
+        `;
+      }
+
+      updateCombinedUni();
+    }
+
+    function handleCampusChange() {
+      const campusSelect = document.getElementById('t_campus_select');
+      const customCampusBox = document.getElementById('t_custom_campus_box');
+      if (!campusSelect) return;
+
+      if (campusSelect.value === 'Other Campus / Specify') {
+        if (customCampusBox) customCampusBox.style.display = 'block';
+        const inp = document.getElementById('t_custom_campus');
+        if (inp) inp.focus();
+      } else {
+        if (customCampusBox) {
+          customCampusBox.style.display = 'none';
+          const inp = document.getElementById('t_custom_campus');
+          if (inp) inp.value = '';
+        }
+      }
+
+      updateCombinedUni();
+    }
+
+    function updateCombinedUni() {
+      const uniSelect = document.getElementById('t_uni_select');
+      const campusSelect = document.getElementById('t_campus_select');
+      const customUni = document.getElementById('t_custom_uni')?.value.trim() || '';
+      const customCampus = document.getElementById('t_custom_campus')?.value.trim() || '';
+      const hiddenUni = document.getElementById('t_uni');
+
+      let uniName = uniSelect ? uniSelect.value : '';
+      if (uniName === 'Other Ethiopian University / College') {
+        uniName = customUni || 'Other University';
+      }
+
+      let campusName = campusSelect ? campusSelect.value : '';
+      if (campusName === 'Other Campus / Specify') {
+        campusName = customCampus || 'Specified Campus';
+      }
+
+      let combined = '';
+      if (uniName && campusName && campusName !== '-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --') {
+        combined = `${uniName} - ${campusName}`;
+      } else if (uniName) {
+        combined = uniName;
+      }
+
+      if (hiddenUni) {
+        hiddenUni.value = combined;
+      }
+      return { uniName, campusName, combined };
+    }
+
     // 3-LANGUAGE DICTIONARY (AMHARIC / ENGLISH / AFAAN OROMOO)
     const translations = {
       am: {
@@ -2453,7 +2952,8 @@
         toptSel: "ፆታዎን ይምረጡ *",
         toptMale: "ወንድ (Male)",
         toptFemale: "ሴት (Female)",
-        fTuni: "ዩኒቨርሲቲ እና ካምፓስ *",
+        fTuni: "🏛️ ዩኒቨርሲቲ (University) *",
+        fTcampus: "🏫 ካምፓስ (Campus) *",
         fTyear: "የትምህርት ዓመት *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "በደንብ ማስተማር የሚችሉት የትምህርት አይነት (ውጤት 'A') *",
@@ -2559,7 +3059,8 @@
         toptSel: "Select Gender *",
         toptMale: "Male",
         toptFemale: "Female",
-        fTuni: "University & Campus Name *",
+        fTuni: "🏛️ University *",
+        fTcampus: "🏫 Campus *",
         fTyear: "Academic Year *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "Subjects You Can Confidently Teach (Grade 'A') *",
@@ -2665,7 +3166,8 @@
         toptSel: "Saala Keessan Filadhaa *",
         toptMale: "Dhiira (Male)",
         toptFemale: "Dubara (Female)",
-        fTuni: "Maqaa Yuunivarsitii fi Kaampaasii *",
+        fTuni: "🏛️ Yuunivarsitii *",
+        fTcampus: "🏫 Kaampaasii *",
         fTyear: "Waggaa Barnootaa *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "Gosoota Barnootaa Barsiisuu Dandeessan (Qabxii 'A') *",
@@ -2800,6 +3302,7 @@
       if (document.getElementById('i18n-topt-male')) document.getElementById('i18n-topt-male').innerText = t.toptMale;
       if (document.getElementById('i18n-topt-female')) document.getElementById('i18n-topt-female').innerText = t.toptFemale;
       document.getElementById('i18n-f-tuni').innerText = t.fTuni;
+      if (document.getElementById('i18n-f-tcampus') && t.fTcampus) document.getElementById('i18n-f-tcampus').innerText = t.fTcampus;
       document.getElementById('i18n-f-tyear').innerText = t.fTyear;
       document.getElementById('i18n-f-tcgpa').innerText = t.fTcgpa;
       document.getElementById('i18n-f-tsubj').innerText = t.fTsubj;
@@ -3528,7 +4031,9 @@
       const name = document.getElementById('t_name').value.trim();
       const phone = document.getElementById('t_phone').value.trim();
       const gender = document.getElementById('t_gender').value;
-      const uni = document.getElementById('t_uni').value.trim();
+      const { uniName, campusName, combined: uniCombined } = updateCombinedUni();
+      const uniSelectEl = document.getElementById('t_uni_select');
+      const campusSelectEl = document.getElementById('t_campus_select');
       const year = document.getElementById('t_year').value;
       const cgpa = document.getElementById('t_cgpa').value.trim();
       const subj = document.getElementById('t_subj').value.trim();
@@ -3595,11 +4100,39 @@
         return;
       }
 
-      if (!uni) {
-        const msg = (currentLang === 'am') ? 'እባክዎ ዩኒቨርሲቲዎን ያስገቡ።' : 'Please enter your University name.';
-        abortTutorValidation(msg, document.getElementById('t_uni'));
+      if (!uniName || (uniSelectEl && !uniSelectEl.value)) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ ዩኒቨርሲቲዎን ከተቆልቋዩ ዝርዝር ይምረጡ።' 
+          : 'Please select your University from the dropdown.';
+        abortTutorValidation(msg, uniSelectEl);
         return;
       }
+
+      if (uniSelectEl && uniSelectEl.value === 'Other Ethiopian University / College' && !document.getElementById('t_custom_uni')?.value.trim()) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የዩኒቨርሲቲዎን ወይም የኮሌጅዎን ስም ያስገቡ።' 
+          : 'Please specify your University or College name.';
+        abortTutorValidation(msg, document.getElementById('t_custom_uni'));
+        return;
+      }
+
+      if (!campusName || (campusSelectEl && !campusSelectEl.value)) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ ካምፓስዎን ከተቆልቋዩ ዝርዝር ይምረጡ።' 
+          : 'Please select your Campus from the dropdown.';
+        abortTutorValidation(msg, campusSelectEl);
+        return;
+      }
+
+      if (campusSelectEl && campusSelectEl.value === 'Other Campus / Specify' && !document.getElementById('t_custom_campus')?.value.trim()) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የካምፓስዎን ስም ያስገቡ።' 
+          : 'Please specify your Campus name.';
+        abortTutorValidation(msg, document.getElementById('t_custom_campus'));
+        return;
+      }
+
+      const uni = uniCombined || `${uniName} - ${campusName}`;
 
       // Validate CGPA
       const gpaNum = parseFloat(cgpa);
@@ -3673,7 +4206,10 @@
           trackingId: trackingId,
           tgTag: tgTag,
           type: 'TUTOR', 
-          name, phone, gender, uni, year, cgpa, subj, 
+          name, phone, gender, uni,
+          university: uniName,
+          campus: campusName,
+          year, cgpa, subj, 
           metalTier: tierName,
           rankTitle: rankTitle,
           campusIdAttached: !!campusFile, 
@@ -3703,7 +4239,9 @@
           tgTag: tgTag,
           name: name,
           phone: phone,
-          university: uni,
+          uni: uni,
+          university: uniName,
+          campus: campusName,
           year: year,
           cgpa: cgpa,
           gender: gender,
@@ -3719,7 +4257,7 @@
         // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
         if (govtFrontFile) {
           compressImageFile(govtFrontFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Govt ID (Front) • ${name} • ${phone} • ${uni} • Tier: ${tierName}`, '@AstegniTutors');
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Govt ID (Front) • ${name} • ${phone} • ${uniName} (${campusName}) • Tier: ${tierName}`, '@AstegniTutors');
           });
         }
         if (govtBackFile) {
@@ -3729,7 +4267,7 @@
         }
         if (campusFile) {
           compressImageFile(campusFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID • ${name} • ${phone} • ${uni}`, '@AstegniTutors');
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID • ${name} • ${phone} • ${uniName} (${campusName})`, '@AstegniTutors');
           });
         }
         if (gradeFile && gradeFile.type && gradeFile.type.startsWith('image/')) {
@@ -3757,7 +4295,8 @@
                         `  • Applicant Sworn Match: Confirmed Exact Match ✓\n` +
                         `🚻 Gender / Sex: ${gender}\n` +
                         `📞 Phone: ${phone}\n` +
-                        `🏛️ University: ${uni}\n` +
+                        `🏛️ University: ${uniName}\n` +
+                        `🏫 Campus: ${campusName}\n` +
                         `📅 Academic Year: ${year}\n` +
                         `⭐ CGPA: ${cgpa} (${tierEmoji} ${tierName} Tier)\n` +
                         `🏅 Metal Tier: ${tierEmoji} ${tierName} Tier\n` +
@@ -3787,7 +4326,8 @@
         gender: gender,
         phone: phone,
         uni: uni,
-        university: uni,
+        university: uniName,
+        campus: campusName,
         year: year,
         cgpa: cgpa,
         tier: tierName,
@@ -3852,6 +4392,7 @@
 
       // Clear form and cycle fresh ID for next applicant
       try { e.target.reset(); } catch (err) {}
+      initUniversityDropdown();
       currentTutorTrackingId = generateTrackingId('T');
       updateLiveTrackingBanners();
     }
@@ -3863,6 +4404,7 @@
     // Default to Amharic on initial load & handle deep-linking & webhook sync
     document.addEventListener('DOMContentLoaded', () => {
       setLang('am');
+      initUniversityDropdown();
       updateLiveTrackingBanners();
 
       // Automatically persist cloud webhook from URL query if provided
