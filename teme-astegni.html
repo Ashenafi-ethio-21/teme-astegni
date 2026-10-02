@@ -1147,13 +1147,49 @@
       color: #60a5fa;
     }
 
-    /* Small credit */
-    .mini-footer {
-      text-align: center;
-      font-size: 0.74rem;
-      color: #475569;
-      margin-top: 1rem;
-      padding-bottom: 0.5rem;
+    /* Tutor Portal Styles */
+    .portal-dossier-card {
+      background: linear-gradient(145deg, rgba(22, 30, 46, 0.95) 0%, rgba(13, 19, 32, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 1.25rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .portal-match-alert {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.28) 100%);
+      border: 1.5px solid #10b981;
+      border-radius: 16px;
+      padding: 1.15rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+    }
+    .portal-unmatched-alert {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1.5px dashed rgba(245, 158, 11, 0.4);
+      border-radius: 16px;
+      padding: 1.15rem;
+      margin-bottom: 1.2rem;
+    }
+    .btn-portal-call {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 850;
+      font-size: 1rem;
+      padding: 0.9rem 1.4rem;
+      border-radius: 14px;
+      margin: 1rem 0 0.5rem 0;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-portal-call:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
     }
   </style>
 </head>
@@ -1189,6 +1225,23 @@
         <div class="hero-badge" id="i18n-hero-badge">⭐ CGPA ≥ 3.00 • 100% VERIFIED</div>
         <h2 id="i18n-hero-h2">Find High-Achieving University Tutors For Your Child</h2>
         <p id="i18n-hero-p">Matched exclusively from nearby university campuses. Identity and academic records verified with zero compromise.</p>
+      </div>
+
+      <!-- Returning Tutor Check Status Banner -->
+      <div class="returning-tutor-banner" onclick="openTutorPortalScreen()" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 95, 70, 0.28) 100%); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 16px; padding: 0.9rem 1.15rem; margin-bottom: 1.15rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 18px rgba(0,0,0,0.25); transition: transform 0.2s, border-color 0.2s;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.45); display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">🎓</div>
+          <div>
+            <div style="font-size: 0.96rem; font-weight: 850; color: #f8fafc; display: flex; align-items: center; gap: 0.45rem;">
+              <span>Tutor Portal • Live Status</span>
+              <span style="font-size: 0.64rem; background: rgba(16, 185, 129, 0.3); color: #34d399; padding: 0.15rem 0.45rem; border-radius: 6px; font-weight: 800;">LIVE</span>
+            </div>
+            <div style="font-size: 0.76rem; color: #a7f3d0; margin-top: 0.15rem;">
+              Returning tutor? Check profile, rank level &amp; assigned family ›
+            </div>
+          </div>
+        </div>
+        <div style="font-size: 1.35rem; color: #34d399; font-weight: 800;">›</div>
       </div>
 
       <!-- Main Task Navigation Cards -->
@@ -1458,6 +1511,16 @@
         <div class="form-header">
           <h2 id="i18n-t-title">Apply as a Certified Teme Astegni</h2>
           <p id="i18n-t-subtitle">Requirements: Active 2nd Year+ university student with CGPA ≥ 3.00 and verified ID credentials.</p>
+        </div>
+
+        <!-- Returning Tutor Status Banner -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+          <div style="font-size: 0.8rem; color: #cbd5e1;">
+            🎓 <b>Already applied?</b> Check your live profile, exam level &amp; assigned family status:
+          </div>
+          <button type="button" onclick="openTutorPortalScreen()" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
+            Open Tutor Portal ›
+          </button>
         </div>
 
         <form id="tutor-form" novalidate onsubmit="handleTutorSubmit(event)">
@@ -1867,6 +1930,59 @@
 
     </div>
 
+    <!-- ========================================== -->
+    <!-- SCREEN 6: TUTOR PROFILE & LIVE STATUS      -->
+    <!-- ========================================== -->
+    <div id="screen-tutor-portal" class="app-screen">
+      <div class="screen-back-bar">
+        <button class="btn-back" onclick="showScreen('screen-home')">
+          <span>‹</span> <span>Back to Menu (ወደ ዋናው)</span>
+        </button>
+        <span style="font-size: 0.8rem; color: #34d399; font-weight: 750;">🎓 Astegni Portal</span>
+      </div>
+
+      <div class="form-card" style="border-color: rgba(16, 185, 129, 0.35); padding: 1.5rem 1.25rem;">
+        <div class="form-header" style="text-align: center; margin-bottom: 1.5rem;">
+          <div style="width: 58px; height: 58px; margin: 0 auto 0.75rem; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35)); border: 2px solid #34d399; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);">🎓</div>
+          <h2 style="font-size: 1.3rem; margin-bottom: 0.35rem; color: #fff;">Tutor Profile &amp; Live Status</h2>
+          <p style="font-size: 0.82rem; color: #94a3b8; max-width: 440px; margin: 0 auto; line-height: 1.5;">
+            Track your verified academic profile, qualification tier, rank level, and check if an assigned student family is ready for you to call.
+          </p>
+        </div>
+
+        <!-- Phone / ID Lookup Card -->
+        <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1rem 1.1rem; margin-bottom: 1.5rem;">
+          <label style="font-size: 0.78rem; font-weight: 750; color: #cbd5e1; display: block; margin-bottom: 0.45rem;">
+            📱 Enter Your Phone Number or Tutor ID (AST-T-XXXX):
+          </label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="portal-tutor-query" class="form-ctrl" placeholder="e.g. 0911223344 or AST-T-1234" style="flex: 1; font-weight: 700;">
+            <button type="button" onclick="checkTutorPortalStatus()" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; font-weight: 850; font-size: 0.85rem; padding: 0.65rem 1.1rem; border-radius: 12px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              🔍 Check Status
+            </button>
+          </div>
+          <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.45rem;">
+            💡 Tip: Saved automatically on this device upon your application submission.
+          </div>
+        </div>
+
+        <!-- Dynamic Results Container -->
+        <div id="portal-tutor-results" style="display: none;">
+          <!-- Filled dynamically by checkTutorPortalStatus() -->
+        </div>
+
+        <!-- Default Empty State -->
+        <div id="portal-tutor-empty" style="text-align: center; padding: 2rem 1rem; background: rgba(30, 41, 59, 0.3); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 16px;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+          <div style="font-size: 0.95rem; font-weight: 800; color: #e2e8f0; margin-bottom: 0.35rem;">Enter Your Details Above</div>
+          <div style="font-size: 0.78rem; color: #94a3b8; max-width: 380px; margin: 0 auto; line-height: 1.55;">
+            Type your phone number or Tutor ID and tap <b>Check Status</b> to view your live profile and see if a family has been linked to you.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <!-- ========================================== -->
@@ -1936,6 +2052,11 @@
           <span id="btn-single-submit-text">Join Astegni Tutors on Telegram</span>
         </a>
 
+        <!-- Check Tutor Portal Button -->
+        <button type="button" onclick="closeModal(); openTutorPortalScreen();" style="background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.45); color: #34d399; font-weight: 850; font-size: 0.88rem; padding: 0.8rem; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s;">
+          <span>🎓</span> <span>View My Live Profile &amp; Match Status ›</span>
+        </button>
+
         <!-- Close / Done button -->
         <button type="button" class="btn-modal-close" onclick="closeModal()" id="i18n-modal-close" style="width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; font-weight: 700; font-size: 0.88rem; padding: 0.75rem; border-radius: 14px; cursor: pointer; transition: background 0.2s;">
           Done / Close
@@ -1965,6 +2086,282 @@
       if (typeof updateLiveTrackingBanners === 'function') {
         updateLiveTrackingBanners();
       }
+    }
+
+    // TUTOR RETURN PORTAL & MATCH STATUS MANAGER
+    function openTutorPortalScreen() {
+      showScreen('screen-tutor-portal');
+      const savedPhone = localStorage.getItem('my_astegni_tutor_phone') || '';
+      const savedId = localStorage.getItem('my_astegni_tutor_id') || '';
+      const inputEl = document.getElementById('portal-tutor-query');
+      if (inputEl) {
+        if (!inputEl.value.trim()) {
+          inputEl.value = savedPhone || savedId;
+        }
+        if (inputEl.value.trim()) {
+          checkTutorPortalStatus();
+        }
+      }
+    }
+
+    async function checkTutorPortalStatus() {
+      const inputEl = document.getElementById('portal-tutor-query');
+      const query = (inputEl ? inputEl.value : '').trim();
+      const resultsEl = document.getElementById('portal-tutor-results');
+      const emptyEl = document.getElementById('portal-tutor-empty');
+
+      if (!query) {
+        alert('Please enter your phone number or Tutor ID (AST-T-XXXX)');
+        if (inputEl) inputEl.focus();
+        return;
+      }
+
+      if (emptyEl) emptyEl.style.display = 'none';
+      if (resultsEl) {
+        resultsEl.style.display = 'block';
+        resultsEl.innerHTML = '<div style="text-align: center; padding: 2rem; color: #34d399; font-weight: 750;">⏳ Checking live database records...</div>';
+      }
+
+      const qClean = query.replace(/\D/g, '');
+      const qUpper = query.toUpperCase();
+
+      // 1. Search tutor in local leads
+      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      let tutor = localTutors.find(t => {
+        const tId = (t.trackingId || t.id || '').toUpperCase();
+        const tPhone = (t.phone || '').replace(/\D/g, '');
+        return tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
+      });
+
+      // 2. Search match in local matches
+      const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+      let match = localMatches.find(m => {
+        const tId = (m.tutorId || '').toUpperCase();
+        const tPhone = (m.tutorPhone || '').replace(/\D/g, '');
+        return tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
+      });
+
+      // 3. Fallback to Firebase Firestore if not found locally
+      if (typeof db !== 'undefined' && db) {
+        try {
+          if (!tutor) {
+            const tutorSnap = await db.collection('astegni_tutor_leads').get();
+            tutorSnap.forEach(doc => {
+              const d = doc.data();
+              const dId = (d.trackingId || d.id || doc.id).toUpperCase();
+              const dPhone = (d.phone || '').replace(/\D/g, '');
+              if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
+                tutor = d;
+              }
+            });
+          }
+          if (!match) {
+            const matchSnap = await db.collection('astegni_matches').get();
+            matchSnap.forEach(doc => {
+              const d = doc.data();
+              const dId = (d.tutorId || '').toUpperCase();
+              const dPhone = (d.tutorPhone || '').replace(/\D/g, '');
+              if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
+                match = d;
+              }
+            });
+          }
+        } catch (e) {
+          console.warn("Portal Firestore query notice:", e);
+        }
+      }
+
+      if (!tutor && !match) {
+        resultsEl.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1.25rem; background: rgba(239, 68, 68, 0.08); border: 1.5px dashed rgba(239, 68, 68, 0.35); border-radius: 16px;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+            <div style="font-size: 1rem; font-weight: 850; color: #f87171; margin-bottom: 0.4rem;">No Tutor Record Found</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; max-width: 400px; margin: 0 auto 1.2rem; line-height: 1.55;">
+              We couldn't find an application matching "<b>${escapeHtml(query)}</b>". Please double-check your phone number or Tutor ID.
+            </p>
+            <button type="button" onclick="showScreen('screen-tutor')" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800; font-size: 0.82rem; padding: 0.6rem 1.1rem; border-radius: 10px; cursor: pointer;">
+              ✍️ Apply as Tutor Now ›
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Build profile info
+      const tutorName = tutor ? tutor.name : (match ? match.tutorName : 'Verified Tutor');
+      const tutorId = tutor ? (tutor.trackingId || tutor.id) : (match ? match.tutorId : 'AST-T');
+      const tutorPhone = tutor ? tutor.phone : (match ? match.tutorPhone : query);
+      const tutorUni = tutor ? (tutor.uni || tutor.university || 'University Campus') : (match ? (match.tutorUni || 'University') : 'University');
+      const tutorCgpa = tutor ? (tutor.cgpa || '3.50') : '≥ 3.00';
+      const tutorYear = tutor ? (tutor.year || '2nd Year+') : 'Active Scholar';
+      const tutorSubj = tutor ? (tutor.subj || tutor.subjects || 'All Subjects') : (match ? (match.subjects || 'General') : 'General');
+      const gVal = parseFloat(tutorCgpa) || 3.0;
+      const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
+      const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
+      const level = tutor ? (Number(tutor.level) || 0) : 0;
+      const levelTitle = level === 5 ? 'Level 5 Master' : (level === 4 ? 'Level 4 Distinguished' : (level === 3 ? 'Level 3 Senior' : (level === 2 ? 'Level 2 Advanced' : (level === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
+
+      let matchHtml = '';
+      if (match) {
+        // ASSIGNED & LINKED TO FAMILY
+        const formattedDate = match.date ? new Date(match.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently Matched';
+        const feeText = match.monthlyFee ? `${Number(match.monthlyFee).toLocaleString()} ETB / Month` : 'Agreed Rate';
+
+        matchHtml = `
+          <div class="portal-match-alert">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+              <span style="background: #059669; color: #fff; font-weight: 850; font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);">
+                🤝 MATCH CONFIRMED &amp; ASSIGNED / ቤተሰብ ተመድቧል ✓
+              </span>
+              <span style="font-size: 0.75rem; color: #a7f3d0; font-weight: 750;">📅 Linked on: ${formattedDate}</span>
+            </div>
+
+            <div style="font-size: 1.15rem; font-weight: 850; color: #ffffff; margin-bottom: 0.25rem;">
+              🎉 Congratulations, ${escapeHtml(tutorName)}!
+            </div>
+            <p style="font-size: 0.82rem; color: #e2e8f0; line-height: 1.5; margin-bottom: 0.9rem;">
+              A verified student family in your area has confirmed their tutoring booking. Please contact the parent directly below to introduce yourself and start the tutoring trial:
+            </p>
+
+            <!-- Parent Call Button (High Visibility) -->
+            <a href="tel:${escapeHtml(match.parentPhone)}" class="btn-portal-call">
+              <span>📞</span> <span>Call Parent Directly: ${escapeHtml(match.parentPhone)}</span>
+            </a>
+
+            <!-- Mandatory Instructions Card -->
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin: 1rem 0; line-height: 1.55; text-align: left;">
+              <div style="font-size: 0.85rem; font-weight: 850; color: #38bdf8; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+                <span>⚠️</span> <span>አስቸኳይ የስራ መመሪያ / Action Required Within 2 Hours:</span>
+              </div>
+              <ol style="font-size: 0.8rem; color: #cbd5e1; padding-left: 1.2rem; margin: 0; display: flex; flex-direction: column; gap: 0.45rem;">
+                <li><b>Call the Parent Immediately:</b> Introduce yourself respectfully: <i>"ጤና ይስጥልኝ! ከቴሜ አስጠኚ (Teme Astegni) ለልጅዎ የተመደብኩት የዩኒቨርሲቲ ተማሪ ${escapeHtml(tutorName)} ነኝ።"</i></li>
+                <li><b>Verify Student Details:</b> Confirm the student's grade, current textbook chapters, and convenient home visit days.</li>
+                <li><b>Set 1-Day Free Trial:</b> Agree on the exact day and hour for the <b>1-Day Free Evaluation Trial Session</b>.</li>
+                <li><b>Coordinator Support:</b> If the parent does not answer or you have questions, reach your coordinator immediately at <a href="tel:0945399808" style="color: #38bdf8; font-weight: 800;">0945399808</a> / <a href="tel:0960064466" style="color: #38bdf8; font-weight: 800;">0960064466</a>.</li>
+              </ol>
+            </div>
+
+            <!-- Assigned Family Bento Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.65rem; background: rgba(0, 0, 0, 0.35); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">👨‍👩‍👧 Parent Name</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.parentName || 'Assigned Family')}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📱 Parent Phone</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #34d399; font-family: monospace;">${escapeHtml(match.parentPhone)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📍 Area / Location</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.parentArea || 'Addis Ababa')}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🎒 Student Grade</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.studentGrade || 'School Student')}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Monthly Tuition</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #fbbf24;">${feeText}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🛡️ Deal Status</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #38bdf8;">${escapeHtml(match.status || 'Active')}</div>
+              </div>
+            </div>
+
+          </div>
+        `;
+      } else {
+        // UNASSIGNED / IN MATCHING POOL
+        matchHtml = `
+          <div class="portal-unmatched-alert">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); font-weight: 850; font-size: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 8px;">
+                ⏳ IN MATCHING QUEUE / በሂደት ላይ (Unassigned)
+              </span>
+            </div>
+            <div style="font-size: 1rem; font-weight: 850; color: #ffffff; margin-bottom: 0.35rem;">
+              Your Profile is Active &amp; Verified in Matching Pool
+            </div>
+            <p style="font-size: 0.82rem; color: #94a3b8; line-height: 1.55; margin-bottom: 0.85rem;">
+              Our coordination team is matching incoming family inquiries based on campus proximity and subjects. As soon as a parent in your area confirms and booking verification completes, their phone number, student grade, and start instructions will appear right here!
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <a href="https://t.me/AstegniTutors" target="_blank" style="background: rgba(36, 161, 222, 0.2); border: 1px solid rgba(36, 161, 222, 0.45); color: #38bdf8; font-weight: 800; font-size: 0.78rem; padding: 0.55rem 0.95rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                ✈️ Join @AstegniTutors Community
+              </a>
+              <button type="button" onclick="checkTutorPortalStatus()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18); color: #cbd5e1; font-weight: 750; font-size: 0.78rem; padding: 0.55rem 0.95rem; border-radius: 10px; cursor: pointer;">
+                🔄 Refresh Status
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      resultsEl.innerHTML = `
+        <!-- MATCH STATUS SECTION (TOP PRIORITY) -->
+        ${matchHtml}
+
+        <!-- TUTOR PROFILE DOSSIER CARD -->
+        <div class="portal-dossier-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.85rem;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16, 185, 129, 0.2); border: 1.5px solid rgba(16, 185, 129, 0.45); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff; font-weight: 850;">
+                ${escapeHtml(tutorName.charAt(0).toUpperCase())}
+              </div>
+              <div>
+                <div style="font-size: 1.12rem; font-weight: 850; color: #fff;">${escapeHtml(tutorName)}</div>
+                <div style="font-size: 0.78rem; color: #94a3b8; display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.15rem;">
+                  <span>🏛️ ${escapeHtml(tutorUni)}</span>
+                  <span>•</span>
+                  <span>📅 ${escapeHtml(tutorYear)}</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <span style="font-family: monospace; font-size: 0.8rem; font-weight: 850; color: #34d399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.35rem 0.7rem; border-radius: 8px;">
+                🏷️ ${escapeHtml(tutorId)}
+              </span>
+            </div>
+          </div>
+
+          <!-- Academic Metal Tier & Rank Badges -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <span class="tag-badge" style="background: rgba(251, 191, 36, 0.18); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.45); font-weight: 850;">
+              ${tierEmoji} ${tierName} Tier (CGPA: ${escapeHtml(tutorCgpa)})
+            </span>
+            <span class="tag-badge" style="background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); font-weight: 850;">
+              ⭐ ${levelTitle}
+            </span>
+            <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);">
+              🛡️ ID Vault Verified ✓
+            </span>
+            <span class="tag-badge" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);">
+              #AST_T_${tutorId.split('-')[2] || 'OPS'}
+            </span>
+          </div>
+
+          <!-- Bento Profile Details -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.65rem; background: rgba(0,0,0,0.25); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <div>
+              <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📱 Registered Phone</div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">${escapeHtml(tutorPhone)}</div>
+            </div>
+            <div>
+              <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">⭐ University CGPA</div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #fbbf24;">${escapeHtml(tutorCgpa)}</div>
+            </div>
+            <div>
+              <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📖 Grade 'A' Subjects</div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">${escapeHtml(tutorSubj)}</div>
+            </div>
+            <div>
+              <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🛡️ Account Status</div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #34d399;">Active (Verified)</div>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // 3-LANGUAGE DICTIONARY (AMHARIC / ENGLISH / AFAAN OROMOO)
@@ -3201,6 +3598,9 @@
         const list = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
         list.push(item);
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
+        localStorage.setItem('my_astegni_tutor_phone', phone);
+        localStorage.setItem('my_astegni_tutor_id', trackingId);
+        localStorage.setItem('my_astegni_tutor_name', name);
 
         const tutorPayload = {
           id: trackingId,
