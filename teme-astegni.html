@@ -2133,12 +2133,13 @@
         return tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
       });
 
-      // 2. Search match in local matches
+      // 2. Search matches in local matches
       const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
-      let match = localMatches.find(m => {
+      let matchesList = localMatches.filter(m => {
         const tId = (m.tutorId || '').toUpperCase();
         const tPhone = (m.tutorPhone || '').replace(/\D/g, '');
-        return tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
+        const isMatch = tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
+        return isMatch && m.status !== 'Terminated' && m.status !== 'Cancelled';
       });
 
       // 3. Fallback to Firebase Firestore if not found locally
@@ -2155,23 +2156,24 @@
               }
             });
           }
-          if (!match) {
-            const matchSnap = await db.collection('astegni_matches').get();
-            matchSnap.forEach(doc => {
-              const d = doc.data();
-              const dId = (d.tutorId || '').toUpperCase();
-              const dPhone = (d.tutorPhone || '').replace(/\D/g, '');
-              if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
-                match = d;
+          const matchSnap = await db.collection('astegni_matches').get();
+          matchSnap.forEach(doc => {
+            const d = doc.data();
+            const dId = (d.tutorId || '').toUpperCase();
+            const dPhone = (d.tutorPhone || '').replace(/\D/g, '');
+            const isMatch = dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)));
+            if (isMatch && d.status !== 'Terminated' && d.status !== 'Cancelled') {
+              if (!matchesList.some(m => m.id === d.id)) {
+                matchesList.push(d);
               }
-            });
-          }
+            }
+          });
         } catch (e) {
           console.warn("Portal Firestore query notice:", e);
         }
       }
 
-      if (!tutor && !match) {
+      if (!tutor && matchesList.length === 0) {
         resultsEl.innerHTML = `
           <div style="text-align: center; padding: 2rem 1.25rem; background: rgba(239, 68, 68, 0.08); border: 1.5px dashed rgba(239, 68, 68, 0.35); border-radius: 16px;">
             <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
@@ -2188,48 +2190,93 @@
       }
 
       // Build profile info
-      const tutorName = tutor ? tutor.name : (match ? match.tutorName : 'Verified Tutor');
-      const tutorId = tutor ? (tutor.trackingId || tutor.id) : (match ? match.tutorId : 'AST-T');
-      const tutorPhone = tutor ? tutor.phone : (match ? match.tutorPhone : query);
-      const tutorUni = tutor ? (tutor.uni || tutor.university || 'University Campus') : (match ? (match.tutorUni || 'University') : 'University');
+      const tutorName = tutor ? tutor.name : (matchesList[0] ? matchesList[0].tutorName : 'Verified Tutor');
+      const tutorId = tutor ? (tutor.trackingId || tutor.id) : (matchesList[0] ? matchesList[0].tutorId : 'AST-T');
+      const tutorPhone = tutor ? tutor.phone : (matchesList[0] ? matchesList[0].tutorPhone : query);
+      const tutorUni = tutor ? (tutor.uni || tutor.university || 'University Campus') : (matchesList[0] ? (matchesList[0].tutorUni || 'University') : 'University');
       const tutorCgpa = tutor ? (tutor.cgpa || '3.50') : '≥ 3.00';
       const tutorYear = tutor ? (tutor.year || '2nd Year+') : 'Active Scholar';
-      const tutorSubj = tutor ? (tutor.subj || tutor.subjects || 'All Subjects') : (match ? (match.subjects || 'General') : 'General');
+      const tutorSubj = tutor ? (tutor.subj || tutor.subjects || 'All Subjects') : (matchesList[0] ? (matchesList[0].subjects || 'General') : 'General');
       const gVal = parseFloat(tutorCgpa) || 3.0;
       const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
       const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
       const level = tutor ? (Number(tutor.level) || 0) : 0;
       const levelTitle = level === 5 ? 'Level 5 Master' : (level === 4 ? 'Level 4 Distinguished' : (level === 3 ? 'Level 3 Senior' : (level === 2 ? 'Level 2 Advanced' : (level === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
 
-      let matchHtml = '';
-      if (match) {
-        // ASSIGNED & LINKED TO FAMILY
-        const formattedDate = match.date ? new Date(match.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently Matched';
-        const feeText = match.monthlyFee ? `${Number(match.monthlyFee).toLocaleString()} ETB / Month` : 'Agreed Rate';
+      // Tiered Capacity Rules: Level 0-1: 1 student max, Level 2-3: 2 students max, Level 4-5: 3 students max
+      const maxSlots = level >= 4 ? 3 : (level >= 2 ? 2 : 1);
+      const activeCount = matchesList.length;
 
+      let capacityNote = '';
+      if (level === 0 || level === 1) {
+        capacityNote = `Base capacity: <b>1 Student Family</b>. Upgrading to <b>Level 2</b> unlocks +1 additional family (2 max)!`;
+      } else if (level === 2 || level === 3) {
+        capacityNote = `Level ${level} capacity: <b>2 Student Families</b> (+1 extra family unlocked!). Upgrading to <b>Level 4</b> unlocks 1 more family (3 max)!`;
+      } else {
+        capacityNote = `Level ${level} Distinguished capacity: <b>3 Student Families</b> (Maximum platform capacity unlocked)!`;
+      }
+
+      let matchHtml = '';
+      if (matchesList.length > 0) {
         matchHtml = `
           <div class="portal-match-alert">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
               <span style="background: #059669; color: #fff; font-weight: 850; font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);">
-                🤝 MATCH CONFIRMED &amp; ASSIGNED / ቤተሰብ ተመድቧል ✓
+                🤝 MATCH CONFIRMED &amp; ASSIGNED (${activeCount}/${maxSlots} FAMILIES) ✓
               </span>
-              <span style="font-size: 0.75rem; color: #a7f3d0; font-weight: 750;">📅 Linked on: ${formattedDate}</span>
+              <span style="font-size: 0.75rem; color: #a7f3d0; font-weight: 750;">
+                ${activeCount < maxSlots ? `🟢 ${maxSlots - activeCount} Open Slot(s) Remaining` : '🔒 Maximum Capacity Reached'}
+              </span>
             </div>
 
             <div style="font-size: 1.15rem; font-weight: 850; color: #ffffff; margin-bottom: 0.25rem;">
               🎉 Congratulations, ${escapeHtml(tutorName)}!
             </div>
             <p style="font-size: 0.82rem; color: #e2e8f0; line-height: 1.5; margin-bottom: 0.9rem;">
-              A verified student family in your area has confirmed their tutoring booking. Please contact the parent directly below to introduce yourself and start the tutoring trial:
+              You have <b>${activeCount} verified student family booking(s)</b>! Please call the parent(s) directly below within 2 hours to introduce yourself and schedule the 1-Day Evaluation Trial Session:
             </p>
 
-            <!-- Parent Call Button (High Visibility) -->
-            <a href="tel:${escapeHtml(match.parentPhone)}" class="btn-portal-call">
-              <span>📞</span> <span>Call Parent Directly: ${escapeHtml(match.parentPhone)}</span>
-            </a>
+            <!-- Render All Assigned Families -->
+            ${matchesList.map((m, mIdx) => {
+              const formattedDate = m.date ? new Date(m.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently Matched';
+              const feeText = m.monthlyFee ? `${Number(m.monthlyFee).toLocaleString()} ETB / Month` : 'Agreed Rate';
+              return `
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem; text-align: left;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.35rem;">
+                    <span style="font-weight: 850; color: #38bdf8; font-size: 0.88rem;">👨‍👩‍👧 Family #${mIdx + 1}: ${escapeHtml(m.parentName || 'Assigned Family')}</span>
+                    <span style="font-size: 0.72rem; color: #94a3b8;">📅 Linked: ${formattedDate}</span>
+                  </div>
+
+                  <!-- Direct Call Button -->
+                  <a href="tel:${escapeHtml(m.parentPhone)}" class="btn-portal-call" style="margin-bottom: 0.75rem;">
+                    <span>📞</span> <span>Call Parent Directly: ${escapeHtml(m.parentPhone)}</span>
+                  </a>
+
+                  <!-- Family Bento Grid -->
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.7rem; border-radius: 10px;">
+                    <div>
+                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📍 Location</div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #fff;">${escapeHtml(m.parentArea || 'Addis Ababa')}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🎒 Student Grade</div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #fff;">${escapeHtml(m.studentGrade || 'School Student')}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📖 Subjects</div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;">${escapeHtml(m.subjects || 'General')}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Tuition</div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #fbbf24;">${feeText}</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
 
             <!-- Mandatory Instructions Card -->
-            <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin: 1rem 0; line-height: 1.55; text-align: left;">
+            <div style="background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin: 0.85rem 0; line-height: 1.55; text-align: left;">
               <div style="font-size: 0.85rem; font-weight: 850; color: #38bdf8; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
                 <span>⚠️</span> <span>አስቸኳይ የስራ መመሪያ / Action Required Within 2 Hours:</span>
               </div>
@@ -2241,43 +2288,18 @@
               </ol>
             </div>
 
-            <!-- Assigned Family Bento Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.65rem; background: rgba(0, 0, 0, 0.35); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08);">
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">👨‍👩‍👧 Parent Name</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.parentName || 'Assigned Family')}</div>
-              </div>
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📱 Parent Phone</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #34d399; font-family: monospace;">${escapeHtml(match.parentPhone)}</div>
-              </div>
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📍 Area / Location</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.parentArea || 'Addis Ababa')}</div>
-              </div>
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🎒 Student Grade</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">${escapeHtml(match.studentGrade || 'School Student')}</div>
-              </div>
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Monthly Tuition</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #fbbf24;">${feeText}</div>
-              </div>
-              <div>
-                <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🛡️ Deal Status</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #38bdf8;">${escapeHtml(match.status || 'Active')}</div>
-              </div>
-            </div>
-
           </div>
         `;
       } else {
         // UNASSIGNED / IN MATCHING POOL
         matchHtml = `
           <div class="portal-unmatched-alert">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
               <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); font-weight: 850; font-size: 0.75rem; padding: 0.3rem 0.65rem; border-radius: 8px;">
                 ⏳ IN MATCHING QUEUE / በሂደት ላይ (Unassigned)
+              </span>
+              <span style="font-size: 0.75rem; color: #94a3b8;">
+                Available Capacity: <b>${maxSlots} Student Family Slot(s)</b>
               </span>
             </div>
             <div style="font-size: 1rem; font-weight: 850; color: #ffffff; margin-bottom: 0.35rem;">
@@ -2326,19 +2348,24 @@
           </div>
 
           <!-- Academic Metal Tier & Rank Badges -->
-          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
             <span class="tag-badge" style="background: rgba(251, 191, 36, 0.18); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.45); font-weight: 850;">
               ${tierEmoji} ${tierName} Tier (CGPA: ${escapeHtml(tutorCgpa)})
             </span>
             <span class="tag-badge" style="background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); font-weight: 850;">
               ⭐ ${levelTitle}
             </span>
+            <span class="tag-badge" style="background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); font-weight: 850;">
+              👥 Slots: ${matchesList.length}/${maxSlots} Students
+            </span>
             <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);">
               🛡️ ID Vault Verified ✓
             </span>
-            <span class="tag-badge" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);">
-              #AST_T_${tutorId.split('-')[2] || 'OPS'}
-            </span>
+          </div>
+
+          <!-- Capacity Explanation Callout -->
+          <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #cbd5e1; line-height: 1.5;">
+            <span style="font-weight: 800; color: #38bdf8;">📌 Mentoring Capacity:</span> ${capacityNote}
           </div>
 
           <!-- Bento Profile Details -->
