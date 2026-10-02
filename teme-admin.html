@@ -3380,8 +3380,13 @@ function rowsToJson(sheet) {
           const docId = docData.id || docData.trackingId || change.doc.id;
           docData.id = docId;
           docData.trackingId = docData.trackingId || docId;
+          const docPhone = (docData.phone || '').replace(/\D/g, '').slice(-9);
 
-          const idx = tutors.findIndex(t => (t.id === docId || t.trackingId === docId));
+          const idx = tutors.findIndex(t => {
+            const tPhone = (t.phone || '').replace(/\D/g, '').slice(-9);
+            return (t.id === docId || t.trackingId === docId || (docPhone && tPhone === docPhone));
+          });
+
           if (change.type === 'added' || change.type === 'modified') {
             if (idx >= 0) {
               tutors[idx] = Object.assign({}, tutors[idx], docData);
@@ -3398,6 +3403,7 @@ function rowsToJson(sheet) {
         });
 
         if (changed) {
+          tutors = deduplicateByPhone(tutors);
           localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
           renderTutors();
           renderDashboard();
@@ -3417,8 +3423,13 @@ function rowsToJson(sheet) {
           const docId = docData.id || docData.trackingId || change.doc.id;
           docData.id = docId;
           docData.trackingId = docData.trackingId || docId;
+          const docPhone = (docData.phone || '').replace(/\D/g, '').slice(-9);
 
-          const idx = parents.findIndex(p => (p.id === docId || p.trackingId === docId));
+          const idx = parents.findIndex(p => {
+            const pPhone = (p.phone || '').replace(/\D/g, '').slice(-9);
+            return (p.id === docId || p.trackingId === docId || (docPhone && pPhone === docPhone));
+          });
+
           if (change.type === 'added' || change.type === 'modified') {
             if (idx >= 0) {
               parents[idx] = Object.assign({}, parents[idx], docData);
@@ -3435,6 +3446,7 @@ function rowsToJson(sheet) {
         });
 
         if (changed) {
+          parents = deduplicateByPhone(parents);
           localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
           renderParents();
           renderDashboard();
@@ -3469,6 +3481,7 @@ function rowsToJson(sheet) {
         });
 
         if (changed) {
+          matches = deduplicateMatches(matches);
           localStorage.setItem('astegni_matches', JSON.stringify(matches));
           renderMatches();
           renderDashboard();
@@ -3557,25 +3570,65 @@ function rowsToJson(sheet) {
       }
     }
 
-    // Synchronized Data Accessors
+    // ==========================================
+    // DEDUPLICATION & STORAGE ACCESSORS
+    // ==========================================
+    function deduplicateByPhone(list) {
+      if (!Array.isArray(list)) return [];
+      const seen = new Set();
+      const result = [];
+      for (const item of list) {
+        if (!item) continue;
+        const rawPhone = item.phone || '';
+        const cleanPhone = rawPhone.replace(/\D/g, '').slice(-9);
+        const key = cleanPhone || item.trackingId || item.id || JSON.stringify(item);
+        if (!seen.has(key)) {
+          seen.add(key);
+          result.push(item);
+        }
+      }
+      return result;
+    }
+
+    function deduplicateMatches(list) {
+      if (!Array.isArray(list)) return [];
+      const seen = new Set();
+      const result = [];
+      for (const m of list) {
+        if (!m) continue;
+        const pKey = (m.parentPhone || m.parentId || '').replace(/\D/g, '').slice(-9) || m.parentId;
+        const tKey = (m.tutorPhone || m.tutorId || '').replace(/\D/g, '').slice(-9) || m.tutorId;
+        const pairKey = (pKey && tKey) ? `${pKey}_${tKey}` : (m.id || JSON.stringify(m));
+        if (!seen.has(pairKey)) {
+          seen.add(pairKey);
+          result.push(m);
+        }
+      }
+      return result;
+    }
+
+    // Synchronized Data Accessors with Strict Deduplication
     function saveTutors(tutors) {
-      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
-      if (db && Array.isArray(tutors)) {
-        tutors.forEach(t => syncTutorToCloud(t));
+      const clean = deduplicateByPhone(tutors);
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(clean));
+      if (db && Array.isArray(clean)) {
+        clean.forEach(t => syncTutorToCloud(t));
       }
     }
 
     function saveParents(parents) {
-      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
-      if (db && Array.isArray(parents)) {
-        parents.forEach(p => syncParentToCloud(p));
+      const clean = deduplicateByPhone(parents);
+      localStorage.setItem('astegni_parent_leads', JSON.stringify(clean));
+      if (db && Array.isArray(clean)) {
+        clean.forEach(p => syncParentToCloud(p));
       }
     }
 
     function saveMatches(matches) {
-      localStorage.setItem('astegni_matches', JSON.stringify(matches));
-      if (db && Array.isArray(matches)) {
-        matches.forEach(m => syncMatchToCloud(m));
+      const clean = deduplicateMatches(matches);
+      localStorage.setItem('astegni_matches', JSON.stringify(clean));
+      if (db && Array.isArray(clean)) {
+        clean.forEach(m => syncMatchToCloud(m));
       }
     }
 
@@ -3585,9 +3638,18 @@ function rowsToJson(sheet) {
     let currentParentFilter = 'ALL';
     let currentTutorFilter = 'ALL';
 
-    function getParents() { return JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]'); }
-    function getTutors() { return JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]'); }
-    function getMatches() { return JSON.parse(localStorage.getItem('astegni_matches') || '[]'); }
+    function getParents() {
+      const list = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      return deduplicateByPhone(list);
+    }
+    function getTutors() {
+      const list = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      return deduplicateByPhone(list);
+    }
+    function getMatches() {
+      const list = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+      return deduplicateMatches(list);
+    }
 
     function renderAll() {
       renderDashboard();
@@ -4851,6 +4913,23 @@ function rowsToJson(sheet) {
 
       const p = parents[pIdx];
       const t = tutors[tIdx];
+
+      // Prevent duplicate active match between same parent and tutor
+      const existingMatches = getMatches();
+      const pPhoneClean = (p.phone || '').replace(/\D/g, '').slice(-9);
+      const tPhoneClean = (t.phone || '').replace(/\D/g, '').slice(-9);
+      const isAlreadyMatched = existingMatches.some(m => {
+        const mPPhone = (m.parentPhone || '').replace(/\D/g, '').slice(-9);
+        const mTPhone = (m.tutorPhone || '').replace(/\D/g, '').slice(-9);
+        const samePair = (mPPhone && mTPhone && mPPhone === pPhoneClean && mTPhone === tPhoneClean);
+        const isActive = (m.status !== 'Terminated' && m.status !== 'Cancelled');
+        return samePair && isActive;
+      });
+      if (isAlreadyMatched) {
+        alert(`⚠️ Duplicate Match Prevented!\nTutor "${t.name}" is already actively paired with Parent "${p.name}".`);
+        return;
+      }
+
       const fee = parseFloat(document.getElementById('match-price-input').value) || 0;
       const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
       const commission = Math.round(fee * (rate / 100));
@@ -5513,15 +5592,15 @@ function rowsToJson(sheet) {
         const seedNames = ['ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)', 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)', 'ቤተልሔም ሰለሞን (Bethelhem S.)', 'ናትናኤል አለማየሁ (Natnael A.)', 'ዮሐንስ መላኩ (Yohannes M.)', 'ጴጥሮስ ኃይሌ (Petros H.)', 'ዳዊት ግርማ (Dawit Girma)', 'Test User', 'Test Tutor', 'Test Parent'];
         
         const rawParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
-        const cleanParents = rawParents.filter(p => !seedTrackingIds.includes(p.trackingId) && !seedTrackingIds.includes(p.id) && !seedNames.includes(p.name));
+        const cleanParents = deduplicateByPhone(rawParents.filter(p => !seedTrackingIds.includes(p.trackingId) && !seedTrackingIds.includes(p.id) && !seedNames.includes(p.name)));
         localStorage.setItem('astegni_parent_leads', JSON.stringify(cleanParents));
 
         const rawTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
-        const cleanTutors = rawTutors.filter(t => !seedTrackingIds.includes(t.trackingId) && !seedTrackingIds.includes(t.id) && !seedNames.includes(t.name));
+        const cleanTutors = deduplicateByPhone(rawTutors.filter(t => !seedTrackingIds.includes(t.trackingId) && !seedTrackingIds.includes(t.id) && !seedNames.includes(t.name)));
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(cleanTutors));
 
         const rawMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
-        const cleanMatches = rawMatches.filter(m => !seedNames.includes(m.parentName) && !seedNames.includes(m.tutorName));
+        const cleanMatches = deduplicateMatches(rawMatches.filter(m => !seedNames.includes(m.parentName) && !seedNames.includes(m.tutorName)));
         localStorage.setItem('astegni_matches', JSON.stringify(cleanMatches));
       } catch (e) {}
     }
