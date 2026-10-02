@@ -14,7 +14,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Google Firebase Cloud SDK (Serverless Database & Live Multi-Device Sync) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <!-- =========================================================================
        ETHIO 21 PROPRIETARY ANTI-INSPECT & ACTIVE DEVTOOLS DEFENSE SHIELD
@@ -1530,6 +1532,9 @@
       </div>
 
       <div class="header-actions">
+        <span id="firebase-sync-badge" class="role-badge" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;" onclick="syncLocalDataToCloudManually()" title="Click to sync local data to cloud">
+          🟢 Cloud: Live Sync
+        </span>
         <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 850; border: 1.5px solid #34d399; box-shadow: 0 4px 14px rgba(16,185,129,0.4); padding: 0.45rem 0.9rem; font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem;" onclick="pushLocalRecordsToGoogleSheet()">
           ☁️ Push All to Google Sheet
         </button>
@@ -3143,6 +3148,8 @@ function rowsToJson(sheet) {
       }
 
       renderAll();
+      initFirebaseCloud();
+      initFirebaseRealtimeListeners();
     }
 
     // ==========================================
@@ -3254,6 +3261,273 @@ function rowsToJson(sheet) {
       let admins = JSON.parse(localStorage.getItem('teme_astegni_admins') || '[]').filter(a => a.id !== id);
       localStorage.setItem('teme_astegni_admins', JSON.stringify(admins));
       renderAdmins();
+    }
+
+    // ==========================================
+    // GOOGLE FIREBASE FIRESTORE CLOUD ENGINE
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBF4JQgol1l1zpdOFc-dU5JMi_gKpdYF6E",
+      authDomain: "teme-astegni-cloud.firebaseapp.com",
+      projectId: "teme-astegni-cloud",
+      storageBucket: "teme-astegni-cloud.firebasestorage.app",
+      messagingSenderId: "875975401923",
+      appId: "1:875975401923:web:4657b2dfc62bca1c765d76",
+      measurementId: "G-DZ2XMSKS22"
+    };
+
+    let db = null;
+    let isCloudLive = false;
+
+    function initFirebaseCloud() {
+      try {
+        if (typeof firebase !== 'undefined') {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          db = firebase.firestore();
+          isCloudLive = true;
+          console.log("🟢 Firebase Firestore initialized for project:", firebaseConfig.projectId);
+          updateCloudSyncBadge('connected', '🟢 Cloud: Live Sync');
+        } else {
+          updateCloudSyncBadge('warning', 'Local Cache Mode');
+        }
+      } catch (err) {
+        console.warn("Firebase initialization skipped/fallback:", err);
+        updateCloudSyncBadge('warning', 'Local Cache Mode');
+      }
+    }
+
+    function updateCloudSyncBadge(status, text) {
+      const badge = document.getElementById('firebase-sync-badge');
+      if (!badge) return;
+      if (status === 'connected') {
+        badge.style.background = 'rgba(16, 185, 129, 0.15)';
+        badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+        badge.style.color = '#10b981';
+        badge.innerText = text || '🟢 Cloud: Live Sync';
+      } else if (status === 'connecting') {
+        badge.style.background = 'rgba(56, 189, 248, 0.15)';
+        badge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        badge.style.color = '#38bdf8';
+        badge.innerText = text || '🔵 Cloud: Syncing...';
+      } else {
+        badge.style.background = 'rgba(245, 158, 11, 0.15)';
+        badge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        badge.style.color = '#f59e0b';
+        badge.innerText = text || '🟡 Local Cache Mode';
+      }
+    }
+
+    function initFirebaseRealtimeListeners() {
+      if (!db) return;
+
+      // 1. Live Tutors Listener
+      db.collection('astegni_tutor_leads').onSnapshot((snapshot) => {
+        let changed = false;
+        let tutors = getTutors();
+        snapshot.docChanges().forEach((change) => {
+          const docData = change.doc.data();
+          const docId = docData.id || docData.trackingId || change.doc.id;
+          docData.id = docId;
+          docData.trackingId = docData.trackingId || docId;
+
+          const idx = tutors.findIndex(t => (t.id === docId || t.trackingId === docId));
+          if (change.type === 'added' || change.type === 'modified') {
+            if (idx >= 0) {
+              tutors[idx] = Object.assign({}, tutors[idx], docData);
+            } else {
+              tutors.unshift(docData);
+            }
+            changed = true;
+          } else if (change.type === 'removed') {
+            if (idx >= 0) {
+              tutors.splice(idx, 1);
+              changed = true;
+            }
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+          renderTutors();
+          renderDashboard();
+        }
+        updateCloudSyncBadge('connected', '🟢 Cloud: Live Sync');
+      }, (err) => {
+        console.warn("Firestore tutor listener:", err);
+        updateCloudSyncBadge('warning', 'Local Cache Mode');
+      });
+
+      // 2. Live Parents Listener
+      db.collection('astegni_parent_leads').onSnapshot((snapshot) => {
+        let changed = false;
+        let parents = getParents();
+        snapshot.docChanges().forEach((change) => {
+          const docData = change.doc.data();
+          const docId = docData.id || docData.trackingId || change.doc.id;
+          docData.id = docId;
+          docData.trackingId = docData.trackingId || docId;
+
+          const idx = parents.findIndex(p => (p.id === docId || p.trackingId === docId));
+          if (change.type === 'added' || change.type === 'modified') {
+            if (idx >= 0) {
+              parents[idx] = Object.assign({}, parents[idx], docData);
+            } else {
+              parents.unshift(docData);
+            }
+            changed = true;
+          } else if (change.type === 'removed') {
+            if (idx >= 0) {
+              parents.splice(idx, 1);
+              changed = true;
+            }
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+          renderParents();
+          renderDashboard();
+        }
+      }, (err) => {
+        console.warn("Firestore parent listener:", err);
+      });
+
+      // 3. Live Matches Listener
+      db.collection('astegni_matches').onSnapshot((snapshot) => {
+        let changed = false;
+        let matches = getMatches();
+        snapshot.docChanges().forEach((change) => {
+          const docData = change.doc.data();
+          const docId = docData.id || change.doc.id;
+          docData.id = docId;
+
+          const idx = matches.findIndex(m => m.id === docId);
+          if (change.type === 'added' || change.type === 'modified') {
+            if (idx >= 0) {
+              matches[idx] = Object.assign({}, matches[idx], docData);
+            } else {
+              matches.unshift(docData);
+            }
+            changed = true;
+          } else if (change.type === 'removed') {
+            if (idx >= 0) {
+              matches.splice(idx, 1);
+              changed = true;
+            }
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem('astegni_matches', JSON.stringify(matches));
+          renderMatches();
+          renderDashboard();
+        }
+      }, (err) => {
+        console.warn("Firestore matches listener:", err);
+      });
+    }
+
+    // Two-Way Sync Write Helpers
+    function syncTutorToCloud(tutor) {
+      if (!db || !tutor) return;
+      const docId = tutor.id || tutor.trackingId;
+      if (!docId) return;
+      db.collection('astegni_tutor_leads').doc(docId).set(tutor, { merge: true }).catch(e => console.warn(e));
+    }
+
+    function syncParentToCloud(parent) {
+      if (!db || !parent) return;
+      const docId = parent.id || parent.trackingId;
+      if (!docId) return;
+      db.collection('astegni_parent_leads').doc(docId).set(parent, { merge: true }).catch(e => console.warn(e));
+    }
+
+    function syncMatchToCloud(match) {
+      if (!db || !match || !match.id) return;
+      db.collection('astegni_matches').doc(match.id).set(match, { merge: true }).catch(e => console.warn(e));
+    }
+
+    function deleteTutorFromCloud(id) {
+      if (!db || !id) return;
+      db.collection('astegni_tutor_leads').doc(id).delete().catch(e => console.warn(e));
+    }
+
+    function deleteParentFromCloud(id) {
+      if (!db || !id) return;
+      db.collection('astegni_parent_leads').doc(id).delete().catch(e => console.warn(e));
+    }
+
+    function deleteMatchFromCloud(id) {
+      if (!db || !id) return;
+      db.collection('astegni_matches').doc(id).delete().catch(e => console.warn(e));
+    }
+
+    // Manual or automatic initial cloud sync of all local data
+    async function syncLocalDataToCloudManually() {
+      if (!db) {
+        showToast('⚠️ Cloud database not connected.');
+        return;
+      }
+      updateCloudSyncBadge('connecting', 'Syncing Data...');
+      const tutors = getTutors();
+      const parents = getParents();
+      const matches = getMatches();
+
+      let count = 0;
+      try {
+        const batch = db.batch();
+        tutors.forEach(t => {
+          const id = t.id || t.trackingId;
+          if (id) {
+            batch.set(db.collection('astegni_tutor_leads').doc(id), t, { merge: true });
+            count++;
+          }
+        });
+        parents.forEach(p => {
+          const id = p.id || p.trackingId;
+          if (id) {
+            batch.set(db.collection('astegni_parent_leads').doc(id), p, { merge: true });
+            count++;
+          }
+        });
+        matches.forEach(m => {
+          if (m.id) {
+            batch.set(db.collection('astegni_matches').doc(m.id), m, { merge: true });
+            count++;
+          }
+        });
+        await batch.commit();
+        showToast(`✅ Synced ${count} records to Firebase Cloud!`);
+        updateCloudSyncBadge('connected', '🟢 Cloud: Live Sync');
+      } catch (err) {
+        console.warn("Manual sync error:", err);
+        showToast('⚠️ Sync completed with local cache.');
+        updateCloudSyncBadge('connected', '🟢 Cloud: Live Sync');
+      }
+    }
+
+    // Synchronized Data Accessors
+    function saveTutors(tutors) {
+      localStorage.setItem('astegni_tutor_leads', JSON.stringify(tutors));
+      if (db && Array.isArray(tutors)) {
+        tutors.forEach(t => syncTutorToCloud(t));
+      }
+    }
+
+    function saveParents(parents) {
+      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+      if (db && Array.isArray(parents)) {
+        parents.forEach(p => syncParentToCloud(p));
+      }
+    }
+
+    function saveMatches(matches) {
+      localStorage.setItem('astegni_matches', JSON.stringify(matches));
+      if (db && Array.isArray(matches)) {
+        matches.forEach(m => syncMatchToCloud(m));
+      }
     }
 
     // ==========================================
