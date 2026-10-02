@@ -1794,6 +1794,7 @@
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
           <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Matches Ledger</button>
+          <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #f87171; font-weight: 800;" onclick="cleanSheetDuplicatesNow()">🧹 Clean Sheet Duplicates Now</button>
           <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync Confirmed Matches to Sheet</button>
           <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Apps Script Code</button>
           <button class="btn-act" style="background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.35); color: #cbd5e1;" onclick="purgeDemoDataNow()">🗑️ Clear Demo Data (Start Fresh for Real Users)</button>
@@ -2257,8 +2258,9 @@
 function onOpen(e) {
   SpreadsheetApp.getUi()
     .createMenu('🚀 Teme Astegni')
-    .addItem('⚡ Format Sheets to Strict 2 Columns (ID Only)', 'setupCleanArchitecture')
-    .addItem('🧹 Delete All Legacy Sheets (Keep Only _ Tabs)', 'cleanLegacyTabs')
+    .addItem('⚡ Format Sheets to Strict Matches Ledger', 'setupCleanArchitecture')
+    .addItem('🧹 Remove All Duplicate Rows from All Sheets', 'deduplicateAllSheets')
+    .addItem('🗑️ Delete All Legacy Sheets (Keep Only _ Tabs)', 'cleanLegacyTabs')
     .addItem('✈️ Send Test Alert to Telegram Bot', 'testTelegramNotification')
     .addToUi();
 }
@@ -2267,6 +2269,15 @@ function doGet(e) {
   var action = (e && e.parameter) ? e.parameter.action : '';
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   
+  if (action === 'cleanDuplicates' || action === 'dedup') {
+    var removed = deduplicateAllSheetsSilently(ss);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'success', 
+      removedRows: removed,
+      message: 'All duplicate IDs and records successfully removed from Google Sheet!' 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
   if (action === 'clean' || action === 'deleteLegacy') {
     cleanLegacyTabsSilently(ss);
     return ContentService.createTextOutput(JSON.stringify({ 
@@ -2279,7 +2290,7 @@ function doGet(e) {
     setupCleanArchitectureSilently(ss);
     return ContentService.createTextOutput(JSON.stringify({ 
       status: 'success', 
-      message: 'Google Sheet automatically reformatted to strict 2-column index (Parents_Index & Tutors_Index)!' 
+      message: 'Google Sheet automatically reformatted to strict Matches_Ledger!' 
     })).setMimeType(ContentService.MimeType.JSON);
   }
 
@@ -2301,12 +2312,17 @@ function doGet(e) {
     var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
     var p = (e && e.parameter) ? e.parameter : {};
     var trackingId = p.id || p.trackingId || '';
+    var phone = p.phone || '';
     if (trackingId) {
+      if (checkExistsInSheet(tSheet, trackingId, phone)) {
+        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
       tSheet.appendRow([
         new Date(), 
         trackingId, 
         p.name || '', 
-        p.phone || '', 
+        phone, 
         p.university || p.uni || '', 
         p.year || '', 
         p.cgpa || '', 
@@ -2314,7 +2330,7 @@ function doGet(e) {
         p.status || 'Interview Pending'
       ]);
       formatLastRow(tSheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + (p.phone || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2324,12 +2340,17 @@ function doGet(e) {
     var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
     var p = (e && e.parameter) ? e.parameter : {};
     var trackingId = p.id || p.trackingId || '';
+    var phone = p.phone || '';
     if (trackingId) {
+      if (checkExistsInSheet(pSheet, trackingId, phone)) {
+        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
       pSheet.appendRow([
         new Date(), 
         trackingId, 
         p.name || '', 
-        p.phone || '', 
+        phone, 
         p.area || p.location || '', 
         p.grade || '', 
         p.subjects || '', 
@@ -2337,7 +2358,7 @@ function doGet(e) {
         p.status || 'Pending'
       ]);
       formatLastRow(pSheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + (p.phone || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2345,7 +2366,7 @@ function doGet(e) {
   
   return ContentService.createTextOutput(JSON.stringify({ 
     status: 'OK', 
-    message: 'Teme Astegni Rich Cloud API Active' 
+    message: 'Teme Astegni Cloud API Active (Strict Deduplication)' 
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -2366,15 +2387,25 @@ function doPost(e) {
     var action = postData.action;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    if (action === 'addParent') {
+    if (action === 'cleanDuplicates' || action === 'dedup') {
+      var removed = deduplicateAllSheetsSilently(ss);
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', removedRows: removed }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    else if (action === 'addParent') {
       var sheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
       var d = postData.data || postData;
       var trackingId = d.trackingId || d.id || '';
+      var phone = d.phone || d.parentPhone || '';
+      if (checkExistsInSheet(sheet, trackingId, phone)) {
+        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
       var newRow = [
         new Date(),
         trackingId,
         d.name || d.parentName || '',
-        d.phone || d.parentPhone || '',
+        phone,
         d.area || d.location || '',
         d.grade || '',
         d.subjects || '',
@@ -2383,17 +2414,22 @@ function doPost(e) {
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + (d.phone || '') + '\n📍 <b>Location:</b> ' + (d.area || '') + '\n🎒 <b>Grade:</b> ' + (d.grade || '') + '\n📖 <b>Subjects:</b> ' + (d.subjects || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📍 <b>Location:</b> ' + (d.area || '') + '\n🎒 <b>Grade:</b> ' + (d.grade || '') + '\n📖 <b>Subjects:</b> ' + (d.subjects || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     } 
     else if (action === 'addTutor') {
       var sheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
       var d = postData.data || postData;
       var trackingId = d.trackingId || d.id || '';
+      var phone = d.phone || d.tutorPhone || '';
+      if (checkExistsInSheet(sheet, trackingId, phone)) {
+        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
       var newRow = [
         new Date(),
         trackingId,
         d.name || d.tutorName || '',
-        d.phone || d.tutorPhone || '',
+        phone,
         d.university || d.uni || '',
         d.year || '',
         d.cgpa || '',
@@ -2402,18 +2438,22 @@ function doPost(e) {
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + (d.phone || '') + '\n🏛️ <b>University:</b> ' + (d.university || '') + '\n⭐ <b>CGPA:</b> ' + (d.cgpa || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n🏛️ <b>University:</b> ' + (d.university || '') + '\n⭐ <b>CGPA:</b> ' + (d.cgpa || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     else if (action === 'addMatch') {
       var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
       var d = postData.data || postData;
+      var matchId = (d.matchId || d.id || '').toString().trim();
       var parentDisplay = (d.parentName || 'Parent') + (d.parentId ? ' (' + d.parentId + ')' : '');
       var tutorDisplay = (d.tutorName || 'Tutor') + (d.tutorId ? ' (' + d.tutorId + ')' : '');
       var feeNum = Number(d.monthlyFee || 0);
       var commNum = Number(d.commission || 0) || Math.round(feeNum * 0.25);
+      var pPhoneClean = (d.parentPhone || '').toString().replace(/\D/g, '').slice(-9);
+      var tPhoneClean = (d.tutorPhone || '').toString().replace(/\D/g, '').slice(-9);
+
       var newRow = [
         new Date(),
-        d.matchId || ('M-' + new Date().getTime()),
+        matchId || ('M-' + new Date().getTime()),
         parentDisplay,
         d.parentPhone || '',
         tutorDisplay,
@@ -2423,9 +2463,30 @@ function doPost(e) {
         commNum.toLocaleString() + ' ETB',
         d.status || '1-Day Trial Pending'
       ];
-      sheet.appendRow(newRow);
-      formatLastRow(sheet, '#1e40af');
-      sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent:</b> ' + parentDisplay + ' (' + (d.parentPhone || 'N/A') + ')\n🎓 <b>Tutor:</b> ' + tutorDisplay + ' (' + (d.tutorPhone || 'N/A') + ')\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+
+      // Deduplication check: check if matchId or (parentPhone + tutorPhone) is already in sheet
+      var data = sheet.getDataRange().getValues();
+      var existingRowIndex = -1;
+      for (var r = 1; r < data.length; r++) {
+        var rMatchId = data[r][1] ? data[r][1].toString().trim() : '';
+        var rPPhone = data[r][3] ? data[r][3].toString().replace(/\D/g, '').slice(-9) : '';
+        var rTPhone = data[r][5] ? data[r][5].toString().replace(/\D/g, '').slice(-9) : '';
+        if ((matchId && rMatchId === matchId) || (pPhoneClean && tPhoneClean && rPPhone === pPhoneClean && rTPhone === tPhoneClean)) {
+          existingRowIndex = r + 1;
+          break;
+        }
+      }
+
+      if (existingRowIndex > 1) {
+        // Update existing row to eliminate duplicates
+        sheet.getRange(existingRowIndex, 1, 1, newRow.length).setValues([newRow]);
+        return ContentService.createTextOutput(JSON.stringify({ status: 'updated_existing', id: matchId }))
+          .setMimeType(ContentService.MimeType.JSON);
+      } else {
+        sheet.appendRow(newRow);
+        formatLastRow(sheet, '#1e40af');
+        sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent:</b> ' + parentDisplay + ' (' + (d.parentPhone || 'N/A') + ')\n🎓 <b>Tutor:</b> ' + tutorDisplay + ' (' + (d.tutorPhone || 'N/A') + ')\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      }
     }
     else if (action === 'logAdminAction') {
       sendTelegramNotification(postData.text || '');
@@ -2437,6 +2498,67 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', error: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function checkExistsInSheet(sheet, id, phone) {
+  if (!sheet || sheet.getLastRow() <= 1) return false;
+  var data = sheet.getDataRange().getValues();
+  var idClean = (id || '').toString().trim().toUpperCase();
+  var phoneClean = (phone || '').toString().replace(/\D/g, '').slice(-9);
+  for (var i = 1; i < data.length; i++) {
+    var rowId = data[i][1] ? data[i][1].toString().trim().toUpperCase() : '';
+    var rowPhone = data[i][3] ? data[i][3].toString().replace(/\D/g, '').slice(-9) : '';
+    if ((idClean && rowId === idClean) || (phoneClean && rowPhone && rowPhone === phoneClean)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function deduplicateAllSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var totalRemoved = deduplicateAllSheetsSilently(ss);
+  SpreadsheetApp.getUi().alert('🧹 CLEANUP COMPLETE!\n\nRemoved ' + totalRemoved + ' duplicate row(s) from your Google Sheets. All IDs and deal records are now 100% unique.');
+}
+
+function deduplicateAllSheetsSilently(ss) {
+  var totalRemoved = 0;
+  var sheetNames = ['Matches_Ledger', 'Tutors_Index', 'Parents_Index'];
+  sheetNames.forEach(function(sName) {
+    var sheet = ss.getSheetByName(sName);
+    if (!sheet) return;
+    var lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return;
+    var values = sheet.getDataRange().getValues();
+    var seenKeys = {};
+    var rowsToDelete = [];
+    for (var r = 1; r < values.length; r++) {
+      var row = values[r];
+      var key = '';
+      if (sName === 'Matches_Ledger') {
+        var matchId = row[1] ? row[1].toString().trim() : '';
+        var pPhone = row[3] ? row[3].toString().replace(/\D/g, '').slice(-9) : '';
+        var tPhone = row[5] ? row[5].toString().replace(/\D/g, '').slice(-9) : '';
+        key = matchId || (pPhone && tPhone ? (pPhone + '_' + tPhone) : '');
+      } else {
+        var id = row[1] ? row[1].toString().trim().toUpperCase() : '';
+        var phone = row[3] ? row[3].toString().replace(/\D/g, '').slice(-9) : '';
+        key = id || phone;
+      }
+      if (key) {
+        if (seenKeys[key]) {
+          rowsToDelete.push(r + 1);
+        } else {
+          seenKeys[key] = true;
+        }
+      }
+    }
+    for (var d = rowsToDelete.length - 1; d >= 0; d--) {
+      sheet.deleteRow(rowsToDelete[d]);
+      totalRemoved++;
+    }
+  });
+  return totalRemoved;
 }
 
 function setupCleanArchitecture() {
@@ -3607,6 +3729,35 @@ function rowsToJson(sheet) {
       return result;
     }
 
+    // ==========================================
+    // TUTOR CAPACITY & LEVEL SLOTS ENGINE
+    // Rules:
+    // • Level 0 - 1: Max 1 student family
+    // • Level 2 - 3: Max 2 student families (+1 extra student unlocked at Level 2)
+    // • Level 4 - 5: Max 3 student families (+1 another student unlocked at Level 4, Max 3)
+    // ==========================================
+    function getTutorCapacity(tutor) {
+      if (!tutor) return 1;
+      const lvl = parseInt(tutor.level || 0, 10);
+      if (lvl >= 4) return 3;
+      if (lvl >= 2) return 2;
+      return 1;
+    }
+
+    function getTutorActiveMatches(tutor, matches) {
+      if (!tutor) return [];
+      if (!matches) matches = getMatches();
+      const tPhoneClean = (tutor.phone || '').replace(/\D/g, '').slice(-9);
+      const tId = (tutor.trackingId || tutor.id || '').toUpperCase();
+      return matches.filter(m => {
+        const mPhoneClean = (m.tutorPhone || '').replace(/\D/g, '').slice(-9);
+        const mId = (m.tutorId || '').toUpperCase();
+        const isThisTutor = (tPhoneClean && mPhoneClean && tPhoneClean === mPhoneClean) || (tId && mId && (mId === tId || mId === (tutor.id || '').toUpperCase()));
+        const isActive = (m.status !== 'Terminated' && m.status !== 'Cancelled');
+        return isThisTutor && isActive;
+      });
+    }
+
     // Synchronized Data Accessors with Strict Deduplication
     function saveTutors(tutors) {
       const clean = deduplicateByPhone(tutors);
@@ -3967,8 +4118,9 @@ function rowsToJson(sheet) {
       container.innerHTML = '';
 
       const isTutorAssigned = (t) => {
-        const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
-        return matches.some(m => (m.tutorPhone && m.tutorPhone === t.phone) || (m.tutorId && (m.tutorId === tTrackingId || m.tutorId === t.id)));
+        const activeMatches = getTutorActiveMatches(t, matches);
+        const cap = getTutorCapacity(t);
+        return activeMatches.length >= cap;
       };
 
       let filtered = tutors.filter(t => {
@@ -4044,11 +4196,16 @@ function rowsToJson(sheet) {
         card.style.transition = 'all 0.2s ease';
 
         const l = Number(t.level) || 0;
+        const cap = getTutorCapacity(t);
+        const activeMatches = getTutorActiveMatches(t, matches);
+        const assignedCount = activeMatches.length;
+        const isFull = assignedCount >= cap;
+        const openSlots = Math.max(0, cap - assignedCount);
+
         const levelTitle = l === 5 ? 'Level 5 Master' : (l === 4 ? 'Level 4 Distinguished' : (l === 3 ? 'Level 3 Senior' : (l === 2 ? 'Level 2 Advanced' : (l === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
         const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
         const tTgTag = t.tgTag || ('#AST_T_' + (t.phone || '').slice(-4));
         const initial = (t.name || 'T').trim().charAt(0).toUpperCase();
-        const isAssigned = isTutorAssigned(t);
         const detailsId = `tutor-details-${tIndex}`;
 
         const subjectsArray = (t.subj || 'General').split(',').map(s => s.trim()).filter(Boolean);
@@ -4074,15 +4231,17 @@ function rowsToJson(sheet) {
                   <span>•</span>
                   <span>⭐ CGPA ${escapeHtml(t.cgpa)}</span>
                   <span>•</span>
-                  <span>Level ${t.level || 0}</span>
+                  <span>Level ${t.level || 0} (${assignedCount}/${cap} Students)</span>
                 </div>
               </div>
             </div>
 
             <div class="record-header-actions" onclick="event.stopPropagation()">
-              ${isAssigned 
-                ? `<span class="tag-badge tag-assigned">🤝 Assigned / የተመደበ</span>` 
-                : `<span class="tag-badge tag-unassigned">⏳ Available / ያልተመደበ</span>`}
+              ${isFull 
+                ? `<span class="tag-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); font-weight: 800;">🤝 Max Assigned (${assignedCount}/${cap})</span>` 
+                : (assignedCount > 0 
+                  ? `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.45); font-weight: 800;">⚡ ${assignedCount}/${cap} Active (${openSlots} Open)</span>`
+                  : `<span class="tag-badge tag-unassigned">⏳ Available (${cap} Slot${cap > 1 ? 's' : ''})</span>`)}
               <span class="tag-badge ${getStatusBadgeClass(t.status || 'Verified')}">${t.status || 'Verified'}</span>
               <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call-modern">📞 Call</a>
               <button type="button" class="btn-collapse-toggle" onclick="toggleCardDetails('${detailsId}', this)">
@@ -4097,10 +4256,11 @@ function rowsToJson(sheet) {
             <div class="record-meta-ribbon">
               <span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 850;">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
               ${getLevelBadgeHtml(t.level, t.cgpa)}
+              <span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-weight: 800;">👥 Capacity: ${assignedCount}/${cap} Students</span>
+              ${getLevelBadgeHtml(t.level, t.cgpa)}
               ${getExamBadgeHtml(t)}
               <span class="tag-badge tag-active">🛡️ Fayda/Campus Verified</span>
               <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">🚀 ${getDispatchPriorityText(t.level, t.cgpa)}</span>
-              ${isAssigned ? `<span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">🤝 Matched with Family</span>` : ''}
             </div>
 
             <!-- Bento Grid Details -->
@@ -4128,6 +4288,22 @@ function rowsToJson(sheet) {
               ${t.examNotes ? `<div class="record-notes-box">📝 <b>Evaluation Notes:</b> "${escapeHtml(t.examNotes)}"</div>` : ''}
             </div>
 
+            <!-- Active Assigned Families Mini-Card -->
+            ${activeMatches.length > 0 ? `
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 0.75rem; margin: 0.75rem 0;">
+                <div style="font-size: 0.74rem; font-weight: 850; color: #34d399; text-transform: uppercase; margin-bottom: 0.45rem; display: flex; justify-content: space-between; align-items: center;">
+                  <span>🤝 Assigned Student Families (${assignedCount}/${cap} Max):</span>
+                  <span style="font-size: 0.68rem; color: #94a3b8;">${openSlots > 0 ? `🟢 ${openSlots} slot(s) remaining` : '🔴 Full capacity'}</span>
+                </div>
+                ${activeMatches.map((am, amIdx) => `
+                  <div style="font-size: 0.8rem; color: #f1f5f9; display: flex; justify-content: space-between; align-items: center; padding: 0.35rem 0; border-bottom: ${amIdx < activeMatches.length - 1 ? '1px dashed rgba(255,255,255,0.08)' : 'none'};">
+                    <span><b>${amIdx + 1}.</b> ${escapeHtml(am.parentName)} (${escapeHtml(am.studentGrade || 'General')}, ${escapeHtml(am.parentArea || 'Addis Ababa')})</span>
+                    <a href="tel:${escapeHtml(am.parentPhone)}" style="color: #38bdf8; text-decoration: none; font-weight: 800; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.25rem;">📞 ${escapeHtml(am.parentPhone)}</a>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+
             <!-- Segmented Actions Footer -->
             <div class="record-actions-modern">
               <div class="actions-left-group">
@@ -4136,7 +4312,9 @@ function rowsToJson(sheet) {
                   <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
                   <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
                 </select>
-                <button class="btn-act btn-act-match" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
+                ${isFull 
+                  ? `<button class="btn-act" style="background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.3); color: #94a3b8; cursor: not-allowed;" title="Maximum student capacity reached for Level ${l} (${cap}/${cap} families)" disabled>🔒 Max Full (${cap}/${cap})</button>`
+                  : `<button class="btn-act btn-act-match" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent (${openSlots} Slot${openSlots > 1 ? 's' : ''} Open)</button>`}
               </div>
 
               <div class="actions-right-group">
@@ -4263,17 +4441,22 @@ function rowsToJson(sheet) {
 
       if (target === 1) {
         feeAmount.innerText = '0 ETB (Free Exam)';
-        feeNote.innerHTML = 'Level 1 is <b>FREE</b> upon passing the Voice / Video Communicative Exam.';
+        feeNote.innerHTML = 'Level 1 is <b>FREE</b> upon passing the Voice / Video Communicative Exam. Capacity: <b>1 Student Family</b>.';
         feeBox.style.display = 'block';
         l5Box.style.display = 'none';
-      } else if (target >= 2 && target <= 4) {
+      } else if (target === 2 || target === 3) {
         feeAmount.innerText = '50 ETB';
-        feeNote.innerHTML = 'Collect <b>50 ETB via Telebirr</b> from the tutor to activate this level booster and record in platform revenue ledger.';
+        feeNote.innerHTML = 'Collect <b>50 ETB via Telebirr</b>. Promotes to Level ' + target + ' and <b>unlocks +1 extra student capacity (2 students max)</b>!';
+        feeBox.style.display = 'block';
+        l5Box.style.display = 'none';
+      } else if (target === 4) {
+        feeAmount.innerText = '50 ETB';
+        feeNote.innerHTML = 'Collect <b>50 ETB via Telebirr</b>. Promotes to Level 4 Distinguished and <b>unlocks another +1 student capacity (3 students maximum)</b>!';
         feeBox.style.display = 'block';
         l5Box.style.display = 'none';
       } else if (target === 5) {
-        feeAmount.innerText = 'Master Evaluation';
-        feeNote.innerHTML = 'Level 5 (Master Astegni) requires a <b>Physical In-Person Demonstration or Comprehensive Video Lesson Audit</b> with Senior Coordinators.';
+        feeAmount.innerText = 'Master Evaluation (3 Students Max)';
+        feeNote.innerHTML = 'Level 5 (Master Astegni) retains maximum capacity (3 students max) and requires a <b>Physical In-Person Demonstration or Comprehensive Video Lesson Audit</b> with Senior Coordinators.';
         feeBox.style.display = 'block';
         l5Box.style.display = 'block';
       }
@@ -4846,11 +5029,18 @@ function rowsToJson(sheet) {
           return scoreB - scoreA;
         });
 
+      const allMatches = getMatches();
       tSelect.innerHTML = sortedTutorsWithIndex.map(item => {
         const t = item.tutor;
         const tier = getTutorMetalTier(t.cgpa);
         const lvl = Number(t.level) || 0;
+        const cap = getTutorCapacity(t);
+        const activeMatches = getTutorActiveMatches(t, allMatches);
+        const activeCount = activeMatches.length;
+        const isFull = activeCount >= cap;
         const tierTag = tier.code === 'GOLDEN' ? 'GOLDEN' : (tier.code === 'SILVER' ? 'SILVER' : 'BRONZE');
+
+        let capBadge = isFull ? `[FULL: ${activeCount}/${cap} Students]` : `[${activeCount}/${cap} Students]`;
         let lvlPrefix = `${tier.emoji} [${tierTag} L0]`;
         if (lvl === 5) lvlPrefix = `👑 ${tier.emoji} [${tierTag} L5 MASTER]`;
         else if (lvl === 4) lvlPrefix = `💎 ${tier.emoji} [${tierTag} L4]`;
@@ -4859,7 +5049,8 @@ function rowsToJson(sheet) {
         else if (lvl === 1) lvlPrefix = `🎙️ ${tier.emoji} [${tierTag} L1 EXAM PASSED]`;
 
         const examNote = (t.examStatus === 'passed' || t.examStatus === 'Passed') ? ` • Exam: ${t.examScore || 88}%` : '';
-        return `<option value="${item.originalIndex}">${lvlPrefix} ${escapeHtml(t.name)} (CGPA ${escapeHtml(t.cgpa)} - ${escapeHtml(t.uni)}${examNote})</option>`;
+        const disabledAttr = isFull ? 'disabled style="color: #64748b;"' : '';
+        return `<option value="${item.originalIndex}" ${disabledAttr}>${capBadge} ${lvlPrefix} ${escapeHtml(t.name)} (CGPA ${escapeHtml(t.cgpa)} - ${escapeHtml(t.uni)}${examNote})</option>`;
       }).join('');
 
       // Restrict commission controls if not permitted
@@ -4927,6 +5118,14 @@ function rowsToJson(sheet) {
       });
       if (isAlreadyMatched) {
         alert(`⚠️ Duplicate Match Prevented!\nTutor "${t.name}" is already actively paired with Parent "${p.name}".`);
+        return;
+      }
+
+      // Enforce Tutor Student Capacity Rules: Level 0-1: max 1, Level 2-3: max 2, Level 4-5: max 3
+      const cap = getTutorCapacity(t);
+      const tutorActiveMatches = getTutorActiveMatches(t, existingMatches);
+      if (tutorActiveMatches.length >= cap) {
+        alert(`⚠️ Tutor Capacity Reached!\n\nTutor "${t.name}" (Level ${t.level || 0}) is currently mentoring ${tutorActiveMatches.length} of ${cap} maximum allowed student families.\n\n📌 Tiered Capacity Rules:\n• Level 0 - 1: Max 1 Student Family\n• Level 2 - 3: Max 2 Student Families (+1 extra student unlocked at Level 2)\n• Level 4 - 5: Max 3 Student Families (+1 extra student unlocked at Level 4, Maximum of 3)\n\nTo assign this tutor to another family, upgrade their level or conclude an existing pairing.`);
         return;
       }
 
@@ -5059,6 +5258,26 @@ function rowsToJson(sheet) {
         alert('🎉 SUCCESS!\n\nYour Google Sheet has been formatted as the Official Matches & Revenue Ledger!\n\n• Main Sheet: Matches_Ledger\n• Columns: [Timestamp, Deal ID, Parent Name & ID, Parent Phone, Tutor Name & ID, Tutor Phone, Requested Subjects, Monthly Tuition, Ethio-21 Commission (25%), Status]\n\nAll raw leads are organized in Telegram & Firebase to keep this ledger 100% clean.');
       } catch (err) {
         alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
+      }
+    }
+
+    async function cleanSheetDuplicatesNow() {
+      const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
+      if (!url) {
+        alert('Please enter and save your Google Apps Script Webhook URL first in Settings.');
+        return;
+      }
+      try {
+        const res = await fetch(url + '?action=cleanDuplicates');
+        const json = await res.json();
+        alert(`🧹 GOOGLE SHEET DEDUPLICATION SUCCESS!\n\n${json.message || 'All duplicate records cleaned!'}\n• Total duplicate rows removed: ${json.removedRows || 0}\n\nYour Matches_Ledger and Index tabs are now 100% unique.`);
+      } catch (err) {
+        try {
+          fetch(url + '?action=cleanDuplicates', { mode: 'no-cors' });
+          alert('🧹 Clean duplicates command dispatched to Google Sheet via webhook!\n\nIf you have not updated your script, open "View/Copy Apps Script Code" in Settings, paste it into Extensions > Apps Script, and click Run > deduplicateAllSheets.');
+        } catch (e2) {
+          alert('Could not execute deduplication via webhook: ' + err.message);
+        }
       }
     }
 
