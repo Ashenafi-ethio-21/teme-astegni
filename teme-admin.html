@@ -130,51 +130,8 @@
       }
       window.triggerSecurityToast = triggerSecurityToast;
 
-      // 5. Active DevTools Detection & Shield Lockdown Overlay
-      const threshold = 160;
-
-      function checkDevToolsDimensions() {
-        const widthDiff = window.outerWidth - window.innerWidth > threshold;
-        const heightDiff = window.outerHeight - window.innerHeight > threshold;
-        if (widthDiff || heightDiff) {
-          setLockoutState(true);
-        } else {
-          setLockoutState(false);
-        }
-      }
-
-      function setLockoutState(locked) {
-        let overlay = document.getElementById('devtools-lockout-overlay');
-        if (locked) {
-          if (!overlay && document.body) {
-            overlay = document.createElement('div');
-            overlay.id = 'devtools-lockout-overlay';
-            overlay.className = 'devtools-lockout-overlay';
-            overlay.innerHTML = '<div class="lockout-box"><div class="lockout-shield-badge">🛡️</div><span class="lockout-tag">ETHIO 21 OPERATIONS SHIELD v2.4</span><h2 class="lockout-title">INSPECTOR &amp; DEVTOOLS DETECTED</h2><p class="lockout-desc">The ETHIO 21 Proprietary Operations Shield has locked this session to protect administrative credentials, customer data, and system integrity.</p><div class="lockout-status">🔒 ADMIN SESSION BLURRED &amp; FROZEN</div><p class="lockout-sub">Please close Developer Tools or Inspector window to resume operations.</p></div>';
-            document.body.appendChild(overlay);
-          }
-          if (overlay) overlay.classList.add('active');
-          if (document.body) document.body.classList.add('shield-lockdown-blur');
-        } else {
-          if (overlay) overlay.classList.remove('active');
-          if (document.body) document.body.classList.remove('shield-lockdown-blur');
-        }
-      }
-
-      window.addEventListener('resize', checkDevToolsDimensions);
-      setInterval(checkDevToolsDimensions, 600);
-
-      // 6. Anti-Debugger Trap Loop
-      setInterval(function() {
-        const start = performance.now();
-        (function() {
-          return false;
-        }['constructor']('debugger')['call']());
-        const timeElapsed = performance.now() - start;
-        if (timeElapsed > 100) {
-          setLockoutState(true);
-        }
-      }, 500);
+      // 5. Clean Security Posture (Safe from false-positive dimension/zoom lockouts)
+      window.setLockoutState = function() {};
 
       // 7. Console Watermark & Flush
       setInterval(function() {
