@@ -3219,7 +3219,7 @@
     }
 
     // Submission Handlers
-    function handleParentSubmit(e) {
+    async function handleParentSubmit(e) {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]') || document.querySelector('#parent-form button.btn-submit');
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
@@ -3255,6 +3255,36 @@
         const msg = (currentLang === 'am')
           ? 'እባክዎ ትክክለኛ የስልክ ቁጥር ያስገቡ (ምሳሌ፡ 0911223344)።'
           : 'Please enter a valid Phone Number (e.g. 0911223344).';
+        abortParentValidation(msg, document.getElementById('p_phone'));
+        return;
+      }
+
+      // ==========================================
+      // DUPLICATION PREVENTION ENGINE (PARENTS)
+      // ==========================================
+      const cleanPhone = phone.replace(/\D/g, '').slice(-9);
+      const existingParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      let duplicateParent = existingParents.find(p => (p.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
+
+      // Also verify against central cloud database
+      if (!duplicateParent && typeof db !== 'undefined' && db) {
+        try {
+          const snap = await db.collection('astegni_parent_leads').get();
+          snap.forEach(doc => {
+            const d = doc.data();
+            const dPhone = (d.phone || '').replace(/\D/g, '');
+            if (dPhone.endsWith(cleanPhone)) {
+              duplicateParent = d;
+            }
+          });
+        } catch (err) {}
+      }
+
+      if (duplicateParent) {
+        const dupTrackingId = duplicateParent.trackingId || duplicateParent.id || 'AST-P';
+        const msg = (currentLang === 'am')
+          ? `⚠️ ይህ ስልክ ቁጥር (${phone}) ቀደም ሲል በኦፊሴላዊ መለያ ${dupTrackingId} ተመዝግቧል!\n\nአንድ ሰው ከአንድ በላይ የወላጅ ጥያቄ መክፈት አይችልም። ጥያቄዎ በአስተባባሪ ቡድናችን ክትትል እየተደረገበት ነው። ለውጥ ወይም ተጨማሪ መረጃ ከፈለጉ በ 0945399808 / 0960064466 ይደውሉልን።`
+          : `⚠️ This phone number (${phone}) is already registered with Parent ID: ${dupTrackingId}!\n\nDuplicate registrations are blocked. Our coordinators are currently handling your existing request. To make updates, call 0945399808 / 0960064466.`;
         abortParentValidation(msg, document.getElementById('p_phone'));
         return;
       }
@@ -3449,7 +3479,7 @@
       updateLiveTrackingBanners();
     }
 
-    function handleTutorSubmit(e) {
+    async function handleTutorSubmit(e) {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]') || document.querySelector('#tutor-form button.btn-submit');
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
@@ -3491,6 +3521,44 @@
           ? 'እባክዎ ትክክለኛ የስልክ ቁጥር (ቴሌብር) ያስገቡ (ምሳሌ፡ 0911223344)።'
           : 'Please enter a valid Phone Number for Telebirr contact (e.g. 0911223344).';
         abortTutorValidation(msg, document.getElementById('t_phone'));
+        return;
+      }
+
+      // ==========================================
+      // DUPLICATION PREVENTION ENGINE (TUTORS)
+      // ==========================================
+      const cleanPhone = phone.replace(/\D/g, '').slice(-9);
+      const existingTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      let duplicateTutor = existingTutors.find(t => (t.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
+
+      // Also verify against central cloud database
+      if (!duplicateTutor && typeof db !== 'undefined' && db) {
+        try {
+          const snap = await db.collection('astegni_tutor_leads').get();
+          snap.forEach(doc => {
+            const d = doc.data();
+            const dPhone = (d.phone || '').replace(/\D/g, '');
+            if (dPhone.endsWith(cleanPhone)) {
+              duplicateTutor = d;
+            }
+          });
+        } catch (err) {}
+      }
+
+      if (duplicateTutor) {
+        const dupTrackingId = duplicateTutor.trackingId || duplicateTutor.id || 'AST-T';
+        const msg = (currentLang === 'am')
+          ? `⚠️ ይህ ስልክ ቁጥር (${phone}) ቀደም ሲል በኦፊሴላዊ የአስጠኚ መለያ ${dupTrackingId} ተመዝግቧል!\n\nአንድ አስጠኚ ከአንድ አካውንት በላይ መክፈት አይችልም። አሁን በቀጥታ ወደ ግል መገለጫዎና የስራ ሁኔታ ገጽ ይወስድዎታል።`
+          : `⚠️ This phone number (${phone}) is already registered with Tutor ID: ${dupTrackingId}!\n\nMultiple tutor accounts are strictly prohibited. Redirecting to your live profile portal now...`;
+        
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+        alert(msg);
+        localStorage.setItem('my_astegni_tutor_phone', phone);
+        localStorage.setItem('my_astegni_tutor_id', dupTrackingId);
+        openTutorPortalScreen();
         return;
       }
 
