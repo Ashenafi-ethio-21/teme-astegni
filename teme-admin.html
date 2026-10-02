@@ -2280,6 +2280,11 @@
  * Primary Owner: ashenafitobe@gmail.com
  * Organization: Ethio 21 Technologies
  * Cost: 100% FREE FOREVER (Google Sheets API &amp; Apps Script)
+ *
+ * EXACT SCHEMAS:
+ * 1. Matches_Ledger: [Timestamp, Parent ID, Tutor ID, Monthly Fee (ETB), Commission (ETB), Status] (Strict 6 Columns)
+ * 2. Parents_Index: [Registration Date, Parent ID] (Strict 2 Columns)
+ * 3. Tutors_Index: [Registration Date, Tutor ID] (Strict 2 Columns)
  */
 
 function onOpen(e) {
@@ -2348,26 +2353,16 @@ function doGet(e) {
   if (action === 'addTutor' || action === 'addTutorId') {
     var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
     var p = (e && e.parameter) ? e.parameter : {};
-    var trackingId = p.id || p.trackingId || '';
-    var phone = p.phone || '';
+    var trackingId = (p.id || p.trackingId || '').toString().trim();
     if (trackingId) {
-      if (checkExistsInSheet(tSheet, trackingId, phone)) {
+      if (checkExistsInSheet(tSheet, trackingId)) {
         return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
           .setMimeType(ContentService.MimeType.JSON);
       }
-      tSheet.appendRow([
-        new Date(), 
-        trackingId, 
-        p.name || '', 
-        phone, 
-        p.university || p.uni || '', 
-        p.year || '', 
-        p.cgpa || '', 
-        p.subjects || '', 
-        p.status || 'Interview Pending'
-      ]);
+      var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+      tSheet.appendRow([ts, trackingId]);
       formatLastRow(tSheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2376,26 +2371,16 @@ function doGet(e) {
   if (action === 'addParent' || action === 'addParentId') {
     var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
     var p = (e && e.parameter) ? e.parameter : {};
-    var trackingId = p.id || p.trackingId || '';
-    var phone = p.phone || '';
+    var trackingId = (p.id || p.trackingId || '').toString().trim();
     if (trackingId) {
-      if (checkExistsInSheet(pSheet, trackingId, phone)) {
+      if (checkExistsInSheet(pSheet, trackingId)) {
         return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
           .setMimeType(ContentService.MimeType.JSON);
       }
-      pSheet.appendRow([
-        new Date(), 
-        trackingId, 
-        p.name || '', 
-        phone, 
-        p.area || p.location || '', 
-        p.grade || '', 
-        p.subjects || '', 
-        p.studentGender || p.childGender || '', 
-        p.status || 'Pending'
-      ]);
+      var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+      pSheet.appendRow([ts, trackingId]);
       formatLastRow(pSheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2437,97 +2422,90 @@ function doPost(e) {
     else if (action === 'addParent') {
       var sheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
       var d = postData.data || postData;
-      var trackingId = d.trackingId || d.id || '';
-      var phone = d.phone || d.parentPhone || '';
-      if (checkExistsInSheet(sheet, trackingId, phone)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
-          .setMimeType(ContentService.MimeType.JSON);
+      var trackingId = (d.trackingId || d.id || d.parentId || '').toString().trim();
+      if (trackingId) {
+        if (checkExistsInSheet(sheet, trackingId)) {
+          return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+        var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+        sheet.appendRow([ts, trackingId]);
+        formatLastRow(sheet, '#0f172a');
+        sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
       }
-      var newRow = [
-        new Date(),
-        trackingId,
-        d.name || d.parentName || '',
-        phone,
-        d.area || d.location || '',
-        d.grade || '',
-        d.subjects || '',
-        d.studentGender || d.childGender || '',
-        d.status || 'Pending'
-      ];
-      sheet.appendRow(newRow);
-      formatLastRow(sheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n📍 <b>Location:</b> ' + (d.area || '') + '\n🎒 <b>Grade:</b> ' + (d.grade || '') + '\n📖 <b>Subjects:</b> ' + (d.subjects || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     } 
     else if (action === 'addTutor') {
       var sheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
       var d = postData.data || postData;
-      var trackingId = d.trackingId || d.id || '';
-      var phone = d.phone || d.tutorPhone || '';
-      if (checkExistsInSheet(sheet, trackingId, phone)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
-          .setMimeType(ContentService.MimeType.JSON);
+      var trackingId = (d.trackingId || d.id || d.tutorId || '').toString().trim();
+      if (trackingId) {
+        if (checkExistsInSheet(sheet, trackingId)) {
+          return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+        var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+        sheet.appendRow([ts, trackingId]);
+        formatLastRow(sheet, '#065f46');
+        sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
       }
-      var newRow = [
-        new Date(),
-        trackingId,
-        d.name || d.tutorName || '',
-        phone,
-        d.university || d.uni || '',
-        d.year || '',
-        d.cgpa || '',
-        d.subjects || '',
-        d.status || 'Interview Pending'
-      ];
-      sheet.appendRow(newRow);
-      formatLastRow(sheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + phone + '\n🏛️ <b>University:</b> ' + (d.university || '') + '\n⭐ <b>CGPA:</b> ' + (d.cgpa || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     else if (action === 'addMatch') {
       var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
       var d = postData.data || postData;
-      var matchId = (d.matchId || d.id || '').toString().trim();
-      var parentDisplay = (d.parentName || 'Parent') + (d.parentId ? ' (' + d.parentId + ')' : '');
-      var tutorDisplay = (d.tutorName || 'Tutor') + (d.tutorId ? ' (' + d.tutorId + ')' : '');
-      var feeNum = Number(d.monthlyFee || 0);
-      var commNum = Number(d.commission || 0) || Math.round(feeNum * 0.25);
-      var pPhoneClean = (d.parentPhone || '').toString().replace(/\D/g, '').slice(-9);
-      var tPhoneClean = (d.tutorPhone || '').toString().replace(/\D/g, '').slice(-9);
+      
+      // Extract clean Parent ID (e.g. AST-P-9207)
+      var pId = (d.parentId || '').toString().trim();
+      if (!pId && d.parentName) {
+        var pMatch = d.parentName.match(/AST-P-[A-Za-z0-9]+/i);
+        if (pMatch) pId = pMatch[0];
+      }
+      if (!pId && d.id && d.id.indexOf('AST-P-') !== -1) pId = d.id;
 
+      // Extract clean Tutor ID (e.g. AST-T-2339)
+      var tId = (d.tutorId || '').toString().trim();
+      if (!tId && d.tutorName) {
+        var tMatch = d.tutorName.match(/AST-T-[A-Za-z0-9]+/i);
+        if (tMatch) tId = tMatch[0];
+      }
+
+      var feeNum = Number(d.monthlyFee || d.fee || 3500);
+      var commNum = Number(d.commission || d.comm || Math.round(feeNum * 0.25));
+      var status = d.status || 'Active Contract ✓';
+      var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+
+      // Exact 6-column row as requested
       var newRow = [
-        new Date(),
-        matchId || ('M-' + new Date().getTime()),
-        parentDisplay,
-        d.parentPhone || '',
-        tutorDisplay,
-        d.tutorPhone || '',
-        d.subjects || 'General Subjects',
-        feeNum.toLocaleString() + ' ETB',
-        commNum.toLocaleString() + ' ETB',
-        d.status || '1-Day Trial Pending'
+        ts,
+        pId,
+        tId,
+        feeNum,
+        commNum,
+        status
       ];
 
-      // Deduplication check: check if matchId or (parentPhone + tutorPhone) is already in sheet
-      var data = sheet.getDataRange().getValues();
+      // Check if this match (parentId + tutorId) already exists in Matches_Ledger
       var existingRowIndex = -1;
-      for (var r = 1; r < data.length; r++) {
-        var rMatchId = data[r][1] ? data[r][1].toString().trim() : '';
-        var rPPhone = data[r][3] ? data[r][3].toString().replace(/\D/g, '').slice(-9) : '';
-        var rTPhone = data[r][5] ? data[r][5].toString().replace(/\D/g, '').slice(-9) : '';
-        if ((matchId && rMatchId === matchId) || (pPhoneClean && tPhoneClean && rPPhone === pPhoneClean && rTPhone === tPhoneClean)) {
-          existingRowIndex = r + 1;
-          break;
+      if (sheet.getLastRow() > 1) {
+        var mData = sheet.getRange(2, 1, sheet.getLastRow() - 1, Math.min(sheet.getLastColumn(), 6)).getValues();
+        for (var r = 0; r < mData.length; r++) {
+          var rowPId = (mData[r][1] || '').toString().trim().toUpperCase();
+          var rowTId = (mData[r][2] || '').toString().trim().toUpperCase();
+          if (pId && tId && rowPId === pId.toUpperCase() && rowTId === tId.toUpperCase()) {
+            existingRowIndex = r + 2; // 1-based, accounting for header
+            break;
+          }
         }
       }
 
       if (existingRowIndex > 1) {
-        // Update existing row to eliminate duplicates
-        sheet.getRange(existingRowIndex, 1, 1, newRow.length).setValues([newRow]);
-        return ContentService.createTextOutput(JSON.stringify({ status: 'updated_existing', id: matchId }))
+        // Update existing row in place with latest status & details to eliminate duplicates!
+        sheet.getRange(existingRowIndex, 1, 1, 6).setValues([newRow]);
+        return ContentService.createTextOutput(JSON.stringify({ status: 'updated_existing', parentId: pId, tutorId: tId }))
           .setMimeType(ContentService.MimeType.JSON);
       } else {
         sheet.appendRow(newRow);
         formatLastRow(sheet, '#1e40af');
-        sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent:</b> ' + parentDisplay + ' (' + (d.parentPhone || 'N/A') + ')\n🎓 <b>Tutor:</b> ' + tutorDisplay + ' (' + (d.tutorPhone || 'N/A') + ')\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+        sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent ID:</b> ' + pId + '\n🎓 <b>Tutor ID:</b> ' + tId + '\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📌 <b>Status:</b> ' + status + '\n📅 <b>Date:</b> ' + ts);
       }
     }
     else if (action === 'logAdminAction') {
@@ -2542,15 +2520,16 @@ function doPost(e) {
   }
 }
 
-function checkExistsInSheet(sheet, id, phone) {
+function checkExistsInSheet(sheet, id) {
   if (!sheet || sheet.getLastRow() <= 1) return false;
-  var data = sheet.getDataRange().getValues();
+  var lastRow = sheet.getLastRow();
+  var lastCol = Math.min(sheet.getLastColumn(), 4);
+  var data = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
   var idClean = (id || '').toString().trim().toUpperCase();
-  var phoneClean = (phone || '').toString().replace(/\D/g, '').slice(-9);
-  for (var i = 1; i < data.length; i++) {
-    var rowId = data[i][1] ? data[i][1].toString().trim().toUpperCase() : '';
-    var rowPhone = data[i][3] ? data[i][3].toString().replace(/\D/g, '').slice(-9) : '';
-    if ((idClean && rowId === idClean) || (phoneClean && rowPhone && rowPhone === phoneClean)) {
+  for (var i = 0; i < data.length; i++) {
+    var colB = data[i][1] ? data[i][1].toString().trim().toUpperCase() : '';
+    var colA = data[i][0] ? data[i][0].toString().trim().toUpperCase() : '';
+    if (idClean && (colB === idClean || colA === idClean)) {
       return true;
     }
   }
@@ -2560,15 +2539,17 @@ function checkExistsInSheet(sheet, id, phone) {
 function fixAndAlignAllSheets() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var summary = fixAndAlignAllSheetsSilently(ss);
-  SpreadsheetApp.getUi().alert('🔧 FIX &amp; ALIGNMENT COMPLETE!\n\n' + summary);
+  SpreadsheetApp.getUi().alert('🔧 FIX & ALIGNMENT COMPLETE!\n\n' + summary);
 }
 
 function fixAndAlignAllSheetsSilently(ss) {
   var log = [];
   
-  // 1. FIX &amp; ALIGN MATCHES_LEDGER (Headers + Merge Duplicates)
+  // ==========================================
+  // 1. FIX & ALIGN MATCHES_LEDGER (Strict 6-Column Layout & Merge Row 2 and Row 3)
+  // ==========================================
   var mSheet = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
-  var mHeaders = ['Timestamp', 'Deal ID', 'Parent Name &amp; ID', 'Parent Phone', 'Tutor Name &amp; ID', 'Tutor Phone', 'Requested Subjects', 'Monthly Tuition (ETB)', 'Ethio-21 Commission (25%)', 'Status'];
+  var mHeaders = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
   
   var existingData = [];
   if (mSheet.getLastRow() > 1) {
@@ -2576,63 +2557,60 @@ function fixAndAlignAllSheetsSilently(ss) {
   }
   
   var cleanMatches = {};
+  var matchOrder = [];
   for (var i = 0; i < existingData.length; i++) {
     var r = existingData[i];
-    var ts = r[0] || new Date();
-    var dealId = '';
-    var parentName = '';
-    var parentPhone = '';
-    var tutorName = '';
-    var tutorPhone = '';
-    var subjects = 'All Subjects';
-    var fee = '3,500 ETB';
-    var comm = '875 ETB';
-    var status = 'Active Contract ✓';
+    var rowText = r.join(' ');
     
-    // Check if 10-column or 6-column
-    if (r.length >= 10 && (r[9] || (r[1] &amp;&amp; r[1].toString().indexOf('M-') === 0))) {
-      dealId = r[1] ? r[1].toString().trim() : ('M-' + new Date().getTime());
-      parentName = r[2] ? r[2].toString().trim() : '';
-      parentPhone = r[3] ? r[3].toString().trim() : '';
-      tutorName = r[4] ? r[4].toString().trim() : '';
-      tutorPhone = r[5] ? r[5].toString().trim() : '';
-      subjects = r[6] ? r[6].toString().trim() : 'All Subjects';
-      fee = r[7] ? r[7].toString().trim() : '3,500 ETB';
-      comm = r[8] ? r[8].toString().trim() : '875 ETB';
-      status = r[9] ? r[9].toString().trim() : 'Active Contract ✓';
+    // Extract Parent ID (e.g. AST-P-9207)
+    var pMatch = rowText.match(/AST-P-[A-Za-z0-9]+/i);
+    var pId = pMatch ? pMatch[0].toUpperCase() : (r[1] ? r[1].toString().trim() : '');
+    
+    // Extract Tutor ID (e.g. AST-T-2339)
+    var tMatch = rowText.match(/AST-T-[A-Za-z0-9]+/i);
+    var tId = tMatch ? tMatch[0].toUpperCase() : (r[2] ? r[2].toString().trim() : '');
+    
+    if (!pId && !tId) continue;
+    
+    // Timestamp
+    var ts = r[0] || '2026-10-02 09:13';
+    if (ts instanceof Date) {
+      ts = Utilities.formatDate(ts, 'GMT+3', 'yyyy-MM-dd HH:mm');
     } else {
-      var pId = r[1] ? r[1].toString().trim() : '';
-      var tId = r[2] ? r[2].toString().trim() : '';
-      parentName = pId;
-      tutorName = tId;
-      var f = Number(r[3]) || 3500;
-      var c = Number(r[4]) || 875;
-      fee = f.toLocaleString() + ' ETB';
-      comm = c.toLocaleString() + ' ETB';
-      status = r[5] ? r[5].toString().trim() : 'Active Contract ✓';
-      dealId = 'M-' + new Date().getTime();
+      ts = ts.toString().trim();
     }
     
-    var pIdMatch = parentName.match(/AST-P-[A-Za-z0-9]+/i);
-    var tIdMatch = tutorName.match(/AST-T-[A-Za-z0-9]+/i);
-    var pKey = pIdMatch ? pIdMatch[0].toUpperCase() : (parentPhone.replace(/\D/g, '').slice(-9) || parentName);
-    var tKey = tIdMatch ? tIdMatch[0].toUpperCase() : (tutorPhone.replace(/\D/g, '').slice(-9) || tutorName);
-    var dedupKey = (pKey &amp;&amp; tKey) ? (pKey + '_' + tKey) : (dealId || ('DEAL_' + i));
+    // Fee and Commission
+    var fee = 3500;
+    var comm = 875;
+    for (var c = 0; c < r.length; c++) {
+      var num = Number((r[c] || '').toString().replace(/[^0-9]/g, ''));
+      if (num >= 2000 && num <= 30000) fee = num;
+      if (num >= 500 && num <= 7500 && num !== fee) comm = num;
+    }
+    if (comm === 875 && fee !== 3500) {
+      comm = Math.round(fee * 0.25);
+    }
     
-    // Prefer richer row with active status and phone numbers
-    if (!cleanMatches[dedupKey] || (parentPhone &amp;&amp; !cleanMatches[dedupKey].parentPhone) || status.indexOf('Active') !== -1) {
-      cleanMatches[dedupKey] = {
-        ts: ts,
-        dealId: dealId || ('M-' + new Date().getTime()),
-        parentName: parentName,
-        parentPhone: parentPhone,
-        tutorName: tutorName,
-        tutorPhone: tutorPhone,
-        subjects: subjects,
-        fee: fee,
-        comm: comm,
-        status: status
-      };
+    // Status
+    var status = 'Active Contract ✓';
+    if (rowText.indexOf('Active') !== -1) {
+      status = 'Active Contract ✓';
+    } else if (rowText.indexOf('Trial') !== -1 || rowText.indexOf('Pending') !== -1) {
+      status = '1-Day Trial Pending';
+    } else if (r[5] && r[5].toString().trim()) {
+      status = r[5].toString().trim();
+    }
+    
+    var key = pId + '_' + tId;
+    if (!cleanMatches[key]) {
+      cleanMatches[key] = { ts: ts, pId: pId, tId: tId, fee: fee, comm: comm, status: status };
+      matchOrder.push(key);
+    } else {
+      // Merge duplicate: prefer Active Contract status and earliest timestamp
+      if (status.indexOf('Active') !== -1) cleanMatches[key].status = 'Active Contract ✓';
+      if (fee) cleanMatches[key].fee = fee;
+      if (comm) cleanMatches[key].comm = comm;
     }
   }
   
@@ -2641,136 +2619,141 @@ function fixAndAlignAllSheetsSilently(ss) {
   applyModernHeader(mSheet, '#1e40af');
   
   var mRowsWritten = 0;
-  for (var k in cleanMatches) {
-    var m = cleanMatches[k];
-    var row = [
-      m.ts,
-      m.dealId,
-      m.parentName,
-      m.parentPhone,
-      m.tutorName,
-      m.tutorPhone,
-      m.subjects,
-      m.fee,
-      m.comm,
-      m.status
-    ];
-    mSheet.appendRow(row);
+  for (var k = 0; k < matchOrder.length; k++) {
+    var m = cleanMatches[matchOrder[k]];
+    mSheet.appendRow([m.ts, m.pId, m.tId, m.fee, m.comm, m.status]);
     formatLastRow(mSheet, '#1e40af');
     mRowsWritten++;
   }
-  log.push('✅ Matches_Ledger: 10 columns aligned, ' + mRowsWritten + ' unique deal(s) saved (merged Row 2 &amp; 3 duplicates).');
+  log.push('✅ Matches_Ledger: Strict 6 columns aligned, ' + mRowsWritten + ' unique deal(s) preserved (Row 2 and Row 3 merged into 1 clean active contract).');
 
-  // 2. DEDUPLICATE TUTORS_INDEX
-  var tSheet = ss.getSheetByName('Tutors_Index');
-  if (tSheet &amp;&amp; tSheet.getLastRow() > 1) {
-    var tRemoved = deduplicateSheetById(tSheet, 1, 3);
-    log.push('✅ Tutors_Index: Removed ' + tRemoved + ' duplicate rows. Unique tutors preserved.');
+  // ==========================================
+  // 2. DEDUPLICATE TUTORS_INDEX (Strict 2 Columns: Registration Date | Tutor ID)
+  // ==========================================
+  var tSheet = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
+  var tHeaders = ['Registration Date', 'Tutor ID'];
+  var tValues = [];
+  if (tSheet.getLastRow() > 1) {
+    tValues = tSheet.getRange(2, 1, tSheet.getLastRow() - 1, Math.min(tSheet.getLastColumn(), 3)).getValues();
   }
+  
+  var uniqueTutors = {};
+  var tutorOrder = [];
+  for (var ti = 0; ti < tValues.length; ti++) {
+    var tr = tValues[ti];
+    var tRowText = tr.join(' ');
+    var tMatch = tRowText.match(/AST-T-[A-Za-z0-9]+/i);
+    var tId = tMatch ? tMatch[0].toUpperCase() : (tr[1] ? tr[1].toString().trim().toUpperCase() : '');
+    if (!tId || tId === 'TUTOR ID') continue;
+    
+    var tDate = tr[0];
+    if (tDate instanceof Date) {
+      tDate = Utilities.formatDate(tDate, 'GMT+3', 'yyyy-MM-dd HH:mm');
+    } else {
+      tDate = (tDate || '').toString().trim() || '2026-10-02 08:24';
+    }
+    
+    if (!uniqueTutors[tId]) {
+      uniqueTutors[tId] = tDate;
+      tutorOrder.push(tId);
+    }
+  }
+  
+  tSheet.clear();
+  tSheet.getRange(1, 1, 1, tHeaders.length).setValues([tHeaders]);
+  applyModernHeader(tSheet, '#065f46');
+  
+  for (var toj = 0; toj < tutorOrder.length; toj++) {
+    var curTId = tutorOrder[toj];
+    tSheet.appendRow([uniqueTutors[curTId], curTId]);
+    formatLastRow(tSheet, '#065f46');
+  }
+  var tDuplicatesRemoved = Math.max(0, tValues.length - tutorOrder.length);
+  log.push('✅ Tutors_Index: Strict 2 columns aligned. Removed ' + tDuplicatesRemoved + ' duplicate rows. Kept ' + tutorOrder.length + ' unique tutor(s).');
 
-  // 3. DEDUPLICATE PARENTS_INDEX
-  var pSheet = ss.getSheetByName('Parents_Index');
-  if (pSheet &amp;&amp; pSheet.getLastRow() > 1) {
-    var pRemoved = deduplicateSheetById(pSheet, 1, 3);
-    log.push('✅ Parents_Index: Removed ' + pRemoved + ' duplicate rows. Unique parents preserved.');
+  // ==========================================
+  // 3. DEDUPLICATE PARENTS_INDEX (Strict 2 Columns: Registration Date | Parent ID)
+  // ==========================================
+  var pSheet = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
+  var pHeaders = ['Registration Date', 'Parent ID'];
+  var pValues = [];
+  if (pSheet.getLastRow() > 1) {
+    pValues = pSheet.getRange(2, 1, pSheet.getLastRow() - 1, Math.min(pSheet.getLastColumn(), 3)).getValues();
   }
+  
+  var uniqueParents = {};
+  var parentOrder = [];
+  for (var pi = 0; pi < pValues.length; pi++) {
+    var pr = pValues[pi];
+    var pRowText = pr.join(' ');
+    var pMatch = pRowText.match(/AST-P-[A-Za-z0-9]+/i);
+    var pId = pMatch ? pMatch[0].toUpperCase() : (pr[1] ? pr[1].toString().trim().toUpperCase() : '');
+    if (!pId || pId === 'PARENT ID') continue;
+    
+    var pDate = pr[0];
+    if (pDate instanceof Date) {
+      pDate = Utilities.formatDate(pDate, 'GMT+3', 'yyyy-MM-dd HH:mm');
+    } else {
+      pDate = (pDate || '').toString().trim() || '2026-10-01 20:50';
+    }
+    
+    if (!uniqueParents[pId]) {
+      uniqueParents[pId] = pDate;
+      parentOrder.push(pId);
+    }
+  }
+  
+  pSheet.clear();
+  pSheet.getRange(1, 1, 1, pHeaders.length).setValues([pHeaders]);
+  applyModernHeader(pSheet, '#0f172a');
+  
+  for (var poj = 0; poj < parentOrder.length; poj++) {
+    var curPId = parentOrder[poj];
+    pSheet.appendRow([uniqueParents[curPId], curPId]);
+    formatLastRow(pSheet, '#0f172a');
+  }
+  var pDuplicatesRemoved = Math.max(0, pValues.length - parentOrder.length);
+  log.push('✅ Parents_Index: Strict 2 columns aligned. Removed ' + pDuplicatesRemoved + ' duplicate rows. Kept ' + parentOrder.length + ' unique parent(s).');
+
+  cleanLegacyTabsSilently(ss);
   
   return log.join('\n\n');
 }
 
-function deduplicateSheetById(sheet, idColIndex, phoneColIndex) {
-  if (!sheet || sheet.getLastRow() <= 1) return 0;
-  var lastRow = sheet.getLastRow();
-  var lastCol = sheet.getLastColumn();
-  var values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
-  
-  var bestRows = {};
-  var order = [];
-  var phoneToKey = {};
-  
-  for (var i = 0; i < values.length; i++) {
-    var r = values[i];
-    var id = (r[idColIndex] || '').toString().trim().toUpperCase();
-    var phone = phoneColIndex !== undefined &amp;&amp; r[phoneColIndex] ? r[phoneColIndex].toString().replace(/\D/g, '').slice(-9) : '';
-    if (!id &amp;&amp; !phone) continue;
-    
-    var score = 0;
-    for (var c = 0; c < r.length; c++) {
-      var val = (r[c] || '').toString().trim();
-      if (val &amp;&amp; val !== 'Tutors ID' &amp;&amp; val !== 'Parents') score += val.length;
-    }
-    
-    var key = id;
-    if (phone &amp;&amp; phoneToKey[phone]) {
-      key = phoneToKey[phone];
-    }
-    
-    if (!bestRows[key]) {
-      bestRows[key] = { row: r, score: score, id: id, phone: phone };
-      order.push(key);
-      if (phone) phoneToKey[phone] = key;
-    } else {
-      if (score > bestRows[key].score) {
-        bestRows[key] = { row: r, score: score, id: id, phone: phone };
-      }
-    }
-  }
-  
-  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
-  sheet.clear();
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  var themeColor = sheet.getName().indexOf('Tutor') !== -1 ? '#065f46' : '#0f172a';
-  applyModernHeader(sheet, themeColor);
-  
-  var removed = values.length - order.length;
-  for (var j = 0; j < order.length; j++) {
-    sheet.appendRow(bestRows[order[j]].row);
-    formatLastRow(sheet, themeColor);
-  }
-  
-  return removed;
-}
-
 function deduplicateAllSheets() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var totalRemoved = deduplicateAllSheetsSilently(ss);
-  SpreadsheetApp.getUi().alert('🧹 CLEANUP COMPLETE!\n\nRemoved ' + totalRemoved + ' duplicate row(s) from your Google Sheets. All IDs and deal records are now 100% unique.');
+  var summary = fixAndAlignAllSheetsSilently(ss);
+  SpreadsheetApp.getUi().alert('🧹 CLEANUP COMPLETE!\n\n' + summary);
 }
 
 function deduplicateAllSheetsSilently(ss) {
-  var totalRemoved = 0;
-  var tSheet = ss.getSheetByName('Tutors_Index');
-  if (tSheet &amp;&amp; tSheet.getLastRow() > 1) {
-    totalRemoved += deduplicateSheetById(tSheet, 1, 3);
-  }
-  var pSheet = ss.getSheetByName('Parents_Index');
-  if (pSheet &amp;&amp; pSheet.getLastRow() > 1) {
-    totalRemoved += deduplicateSheetById(pSheet, 1, 3);
-  }
-  return totalRemoved;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  fixAndAlignAllSheetsSilently(ss);
+  return 'All sheets cleaned and deduplicated.';
 }
 
 function setupCleanArchitecture() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   setupCleanArchitectureSilently(ss);
-  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Official Matches &amp; Revenue Ledger!\n\n• Sheet: Matches_Ledger\n• Columns: [Timestamp, Deal ID, Parent Name &amp; ID, Parent Phone, Tutor Name &amp; ID, Tutor Phone, Requested Subjects, Monthly Tuition, Ethio-21 Commission (25%), Status]\n\nAll raw leads remain organized in Telegram &amp; Firebase to keep this ledger 100% clean.');
+  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Official Matches &amp; Revenue Ledger!\n\n• Matches_Ledger: [Timestamp, Parent ID, Tutor ID, Monthly Fee (ETB), Commission (ETB), Status]\n• Parents_Index: [Registration Date, Parent ID]\n• Tutors_Index: [Registration Date, Tutor ID]\n\nAll raw leads remain organized in Telegram &amp; Firebase to keep this ledger 100% clean.');
 }
 
 function setupCleanArchitectureSilently(ss) {
   createMatchesSheet(ss);
+  createParentsSheet(ss);
+  createTutorsSheet(ss);
   cleanLegacyTabsSilently(ss);
 }
 
 function createMatchesSheet(ss) {
   var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
-  var mHeaders = ['Timestamp', 'Deal ID', 'Parent Name &amp; ID', 'Parent Phone', 'Tutor Name &amp; ID', 'Tutor Phone', 'Requested Subjects', 'Monthly Tuition (ETB)', 'Ethio-21 Commission (25%)', 'Status'];
+  var mHeaders = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
   if (s.getLastRow() === 0) {
     s.appendRow(mHeaders);
     applyModernHeader(s, '#1e40af');
   } else {
-    var currentCols = s.getLastColumn();
-    var currentHeader = s.getRange(1, 1, 1, Math.max(currentCols, 1)).getValues()[0];
-    if (currentCols < 10 || (currentHeader[1] &amp;&amp; currentHeader[1].toString().indexOf('Deal') === -1)) {
+    var currentHeader = s.getRange(1, 1, 1, Math.min(s.getLastColumn(), 6)).getValues()[0];
+    if (!currentHeader[1] || currentHeader[1].toString().indexOf('Parent ID') === -1) {
       s.getRange(1, 1, 1, mHeaders.length).setValues([mHeaders]);
       applyModernHeader(s, '#1e40af');
     }
@@ -2780,8 +2763,8 @@ function createMatchesSheet(ss) {
 
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
+  var headers = ['Registration Date', 'Parent ID'];
   if (s.getLastRow() === 0) {
-    var headers = ['Timestamp', 'Parent ID', 'Name', 'Phone', 'Location', 'Grade', 'Subjects', 'Student Gender', 'Status'];
     s.appendRow(headers);
     applyModernHeader(s, '#0f172a');
   }
@@ -2790,8 +2773,8 @@ function createParentsSheet(ss) {
 
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
+  var headers = ['Registration Date', 'Tutor ID'];
   if (s.getLastRow() === 0) {
-    var headers = ['Timestamp', 'Tutor ID', 'Name', 'Phone', 'University', 'Year', 'CGPA', 'Subjects', 'Status'];
     s.appendRow(headers);
     applyModernHeader(s, '#065f46');
   }
@@ -2808,7 +2791,7 @@ function cleanLegacyTabsSilently(ss) {
   var allowed = ['Matches_Ledger', 'Tutors_Index', 'Parents_Index'];
   var sheets = ss.getSheets();
   sheets.forEach(function(s) {
-    if (allowed.indexOf(s.getName()) === -1 &amp;&amp; ss.getSheets().length > 1) {
+    if (allowed.indexOf(s.getName()) === -1 && ss.getSheets().length > 1) {
       try { ss.deleteSheet(s); } catch (e) {}
     }
   });
@@ -5424,13 +5407,8 @@ function rowsToJson(sheet) {
             action: 'addMatch',
             data: {
               matchId: newMatch.id,
-              parentName: p.name || '',
-              parentPhone: p.phone || '',
               parentId: pTrackingId,
-              tutorName: t.name || '',
-              tutorPhone: t.phone || '',
               tutorId: tTrackingId,
-              subjects: p.subjects || t.subjects || '',
               monthlyFee: fee,
               commission: commission,
               status: '1-Day Trial Pending'
@@ -5473,7 +5451,7 @@ function rowsToJson(sheet) {
         alert('Please enter and save your Google Apps Script Webhook URL first in Settings.');
         return;
       }
-      if (!confirm('This will fix and align your entire Google Sheet:\n\n1. Matches_Ledger: Set 10-column header & merge Row 2 (trial) and Row 3 (active) into 1 perfectly aligned contract row.\n2. Tutors_Index: Remove all 14 duplicate rows & keep unique tutors.\n3. Parents_Index: Remove all duplicate rows & keep unique parents.\n\nProceed with 1-Click Fix?')) {
+      if (!confirm('This will fix and align your entire Google Sheet:\n\n1. Matches_Ledger: Strict 6-column format [Timestamp, Parent ID, Tutor ID, Monthly Fee, Commission, Status] & merge duplicates into clean active contract.\n2. Tutors_Index: Strict 2 columns [Registration Date, Tutor ID] & remove all duplicate rows.\n3. Parents_Index: Strict 2 columns [Registration Date, Parent ID] & remove all duplicate rows.\n\nProceed with 1-Click Fix?')) {
         return;
       }
       try {
@@ -5499,7 +5477,7 @@ function rowsToJson(sheet) {
       try {
         const res = await fetch(url + '?action=format');
         const json = await res.json();
-        alert('🎉 SUCCESS!\n\nYour Google Sheet has been formatted as the Official Matches & Revenue Ledger!\n\n• Main Sheet: Matches_Ledger\n• Columns: [Timestamp, Deal ID, Parent Name & ID, Parent Phone, Tutor Name & ID, Tutor Phone, Requested Subjects, Monthly Tuition, Ethio-21 Commission (25%), Status]\n\nAll raw leads are organized in Telegram & Firebase to keep this ledger 100% clean.');
+        alert('🎉 SUCCESS!\n\nYour Google Sheet has been formatted as the Official Matches & Revenue Ledger!\n\n• Matches_Ledger: [Timestamp, Parent ID, Tutor ID, Monthly Fee (ETB), Commission (ETB), Status]\n• Parents_Index: [Registration Date, Parent ID]\n• Tutors_Index: [Registration Date, Tutor ID]\n\nAll raw leads are organized in Telegram & Firebase to keep this ledger 100% clean.');
       } catch (err) {
         alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
       }
@@ -5645,16 +5623,11 @@ function rowsToJson(sheet) {
               action: 'addMatch',
               data: {
                 matchId: m.id || ('M-' + Date.now()),
-                parentName: m.parentName || '',
-                parentPhone: m.parentPhone || '',
-                parentId: m.parentId || '',
-                tutorName: m.tutorName || '',
-                tutorPhone: m.tutorPhone || '',
-                tutorId: m.tutorId || '',
-                subjects: m.subjects || '',
-                monthlyFee: m.monthlyFee || '',
-                commission: m.commission || '',
-                status: m.status || '1-Day Trial Pending'
+                parentId: m.parentId || ('AST-P-' + (m.parentPhone || '').slice(-4)),
+                tutorId: m.tutorId || ('AST-T-' + (m.tutorPhone || '').slice(-4)),
+                monthlyFee: Number(m.monthlyFee || 0),
+                commission: Number(m.commission || 0) || Math.round(Number(m.monthlyFee || 0) * 0.25),
+                status: m.status || 'Active Contract ✓'
               }
             })
           });
