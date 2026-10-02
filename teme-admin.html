@@ -1730,10 +1730,10 @@
     <section id="view-database" class="view-panel">
       <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem; margin-bottom: 1.25rem;">
         <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff; margin-bottom: 0.4rem;">
-          ☁️ Google Sheets Cloud Database
+          💼 Google Sheets Official Revenue &amp; Matches Ledger
         </h2>
         <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
-          Primary Account: <b>ashenafitobe@gmail.com</b>. Synchronizes live leads with Google Sheets for zero-cost scalability.
+          Account: <b>ashenafitobe@gmail.com</b>. Your Google Sheet acts as the <b>Executive Financial Ledger (Matches_Ledger)</b>, recording only confirmed deals, agreed monthly tuition fees, and Ethio-21 25% commissions. (Raw applicant leads remain in Telegram &amp; Firebase to keep your Google Sheet 100% clean and free of junk).
         </p>
 
         <div class="form-group">
@@ -1744,26 +1744,10 @@
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
           <button class="btn-act btn-act-primary" onclick="saveWebhookUrl()">💾 Save Webhook URL</button>
           <button class="btn-act" onclick="testWebhookConnection()">🔌 Test Connection</button>
-          <button class="btn-act" style="background: rgba(14, 165, 233, 0.25); border-color: rgba(14, 165, 233, 0.5); color: #38bdf8; font-weight: 850;" onclick="copyTutorShareLinkWithWebhook()">📋 Copy Tutor Link (With Cloud Sync Built-In)</button>
-          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Sheet to 2 Columns</button>
-          <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.45); color: #f87171; font-weight: 800;" onclick="cleanLegacySheetsNow()">🧹 1-Click Delete Legacy Sheets (Keep Only _ Tabs)</button>
-          <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync &amp; Push All Leads to Sheet</button>
-          <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Updated Apps Script Code</button>
+          <button class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800;" onclick="formatCloudSheetNow()">⚡ 1-Click Format Matches Ledger</button>
+          <button class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; font-weight: 800;" id="btn-push-sheet" onclick="pushLocalRecordsToGoogleSheet()">📤 Sync Confirmed Matches to Sheet</button>
+          <button class="btn-act" style="background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;" onclick="openAppsScriptModal()">📜 View/Copy Apps Script Code</button>
           <button class="btn-act" style="background: rgba(148, 163, 184, 0.15); border-color: rgba(148, 163, 184, 0.35); color: #cbd5e1;" onclick="purgeDemoDataNow()">🗑️ Clear Demo Data (Start Fresh for Real Users)</button>
-        </div>
-
-        <!-- QUICK PUSH SINGLE ID DIRECTLY -->
-        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-top: 0.75rem;">
-          <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8; margin-bottom: 0.35rem;">🎯 Quick Push Single ID to Google Sheet:</div>
-          <p style="font-size: 0.74rem; color: #94a3b8; margin-bottom: 0.6rem;">If a tutor or parent signed up and their ID is missing from Google Sheet, enter the ID below and push it with 1 click:</p>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <input type="text" id="manual-push-id-input" class="form-ctrl" style="flex: 1; min-width: 160px;" placeholder="e.g. AST-T-1024 or AST-P-2048">
-            <select id="manual-push-type-select" class="form-ctrl" style="width: 170px;">
-              <option value="addTutor">🎓 Tutors_Index</option>
-              <option value="addParent">👨‍👩‍👧 Parents_Index</option>
-            </select>
-            <button class="btn-act btn-act-primary" onclick="pushSingleIdToGoogleSheet()">⚡ Push ID Now</button>
-          </div>
         </div>
       </div>
 
@@ -2374,23 +2358,25 @@ function doPost(e) {
     else if (action === 'addMatch') {
       var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
       var d = postData.data || postData;
+      var parentDisplay = (d.parentName || 'Parent') + (d.parentId ? ' (' + d.parentId + ')' : '');
+      var tutorDisplay = (d.tutorName || 'Tutor') + (d.tutorId ? ' (' + d.tutorId + ')' : '');
+      var feeNum = Number(d.monthlyFee || 0);
+      var commNum = Number(d.commission || 0) || Math.round(feeNum * 0.25);
       var newRow = [
         new Date(),
         d.matchId || ('M-' + new Date().getTime()),
-        d.parentName || d.parentId || '',
+        parentDisplay,
         d.parentPhone || '',
-        d.parentId || '',
-        d.tutorName || d.tutorId || '',
+        tutorDisplay,
         d.tutorPhone || '',
-        d.tutorId || '',
-        d.subjects || '',
-        d.monthlyFee || '',
-        d.commission || '',
+        d.subjects || 'General Subjects',
+        feeNum.toLocaleString() + ' ETB',
+        commNum.toLocaleString() + ' ETB',
         d.status || '1-Day Trial Pending'
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#1e40af');
-      sendTelegramNotification('🤝 <b>NEW MATCH CREATED</b>\n\n🏷️ <b>Parent:</b> ' + (d.parentName || '') + ' (<code>' + (d.parentId || '') + '</code>)\n📞 <b>Parent Phone:</b> ' + (d.parentPhone || '') + '\n🎓 <b>Tutor:</b> ' + (d.tutorName || '') + ' (<code>' + (d.tutorId || '') + '</code>)\n📞 <b>Tutor Phone:</b> ' + (d.tutorPhone || '') + '\n💵 <b>Fee:</b> ' + (d.monthlyFee || '') + ' ETB\n💼 <b>Commission:</b> ' + (d.commission || '') + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent:</b> ' + parentDisplay + ' (' + (d.parentPhone || 'N/A') + ')\n🎓 <b>Tutor:</b> ' + tutorDisplay + ' (' + (d.tutorPhone || 'N/A') + ')\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     else if (action === 'logAdminAction') {
       sendTelegramNotification(postData.text || '');
@@ -2407,40 +2393,18 @@ function doPost(e) {
 function setupCleanArchitecture() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   setupCleanArchitectureSilently(ss);
-  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Complete Cloud Ledger Architecture!\n\n• Parents_Index: [Date, Parent ID, Name, Phone, Area, Grade, Subjects, Gender, Status]\n• Tutors_Index: [Date, Tutor ID, Name, Phone, University, Year, CGPA, Subjects, Status]\n• Matches_Ledger: [Timestamp, Match ID, Parent Name, Parent Phone, Parent ID, Tutor Name, Tutor Phone, Tutor ID, Subjects, Fee, Commission, Status]\n• All legacy tabs safely managed.');
+  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Official Matches & Revenue Ledger!\n\n• Sheet: Matches_Ledger\n• Columns: [Timestamp, Deal ID, Parent Name & ID, Parent Phone, Tutor Name & ID, Tutor Phone, Requested Subjects, Monthly Tuition, Ethio-21 Commission (25%), Status]\n\nAll raw leads remain organized in Telegram & Firebase to keep this ledger 100% clean.');
 }
 
 function setupCleanArchitectureSilently(ss) {
-  createParentsSheet(ss);
-  createTutorsSheet(ss);
   createMatchesSheet(ss);
   cleanLegacyTabsSilently(ss);
-}
-
-function createParentsSheet(ss) {
-  var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
-  if (s.getLastRow() === 0) {
-    var headers = ['Registration Date', 'Parent ID', 'Parent Name', 'Phone Number', 'Location / Area', 'Student Grade', 'Requested Subjects', 'Student Gender', 'Status'];
-    s.appendRow(headers);
-    applyModernHeader(s, '#0f172a');
-  }
-  return s;
-}
-
-function createTutorsSheet(ss) {
-  var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
-  if (s.getLastRow() === 0) {
-    var headers = ['Registration Date', 'Tutor ID', 'Tutor Name', 'Phone Number', 'University', 'Academic Year', 'CGPA', 'Subjects (Grade A)', 'Status'];
-    s.appendRow(headers);
-    applyModernHeader(s, '#065f46');
-  }
-  return s;
 }
 
 function createMatchesSheet(ss) {
   var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
   if (s.getLastRow() === 0) {
-    var headers = ['Timestamp', 'Match ID', 'Parent Name', 'Parent Phone', 'Parent ID', 'Tutor Name', 'Tutor Phone', 'Tutor ID', 'Subjects', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
+    var headers = ['Timestamp', 'Deal ID', 'Parent Name & ID', 'Parent Phone', 'Tutor Name & ID', 'Tutor Phone', 'Requested Subjects', 'Monthly Tuition (ETB)', 'Ethio-21 Commission (25%)', 'Status'];
     s.appendRow(headers);
     applyModernHeader(s, '#1e40af');
   }
@@ -2450,11 +2414,11 @@ function createMatchesSheet(ss) {
 function cleanLegacyTabs() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   cleanLegacyTabsSilently(ss);
-  SpreadsheetApp.getUi().alert('🧹 All legacy sheets cleaned successfully!\n\nOnly the official sheets with "_" remain:\n• Parents_Index\n• Tutors_Index\n• Matches_Ledger');
+  SpreadsheetApp.getUi().alert('🧹 Legacy unused sheets removed!\n\nOnly Matches_Ledger remains as your official executive revenue ledger.');
 }
 
 function cleanLegacyTabsSilently(ss) {
-  var allowed = ['Parents_Index', 'Tutors_Index', 'Matches_Ledger'];
+  var allowed = ['Matches_Ledger'];
   var sheets = ss.getSheets();
   sheets.forEach(function(s) {
     if (allowed.indexOf(s.getName()) === -1 && ss.getSheets().length > 1) {
@@ -4902,13 +4866,9 @@ function rowsToJson(sheet) {
       try {
         const res = await fetch(url + '?action=format');
         const json = await res.json();
-        if (json.status === 'success') {
-          alert('🎉 SUCCESS!\n\nYour Google Sheet has been automatically reformatted to the new Ultra-Lean 2-Column Architecture!\n\n• Parents_Index: [Registration Date, Parent ID]\n• Tutors_Index: [Registration Date, Tutor ID]\n• All old 8 columns and legacy sheets have been deleted.');
-        } else {
-          alert('Response: ' + JSON.stringify(json));
-        }
+        alert('🎉 SUCCESS!\n\nYour Google Sheet has been formatted as the Official Matches & Revenue Ledger!\n\n• Main Sheet: Matches_Ledger\n• Columns: [Timestamp, Deal ID, Parent Name & ID, Parent Phone, Tutor Name & ID, Tutor Phone, Requested Subjects, Monthly Tuition, Ethio-21 Commission (25%), Status]\n\nAll raw leads are organized in Telegram & Firebase to keep this ledger 100% clean.');
       } catch (err) {
-        alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Updated Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
+        alert('Could not auto-format via webhook. Please copy the updated script using the "View/Copy Apps Script Code" button, paste it into Extensions > Apps Script in your Google Sheet, and click Run > setupCleanArchitecture.');
       }
     }
 
@@ -5010,83 +4970,18 @@ function rowsToJson(sheet) {
           return;
         }
       }
-      const tutors = getTutors();
-      const parents = getParents();
-      if (tutors.length === 0 && parents.length === 0) {
-        alert('No registered tutors or parents found in local storage to push.');
+      const matches = getMatches();
+      if (matches.length === 0) {
+        alert('ℹ️ No confirmed matches found yet.\n\nIn this strategy, Google Sheet is kept 100% clean and stores ONLY confirmed matches.\n\nUse "Pair With Parent" on any verified tutor card to create a match contract.');
         return;
       }
       const btn = document.getElementById('btn-push-sheet');
       if (btn) {
         btn.disabled = true;
-        btn.innerText = '⏳ Pushing to Sheet...';
+        btn.innerText = '⏳ Pushing Matches to Ledger...';
       }
 
-      let tSuccess = 0;
-      let pSuccess = 0;
       let mSuccess = 0;
-
-      for (const t of tutors) {
-        const id = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
-        if (!id) continue;
-        try {
-          await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ 
-              action: 'addTutor', 
-              data: { 
-                id: id, 
-                trackingId: id,
-                name: t.name || '',
-                phone: t.phone || '',
-                university: t.university || t.uni || '',
-                year: t.year || '',
-                cgpa: t.cgpa || '',
-                subjects: t.subjects || '',
-                status: t.status || 'Interview Pending'
-              } 
-            })
-          });
-          const sep = url.includes('?') ? '&' : '?';
-          fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(id)}&name=${encodeURIComponent(t.name||'')}&phone=${encodeURIComponent(t.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
-          tSuccess++;
-          await new Promise(r => setTimeout(r, 350));
-        } catch(e) {}
-      }
-
-      for (const p of parents) {
-        const id = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
-        if (!id) continue;
-        try {
-          await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ 
-              action: 'addParent', 
-              data: { 
-                id: id, 
-                trackingId: id,
-                name: p.name || '',
-                phone: p.phone || '',
-                area: p.area || p.location || '',
-                grade: p.grade || '',
-                subjects: p.subjects || '',
-                studentGender: p.studentGender || p.childGender || '',
-                status: p.status || 'Pending'
-              } 
-            })
-          });
-          const sep = url.includes('?') ? '&' : '?';
-          fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(id)}&name=${encodeURIComponent(p.name||'')}&phone=${encodeURIComponent(p.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
-          pSuccess++;
-          await new Promise(r => setTimeout(r, 350));
-        } catch(e) {}
-      }
-
-      const matches = getMatches();
       for (const m of matches) {
         try {
           await fetch(url, {
@@ -5117,9 +5012,9 @@ function rowsToJson(sheet) {
 
       if (btn) {
         btn.disabled = false;
-        btn.innerText = '📤 Sync & Push All Leads to Sheet';
+        btn.innerText = '📤 Sync Confirmed Matches to Sheet';
       }
-      alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed to Google Sheet Cloud Ledger:\n• ${tSuccess} Tutor Record(s) to Tutors_Index\n• ${pSuccess} Parent Record(s) to Parents_Index\n• ${mSuccess} Match Record(s) to Matches_Ledger\n\nPlease check your Google Sheet now!`);
+      alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed ${mSuccess} Confirmed Match Deal(s) to Google Sheet (Matches_Ledger)!\n\nEvery row represents an active client contract and earned commission.`);
     }
 
     async function pushSingleIdToGoogleSheet() {
