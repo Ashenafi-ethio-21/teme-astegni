@@ -1697,8 +1697,34 @@
     <!-- VIEW 3: TUTORS DIRECTORY -->
     <section id="view-tutors" class="view-panel">
       <div class="toolbar-box" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.1rem; margin-bottom: 1rem;">
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%; margin-bottom: 0.85rem;">
-          <input type="text" id="tutor-search" class="search-input" placeholder="🔍 Search tutor name, campus, CGPA, subjects, #AST_T..." oninput="filterTutors()">
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; width: 100%; margin-bottom: 0.85rem; align-items: center;">
+          <input type="text" id="tutor-search" class="search-input" style="flex: 1; min-width: 220px;" placeholder="🔍 Search tutor name, campus, CGPA, subjects, #AST_T..." oninput="renderTutors()">
+          <select id="tutor-filter-uni" class="form-ctrl" style="max-width: 260px; padding: 0.55rem 0.85rem; font-size: 0.8rem; background: rgba(15, 23, 42, 0.9); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 12px; color: #fff;" onchange="renderTutors()">
+            <option value="">🏛️ All Universities &amp; Campuses</option>
+            <option value="Addis Ababa University">Addis Ababa University (AAU)</option>
+            <option value="4 Kilo">AAU 4 Kilo (Natural Sciences)</option>
+            <option value="5 Kilo">AAU 5 Kilo (AAiT Technology)</option>
+            <option value="6 Kilo">AAU 6 Kilo (Main Campus)</option>
+            <option value="Tikur Anbessa">AAU Tikur Anbessa (Medicine)</option>
+            <option value="FBE">AAU FBE (Economics)</option>
+            <option value="Commerce">AAU Commerce Campus</option>
+            <option value="EiABC">AAU EiABC (Architecture)</option>
+            <option value="AASTU">AASTU (Kilinto)</option>
+            <option value="ASTU">ASTU (Adama)</option>
+            <option value="Jimma">Jimma University (JU)</option>
+            <option value="Hawassa">Hawassa University (HU)</option>
+            <option value="Bahir Dar">Bahir Dar University (BDU)</option>
+            <option value="Gondar">University of Gondar (UoG)</option>
+            <option value="Haramaya">Haramaya University (HU)</option>
+            <option value="Arba Minch">Arba Minch University (AMU)</option>
+            <option value="Wollo">Wollo University / KIOT</option>
+            <option value="Debre Birhan">Debre Birhan University (DBU)</option>
+            <option value="Debre Markos">Debre Markos University (DMU)</option>
+            <option value="Mekelle">Mekelle University (MU)</option>
+            <option value="Ambo">Ambo University (AU)</option>
+            <option value="Wolkite">Wolkite University (WKU)</option>
+            <option value="St. Mary">St. Mary's University</option>
+          </select>
           <div style="display: flex; gap: 0.5rem;">
             <button class="btn-act" style="background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 850;" onclick="pushLocalRecordsToGoogleSheet()">☁️ Push All to Sheet</button>
             <button class="btn-act" onclick="exportDataToCsv('tutors')">📥 Export CSV</button>
@@ -4313,14 +4339,19 @@ function rowsToJson(sheet) {
         return activeMatches.length >= cap;
       };
 
+      const uniFilter = (document.getElementById('tutor-filter-uni')?.value || '').toLowerCase();
+
       let filtered = tutors.filter(t => {
+        const tUni = (t.uni || t.university || '').toLowerCase();
+        if (uniFilter && !tUni.includes(uniFilter)) return false;
+
         const matchesQuery = !query || 
-          t.name.toLowerCase().includes(query) || 
-          t.phone.toLowerCase().includes(query) || 
-          t.uni.toLowerCase().includes(query) ||
+          (t.name || '').toLowerCase().includes(query) || 
+          (t.phone || '').toLowerCase().includes(query) || 
+          tUni.includes(query) ||
           (t.trackingId && t.trackingId.toLowerCase().includes(query)) ||
           (t.tgTag && t.tgTag.toLowerCase().includes(query)) ||
-          t.subj.toLowerCase().includes(query);
+          (t.subj || '').toLowerCase().includes(query);
 
         const lvl = Number(t.level) || 0;
         const tier = getTutorMetalTier(t.cgpa);
