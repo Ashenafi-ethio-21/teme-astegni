@@ -925,6 +925,44 @@
       border-color: rgba(56, 189, 248, 0.3);
     }
 
+    /* Assigned vs Available Badges */
+    .tag-assigned {
+      background: rgba(16, 185, 129, 0.22) !important;
+      color: #34d399 !important;
+      border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+      font-weight: 850 !important;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+    }
+    .tag-unassigned {
+      background: rgba(148, 163, 184, 0.12) !important;
+      color: #94a3b8 !important;
+      border: 1px dashed rgba(148, 163, 184, 0.35) !important;
+      font-weight: 700 !important;
+    }
+    .btn-collapse-toggle {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #cbd5e1;
+      font-weight: 800;
+      font-size: 0.74rem;
+      padding: 0.32rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-collapse-toggle:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+    }
+    .card-expandable-body {
+      animation: fadeInDetails 0.25s ease-out;
+    }
+    @keyframes fadeInDetails {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Meta Ribbon Bar */
     .record-meta-ribbon {
       display: flex;
@@ -1629,12 +1667,21 @@
             <button class="btn-act" onclick="exportDataToCsv('parents')">📥 Export CSV</button>
           </div>
         </div>
-        <div class="filter-pills" style="gap: 0.5rem; flex-wrap: wrap;">
+        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Assignment &amp; Status Filters</div>
+        <div class="filter-pills" style="gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
           <button class="pill-btn active" onclick="setParentFilter('ALL', this)">All Inquiries</button>
+          <button class="pill-btn" style="border-color: rgba(16, 185, 129, 0.5); color: #34d399;" onclick="setParentFilter('ASSIGNED', this)">🤝 Assigned / Paired</button>
+          <button class="pill-btn" style="border-color: rgba(245, 158, 11, 0.5); color: #fbbf24;" onclick="setParentFilter('UNASSIGNED', this)">⏳ Unassigned (Pending Match)</button>
           <button class="pill-btn" onclick="setParentFilter('Pending', this)">⏳ Pending</button>
           <button class="pill-btn" onclick="setParentFilter('Trial Scheduled', this)">📅 In Trial</button>
           <button class="pill-btn" onclick="setParentFilter('Active Contract', this)">✅ Active Contracts</button>
           <button class="pill-btn" onclick="setParentFilter('Closed', this)">🔒 Closed</button>
+        </div>
+        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Grade Levels</div>
+        <div class="filter-pills" style="gap: 0.45rem; flex-wrap: wrap;">
+          <button class="pill-btn" onclick="setParentFilter('GRADE_1_4', this)">🎒 Grade 1 - 4</button>
+          <button class="pill-btn" onclick="setParentFilter('GRADE_5_8', this)">📚 Grade 5 - 8</button>
+          <button class="pill-btn" onclick="setParentFilter('GRADE_9_12', this)">🎓 Grade 9 - 12</button>
         </div>
       </div>
 
@@ -1658,10 +1705,12 @@
           </div>
         </div>
 
-        <!-- Tier 1 Filters: Academic Metal Tiers -->
-        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Academic Tier & Evaluation</div>
+        <!-- Tier 1 Filters: Academic Metal Tiers & Assignment -->
+        <div style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem;">Assignment &amp; Academic Tier</div>
         <div class="filter-pills" style="gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
           <button class="pill-btn active" onclick="setTutorFilter('ALL', this)">All Scholars</button>
+          <button class="pill-btn" style="border-color: rgba(16, 185, 129, 0.5); color: #34d399;" onclick="setTutorFilter('ASSIGNED', this)">🤝 Assigned / Paired</button>
+          <button class="pill-btn" style="border-color: rgba(56, 189, 248, 0.5); color: #38bdf8;" onclick="setTutorFilter('AVAILABLE', this)">⏳ Available (Unassigned)</button>
           <button class="pill-btn" style="border-color: rgba(251, 191, 36, 0.5); color: #fbbf24;" onclick="setTutorFilter('GOLDEN', this)">🥇 Golden (CGPA ≥ 3.75)</button>
           <button class="pill-btn" style="border-color: rgba(203, 213, 225, 0.5); color: #e2e8f0;" onclick="setTutorFilter('SILVER', this)">🥈 Silver (3.40 - 3.74)</button>
           <button class="pill-btn" style="border-color: rgba(249, 115, 22, 0.5); color: #fdba74;" onclick="setTutorFilter('BRONZE', this)">🥉 Bronze (3.00 - 3.39)</button>
@@ -3611,12 +3660,18 @@ function rowsToJson(sheet) {
 
     function renderParents() {
       const parents = getParents();
+      const matches = getMatches();
       const query = (document.getElementById('parent-search').value || '').toLowerCase();
       const container = document.getElementById('parents-cards-container');
       const user = getSessionUser();
       const canDelete = user && (user.role === 'owner' || user.permissions.canDelete);
 
       container.innerHTML = '';
+
+      const isParentAssigned = (p) => {
+        const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
+        return matches.some(m => (m.parentPhone && m.parentPhone === p.phone) || (m.parentId && (m.parentId === pTrackingId || m.parentId === p.id)));
+      };
 
       let filtered = parents.filter(p => {
         const matchesQuery = !query || 
@@ -3629,8 +3684,15 @@ function rowsToJson(sheet) {
           p.grade.toLowerCase().includes(query);
 
         const status = p.status || 'Pending';
-        const matchesFilter = currentParentFilter === 'ALL' || status === currentParentFilter;
-        return matchesQuery && matchesFilter;
+        const isAssigned = isParentAssigned(p);
+
+        if (currentParentFilter === 'ALL') return matchesQuery;
+        if (currentParentFilter === 'ASSIGNED') return matchesQuery && isAssigned;
+        if (currentParentFilter === 'UNASSIGNED') return matchesQuery && !isAssigned;
+        if (currentParentFilter === 'GRADE_1_4') return matchesQuery && /(grade\s*)?[1-4](\b|\s|$)/i.test(p.grade || '');
+        if (currentParentFilter === 'GRADE_5_8') return matchesQuery && /(grade\s*)?[5-8](\b|\s|$)/i.test(p.grade || '');
+        if (currentParentFilter === 'GRADE_9_12') return matchesQuery && /(grade\s*)?(9|10|11|12)(\b|\s|$)/i.test(p.grade || '');
+        return matchesQuery && status === currentParentFilter;
       });
 
       document.getElementById('parent-list-counter').innerText = `Showing ${filtered.length} of ${parents.length} requests`;
@@ -3651,85 +3713,102 @@ function rowsToJson(sheet) {
         return;
       }
 
-      filtered.reverse().forEach((p) => {
+      filtered.reverse().forEach((p, pIndex) => {
         const card = document.createElement('div');
         card.className = 'record-card parent-card';
+        card.style.transition = 'all 0.2s ease';
         const currentStatus = p.status || 'Pending';
         const isAdult = p.applicantType === 'STUDENT_ADULT';
         const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
         const pTgTag = p.tgTag || ('#AST_P_' + (p.phone || '').slice(-4));
+        const isAssigned = isParentAssigned(p);
+        const detailsId = `parent-details-${pIndex}`;
 
         const subjectsArray = (p.subjs || 'General / All').split(',').map(s => s.trim()).filter(Boolean);
         const subjChipsHtml = subjectsArray.map(s => `<span class="subj-chip">${escapeHtml(s)}</span>`).join('');
 
         card.innerHTML = `
-          <!-- Top Header -->
-          <div class="record-header-modern">
+          <!-- Summary Header (Always Visible • Overview Style + Tracking ID) -->
+          <div class="record-header-modern" onclick="toggleCardDetails('${detailsId}', this)" style="cursor: pointer; margin-bottom: 0; user-select: none;">
             <div class="record-identity">
-              <div class="record-avatar avatar-parent">${isAdult ? '🎓' : '👨‍👩‍👧'}</div>
+              <div class="record-avatar avatar-parent" style="width: 44px; height: 44px; font-size: 1.15rem;">${isAdult ? '🎓' : '👨‍👩‍👧'}</div>
               <div class="record-titles">
-                <div class="record-fullname">
-                  ${escapeHtml(p.name)}
+                <div class="record-fullname" style="font-size: 1.05rem;">
+                  <span>${escapeHtml(p.name)}</span>
+                  <span class="id-badge-pill id-parent-pill">🏷️ ${escapeHtml(pTrackingId)}</span>
                   ${isAdult 
-                    ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-size: 0.65rem;">🎓 Adult Student 18+</span>`
-                    : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-size: 0.65rem;">👨‍👩‍👧 Parent Lead</span>`}
+                    ? `<span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-size: 0.65rem;">🎓 Adult Student</span>`
+                    : ''}
                 </div>
                 <div class="record-subtitle-line">
                   <span>📍 ${escapeHtml(p.area)}</span>
                   <span>•</span>
-                  <span>📅 ${new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  <span>🎒 ${escapeHtml(p.grade)}</span>
+                  <span>•</span>
+                  <span>🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
+                  <span>•</span>
+                  <span>📅 ${new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
                 </div>
               </div>
             </div>
 
-            <div class="record-header-actions">
-              <span class="id-badge-pill id-parent-pill">🏷️ ${escapeHtml(pTrackingId)}</span>
+            <div class="record-header-actions" onclick="event.stopPropagation()">
+              ${isAssigned 
+                ? `<span class="tag-badge tag-assigned">🤝 Assigned / የተመደበ</span>` 
+                : `<span class="tag-badge tag-unassigned">⏳ Available / ያልተመደበ</span>`}
               <span class="tag-badge ${getStatusBadgeClass(currentStatus)}">${currentStatus}</span>
-              <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call-modern">📞 Call Client</a>
+              <a href="tel:${escapeHtml(p.phone)}" class="btn-act btn-act-call-modern">📞 Call</a>
+              <button type="button" class="btn-collapse-toggle" onclick="toggleCardDetails('${detailsId}', this)">
+                ▼ Details
+              </button>
             </div>
           </div>
 
-          <!-- Meta Ribbon Bar -->
-          <div class="record-meta-ribbon">
-            <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
-            <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
-            <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
-            <a href="https://t.me/AstegniParents" target="_blank" class="tag-badge" style="text-decoration:none; background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in @AstegniParents">✈️ ${escapeHtml(pTgTag)}</a>
-          </div>
-
-          <!-- Bento Grid Details -->
-          <div class="record-bento-grid">
-            <div class="bento-item" style="grid-column: 1 / -1;">
-              <span class="bento-label">📖 Requested Subjects</span>
-              <div class="subj-pill-list">${subjChipsHtml}</div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">📞 Direct Phone</span>
-              <div class="bento-value">${escapeHtml(p.phone)}</div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">📍 Neighborhood / City</span>
-              <div class="bento-value">${escapeHtml(p.area)}</div>
-            </div>
-          </div>
-
-          <!-- Segmented Actions Footer -->
-          <div class="record-actions-modern">
-            <div class="actions-left-group">
-              <select class="status-dropdown" onchange="updateParentStatus('${escapeHtml(p.phone)}', this.value)">
-                <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending (በመጠባበቅ)</option>
-                <option value="Trial Scheduled" ${currentStatus === 'Trial Scheduled' ? 'selected' : ''}>📅 Trial Scheduled (በሙከራ)</option>
-                <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
-                <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
-              </select>
-              <button class="btn-act btn-act-match" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
+          <!-- Expandable Full Dossier Body (Collapsed by Default) -->
+          <div id="${detailsId}" class="card-expandable-body" style="display: none; margin-top: 1rem; padding-top: 0.95rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <!-- Meta Ribbon Bar -->
+            <div class="record-meta-ribbon">
+              <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
+              <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
+              <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
+              <a href="https://t.me/AstegniParents" target="_blank" class="tag-badge" style="text-decoration:none; background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in @AstegniParents">✈️ ${escapeHtml(pTgTag)}</a>
+              ${isAssigned ? `<span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">🤝 Active Tutor Linked</span>` : ''}
             </div>
 
-            <div class="actions-right-group">
-              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
-              <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardParentDossierToTelegram('${escapeHtml(p.phone)}')" title="Send full parent dossier to Telegram Ops group">✈️ Telegram Ops</button>
-              <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push</button>
-              ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️</button>` : ''}
+            <!-- Bento Grid Details -->
+            <div class="record-bento-grid">
+              <div class="bento-item" style="grid-column: 1 / -1;">
+                <span class="bento-label">📖 Requested Subjects</span>
+                <div class="subj-pill-list">${subjChipsHtml}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">📞 Direct Phone</span>
+                <div class="bento-value">${escapeHtml(p.phone)}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">📍 Neighborhood / City</span>
+                <div class="bento-value">${escapeHtml(p.area)}</div>
+              </div>
+            </div>
+
+            <!-- Segmented Actions Footer -->
+            <div class="record-actions-modern">
+              <div class="actions-left-group">
+                <select class="status-dropdown" onchange="updateParentStatus('${escapeHtml(p.phone)}', this.value)">
+                  <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>⏳ Pending (በመጠባበቅ)</option>
+                  <option value="Trial Scheduled" ${currentStatus === 'Trial Scheduled' ? 'selected' : ''}>📅 Trial Scheduled (በሙከራ)</option>
+                  <option value="Active Contract" ${currentStatus === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
+                  <option value="Closed" ${currentStatus === 'Closed' ? 'selected' : ''}>🔒 Closed (የተጠናቀቀ)</option>
+                </select>
+                <button class="btn-act btn-act-match" onclick="quickMatchParent('${escapeHtml(p.name)}', '${escapeHtml(p.phone)}')">🤝 Assign Tutor</button>
+              </div>
+
+              <div class="actions-right-group">
+                <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
+                <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardParentDossierToTelegram('${escapeHtml(p.phone)}')" title="Send full parent dossier to Telegram Ops group">✈️ Telegram Ops</button>
+                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push</button>
+                ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️</button>` : ''}
+              </div>
             </div>
           </div>
         `;
@@ -3817,12 +3896,18 @@ function rowsToJson(sheet) {
 
     function renderTutors() {
       const tutors = getTutors();
+      const matches = getMatches();
       const query = (document.getElementById('tutor-search').value || '').toLowerCase();
       const container = document.getElementById('tutors-cards-container');
       const user = getSessionUser();
       const canDelete = user && (user.role === 'owner' || user.permissions.canDelete);
 
       container.innerHTML = '';
+
+      const isTutorAssigned = (t) => {
+        const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
+        return matches.some(m => (m.tutorPhone && m.tutorPhone === t.phone) || (m.tutorId && (m.tutorId === tTrackingId || m.tutorId === t.id)));
+      };
 
       let filtered = tutors.filter(t => {
         const matchesQuery = !query || 
@@ -3836,8 +3921,11 @@ function rowsToJson(sheet) {
         const lvl = Number(t.level) || 0;
         const tier = getTutorMetalTier(t.cgpa);
         const examPassed = t.examStatus === 'passed' || t.examStatus === 'Passed';
+        const isAssigned = isTutorAssigned(t);
 
         if (currentTutorFilter === 'ALL') return matchesQuery;
+        if (currentTutorFilter === 'ASSIGNED') return matchesQuery && isAssigned;
+        if (currentTutorFilter === 'AVAILABLE') return matchesQuery && !isAssigned;
         if (currentTutorFilter === 'GOLDEN') return matchesQuery && tier.code === 'GOLDEN';
         if (currentTutorFilter === 'SILVER') return matchesQuery && tier.code === 'SILVER';
         if (currentTutorFilter === 'BRONZE') return matchesQuery && tier.code === 'BRONZE';
@@ -3885,30 +3973,34 @@ function rowsToJson(sheet) {
         return;
       }
 
-      filtered.forEach((t) => {
+      filtered.forEach((t, tIndex) => {
         const card = document.createElement('div');
         const tier = getTutorMetalTier(t.cgpa);
         const tierCardClass = tier.code === 'GOLDEN' ? 'tier-card-golden' : (tier.code === 'SILVER' ? 'tier-card-silver' : 'tier-card-bronze');
         const avatarClass = tier.code === 'GOLDEN' ? 'avatar-golden' : (tier.code === 'SILVER' ? 'avatar-silver' : 'avatar-bronze');
         card.className = `record-card ${tierCardClass}`;
+        card.style.transition = 'all 0.2s ease';
 
         const l = Number(t.level) || 0;
         const levelTitle = l === 5 ? 'Level 5 Master' : (l === 4 ? 'Level 4 Distinguished' : (l === 3 ? 'Level 3 Senior' : (l === 2 ? 'Level 2 Advanced' : (l === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
         const tTrackingId = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
         const tTgTag = t.tgTag || ('#AST_T_' + (t.phone || '').slice(-4));
         const initial = (t.name || 'T').trim().charAt(0).toUpperCase();
+        const isAssigned = isTutorAssigned(t);
+        const detailsId = `tutor-details-${tIndex}`;
 
         const subjectsArray = (t.subj || 'General').split(',').map(s => s.trim()).filter(Boolean);
         const subjChipsHtml = subjectsArray.map(s => `<span class="subj-chip subj-chip-amber">${escapeHtml(s)}</span>`).join('');
 
         card.innerHTML = `
-          <!-- Top Header -->
-          <div class="record-header-modern">
+          <!-- Summary Header (Always Visible • Overview Style + Tracking ID) -->
+          <div class="record-header-modern" onclick="toggleCardDetails('${detailsId}', this)" style="cursor: pointer; margin-bottom: 0; user-select: none;">
             <div class="record-identity">
-              <div class="record-avatar ${avatarClass}">${initial}</div>
+              <div class="record-avatar ${avatarClass}" style="width: 44px; height: 44px; font-size: 1.15rem;">${initial}</div>
               <div class="record-titles">
-                <div class="record-fullname">
-                  ${escapeHtml(t.name)}
+                <div class="record-fullname" style="font-size: 1.05rem;">
+                  <span>${escapeHtml(t.name)}</span>
+                  <span class="id-badge-pill">🏷️ ${escapeHtml(tTrackingId)}</span>
                   <span class="level-badge ${tier.badgeClass}" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">${tier.emoji} ${tier.name}</span>
                 </div>
                 <div class="record-subtitle-line">
@@ -3917,68 +4009,82 @@ function rowsToJson(sheet) {
                   <span>📅 ${escapeHtml(t.year)}</span>
                   <span>•</span>
                   <span>🚻 ${escapeHtml(t.gender || 'Scholar')}</span>
+                  <span>•</span>
+                  <span>⭐ CGPA ${escapeHtml(t.cgpa)}</span>
+                  <span>•</span>
+                  <span>Level ${t.level || 0}</span>
                 </div>
               </div>
             </div>
 
-            <div class="record-header-actions">
-              <span class="id-badge-pill">🏷️ ${escapeHtml(tTrackingId)}</span>
-              <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call-modern">📞 Call Astegni</a>
+            <div class="record-header-actions" onclick="event.stopPropagation()">
+              ${isAssigned 
+                ? `<span class="tag-badge tag-assigned">🤝 Assigned / የተመደበ</span>` 
+                : `<span class="tag-badge tag-unassigned">⏳ Available / ያልተመደበ</span>`}
+              <span class="tag-badge ${getStatusBadgeClass(t.status || 'Verified')}">${t.status || 'Verified'}</span>
+              <a href="tel:${escapeHtml(t.phone)}" class="btn-act btn-act-call-modern">📞 Call</a>
+              <button type="button" class="btn-collapse-toggle" onclick="toggleCardDetails('${detailsId}', this)">
+                ▼ Details
+              </button>
             </div>
           </div>
 
-          <!-- Meta Badges Ribbon -->
-          <div class="record-meta-ribbon">
-            <span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 850;">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
-            ${getLevelBadgeHtml(t.level, t.cgpa)}
-            ${getExamBadgeHtml(t)}
-            <span class="tag-badge tag-active">🛡️ Fayda/Campus Verified</span>
-            <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">🚀 ${getDispatchPriorityText(t.level, t.cgpa)}</span>
-          </div>
-
-          <!-- Bento Grid Details -->
-          <div class="record-bento-grid">
-            <div class="bento-item" style="grid-column: 1 / -1;">
-              <span class="bento-label">📖 Subjects (Grade A Mastery)</span>
-              <div class="subj-pill-list">${subjChipsHtml}</div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">📞 Direct Phone</span>
-              <div class="bento-value">${escapeHtml(t.phone)}</div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">🎙️ Teaching Clarity</span>
-              <div class="bento-value">${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">🆔 ID Verification</span>
-              <div class="bento-value">${escapeHtml(t.govtId || 'National Fayda / Kebele')} <span class="tag-badge tag-active" style="font-size:0.62rem;">✓ Vault</span></div>
-            </div>
-            <div class="bento-item">
-              <span class="bento-label">✈️ Telegram Tag</span>
-              <div class="bento-value"><a href="https://t.me/AstegniTutors" target="_blank" style="color: #24a1de; text-decoration: none; font-weight: 750;" title="Search ${escapeHtml(tTgTag)} in @AstegniTutors">${escapeHtml(tTgTag)}</a></div>
-            </div>
-            ${t.examNotes ? `<div class="record-notes-box">📝 <b>Evaluation Notes:</b> "${escapeHtml(t.examNotes)}"</div>` : ''}
-          </div>
-
-          <!-- Segmented Actions Footer -->
-          <div class="record-actions-modern">
-            <div class="actions-left-group">
-              <select class="status-dropdown" onchange="updateTutorStatus('${escapeHtml(t.phone)}', this.value)">
-                <option value="Verified" ${(t.status || 'Verified') === 'Verified' ? 'selected' : ''}>✅ Verified (ንቁ)</option>
-                <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
-                <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
-              </select>
-              <button class="btn-act btn-act-match" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
+          <!-- Expandable Full Dossier Body (Collapsed by Default) -->
+          <div id="${detailsId}" class="card-expandable-body" style="display: none; margin-top: 1rem; padding-top: 0.95rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <!-- Meta Badges Ribbon -->
+            <div class="record-meta-ribbon">
+              <span class="tag-badge" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35); font-weight: 850;">⭐ CGPA ${escapeHtml(t.cgpa)}</span>
+              ${getLevelBadgeHtml(t.level, t.cgpa)}
+              ${getExamBadgeHtml(t)}
+              <span class="tag-badge tag-active">🛡️ Fayda/Campus Verified</span>
+              <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">🚀 ${getDispatchPriorityText(t.level, t.cgpa)}</span>
+              ${isAssigned ? `<span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">🤝 Matched with Family</span>` : ''}
             </div>
 
-            <div class="actions-right-group">
-              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
-              <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Exam</button>
-              <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Level</button>
-              <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardTutorDossierToTelegram('${escapeHtml(t.phone)}')" title="Send full tutor dossier to Telegram Ops group">✈️ Telegram Ops</button>
-              <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push</button>
-              ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️</button>` : ''}
+            <!-- Bento Grid Details -->
+            <div class="record-bento-grid">
+              <div class="bento-item" style="grid-column: 1 / -1;">
+                <span class="bento-label">📖 Subjects (Grade A Mastery)</span>
+                <div class="subj-pill-list">${subjChipsHtml}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">📞 Direct Phone</span>
+                <div class="bento-value">${escapeHtml(t.phone)}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">🎙️ Teaching Clarity</span>
+                <div class="bento-value">${escapeHtml(t.examClarity || (t.examStatus === 'passed' ? 'Verified Strong' : 'Pending Evaluation'))}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">🆔 ID Verification</span>
+                <div class="bento-value">${escapeHtml(t.govtId || 'National Fayda / Kebele')} <span class="tag-badge tag-active" style="font-size:0.62rem;">✓ Vault</span></div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">✈️ Telegram Tag</span>
+                <div class="bento-value"><a href="https://t.me/AstegniTutors" target="_blank" style="color: #24a1de; text-decoration: none; font-weight: 750;" title="Search ${escapeHtml(tTgTag)} in @AstegniTutors">${escapeHtml(tTgTag)}</a></div>
+              </div>
+              ${t.examNotes ? `<div class="record-notes-box">📝 <b>Evaluation Notes:</b> "${escapeHtml(t.examNotes)}"</div>` : ''}
+            </div>
+
+            <!-- Segmented Actions Footer -->
+            <div class="record-actions-modern">
+              <div class="actions-left-group">
+                <select class="status-dropdown" onchange="updateTutorStatus('${escapeHtml(t.phone)}', this.value)">
+                  <option value="Verified" ${(t.status || 'Verified') === 'Verified' ? 'selected' : ''}>✅ Verified (ንቁ)</option>
+                  <option value="Interview Pending" ${t.status === 'Interview Pending' ? 'selected' : ''}>⏳ Interview Pending (በመጠባበቅ)</option>
+                  <option value="On-Hold" ${t.status === 'On-Hold' ? 'selected' : ''}>⏸️ On-Hold (የታገደ)</option>
+                </select>
+                <button class="btn-act btn-act-match" onclick="quickMatchTutor('${escapeHtml(t.name)}', '${escapeHtml(t.phone)}')">🤝 Pair With Parent</button>
+              </div>
+
+              <div class="actions-right-group">
+                <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
+                <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Exam</button>
+                <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Level</button>
+                <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardTutorDossierToTelegram('${escapeHtml(t.phone)}')" title="Send full tutor dossier to Telegram Ops group">✈️ Telegram Ops</button>
+                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push</button>
+                ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️</button>` : ''}
+              </div>
             </div>
           </div>
         `;
@@ -4451,7 +4557,7 @@ function rowsToJson(sheet) {
         if (item.paymentProof && item.status === '1-Day Trial Pending') {
           item.status = 'Active Contract';
         }
-        localStorage.setItem('astegni_matches', JSON.stringify(matches));
+        saveMatches(matches);
         renderAll();
 
         const p = getParents().find(x => x.phone === item.parentPhone);
@@ -4607,7 +4713,7 @@ function rowsToJson(sheet) {
         const oldStatus = item.status || 'Pending';
         if (oldStatus === newStatus) return;
         item.status = newStatus;
-        localStorage.setItem('astegni_matches', JSON.stringify(matches));
+        saveMatches(matches);
         renderAll();
 
         const p = getParents().find(x => x.phone === item.parentPhone);
@@ -4652,7 +4758,8 @@ function rowsToJson(sheet) {
         dispatchTelegramOpsLog(msg);
       }
       let filtered = matches.filter(m => m.id !== id);
-      localStorage.setItem('astegni_matches', JSON.stringify(filtered));
+      saveMatches(filtered);
+      deleteMatchFromCloud(id);
       renderAll();
     }
 
@@ -4759,10 +4866,14 @@ function rowsToJson(sheet) {
         parentTag: pTgTag,
         parentName: p.name,
         parentPhone: p.phone,
+        parentArea: p.area || 'Addis Ababa',
+        studentGrade: p.grade || 'General',
+        subjects: p.subjs || t.subj || 'All Subjects',
         tutorId: tTrackingId,
         tutorTag: tTgTag,
         tutorName: t.name,
         tutorPhone: t.phone,
+        tutorUni: t.uni || '',
         monthlyFee: fee,
         rate: rate,
         commission: commission,
@@ -4772,10 +4883,10 @@ function rowsToJson(sheet) {
 
       const matches = getMatches();
       matches.push(newMatch);
-      localStorage.setItem('astegni_matches', JSON.stringify(matches));
+      saveMatches(matches);
 
       p.status = 'Trial Scheduled';
-      localStorage.setItem('astegni_parent_leads', JSON.stringify(parents));
+      saveParents(parents);
 
       closeModal('modal-match-maker');
       renderAll();
@@ -5337,6 +5448,21 @@ function rowsToJson(sheet) {
     }
 
     function filterTutors() { renderTutors(); }
+
+    function toggleCardDetails(id, triggerEl) {
+      const bodyEl = document.getElementById(id);
+      if (!bodyEl) return;
+      const isHidden = bodyEl.style.display === 'none' || !bodyEl.style.display;
+      bodyEl.style.display = isHidden ? 'block' : 'none';
+      const card = bodyEl.closest('.record-card');
+      const btn = card ? card.querySelector('.btn-collapse-toggle') : null;
+      if (btn) {
+        btn.innerHTML = isHidden ? '▲ Collapse' : '▼ Details';
+        btn.style.color = isHidden ? '#38bdf8' : '#cbd5e1';
+        btn.style.borderColor = isHidden ? 'rgba(56, 189, 248, 0.45)' : 'rgba(255, 255, 255, 0.18)';
+        btn.style.background = isHidden ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.08)';
+      }
+    }
 
     function openScriptCodeModal() { document.getElementById('modal-script-code').classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
