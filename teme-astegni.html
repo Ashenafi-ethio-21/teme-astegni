@@ -2711,31 +2711,10 @@
     // Active Submission Tracking State
     window.lastSubmittedRecord = null;
 
-    // Silent Background Google Sheet Cloud Ledger Sync (Rich Record)
+    // Google Sheet is reserved exclusively for Confirmed Matches (Matches_Ledger)
     function pushCurrentApplicationToSheetSilent() {
-      if (!window.lastSubmittedRecord || !window.lastSubmittedRecord.trackingId) return;
-      const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
-      if (!webhookUrl || !webhookUrl.startsWith('http')) return;
-      
-      const rec = window.lastSubmittedRecord;
-      const action = rec.type === 'addParent' ? 'addParent' : 'addTutor';
-
-      try {
-        // Channel 1: POST (Rich data)
-        fetch(webhookUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ 
-            action: action, 
-            data: rec
-          })
-        }).catch(() => {});
-
-        // Channel 2: GET Fallback Beacon
-        const sep = webhookUrl.includes('?') ? '&' : '?';
-        fetch(`${webhookUrl}${sep}action=${action}&id=${encodeURIComponent(rec.trackingId)}&name=${encodeURIComponent(rec.name||'')}&phone=${encodeURIComponent(rec.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
-      } catch (err) {}
+      // Raw leads are preserved in Telegram Groups & Firebase Cloud to keep Google Sheet 100% clean
+      return;
     }
 
     // Clean Modal Action: Copy Only Reference Tracking ID
@@ -2958,26 +2937,7 @@
           createdAt: new Date().toISOString()
         };
 
-        // Asynchronously register in Google Sheets Cloud Ledger
-        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
-        if (webhookUrl && webhookUrl.startsWith('http')) {
-          // Channel 1: POST
-          fetch(webhookUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ 
-              action: 'addParent', 
-              data: parentPayload
-            })
-          }).catch(() => {});
-
-          // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
-          try {
-            const sep = webhookUrl.includes('?') ? '&' : '?';
-            fetch(`${webhookUrl}${sep}action=addParent&id=${encodeURIComponent(trackingId)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`, { mode: 'no-cors' }).catch(() => {});
-          } catch(e) {}
-        }
+        // Raw parent leads are preserved on Telegram Hub & Firebase Cloud (Google Sheet stores only confirmed matches)
 
         // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
         if (frontFile) {
@@ -3259,26 +3219,7 @@
           createdAt: new Date().toISOString()
         };
 
-        // Asynchronously register in Google Sheets Cloud Ledger
-        const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
-        if (webhookUrl && webhookUrl.startsWith('http')) {
-          // Channel 1: POST
-          fetch(webhookUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ 
-              action: 'addTutor', 
-              data: tutorPayload
-            })
-          }).catch(() => {});
-
-          // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
-          try {
-            const sep = webhookUrl.includes('?') ? '&' : '?';
-            fetch(`${webhookUrl}${sep}action=addTutor&id=${encodeURIComponent(trackingId)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`, { mode: 'no-cors' }).catch(() => {});
-          } catch(e) {}
-        }
+        // Raw tutor leads are preserved on Telegram Hub & Firebase Cloud (Google Sheet stores only confirmed matches)
 
         // Asynchronously compress and upload tutor ID photos to Telegram (100% Free Forever)
         if (govtFrontFile) {
