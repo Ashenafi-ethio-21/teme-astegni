@@ -1436,6 +1436,101 @@
             </div>
           </div>
 
+          <!-- MONTHLY TUTORING PACKAGE & SCHEDULE SELECTION -->
+          <div class="field" style="background: rgba(56, 189, 248, 0.05); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+              <label style="color: #38bdf8; font-weight: 850; font-size: 0.92rem; margin: 0;">
+                💰 Select Monthly Tutoring Package (የማስጠኛ ጥቅል እና ክፍያ) *
+              </label>
+              <span style="font-size: 0.7rem; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">Free 1-Day Trial Included</span>
+            </div>
+            <p style="font-size: 0.75rem; color: #94a3b8; line-height: 1.4; margin-bottom: 0.85rem;">
+              Choose your schedule and tuition plan. Payment is made via Telebirr only after your 1-day free in-home trial is 100% satisfactory.
+            </p>
+
+            <!-- Package Options Cards -->
+            <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+              
+              <!-- OPTION 1: 3,000 ETB / MONTH -->
+              <label class="package-option-card" id="card-pkg-3000" style="display: block; position: relative; padding: 0.9rem; border-radius: 12px; background: rgba(56, 189, 248, 0.12); border: 2px solid #38bdf8; cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;">
+                  <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <input type="radio" name="p_package" value="3000_STANDARD" checked onchange="updateSelectedPackage(3000, '3 Days a Week (1 hr/day)', 'Standard Package')">
+                    <div>
+                      <div style="font-size: 0.95rem; font-weight: 850; color: #f8fafc;">
+                        🥉 Standard Tutoring (መደበኛ ጥቅል)
+                      </div>
+                      <div style="font-size: 0.78rem; color: #38bdf8; font-weight: 700; margin-top: 0.15rem;">
+                        📅 3 Days a Week • 1 Hour per Day (በሳምንት 3 ቀናት • በቀን 1 ሰዓት)
+                      </div>
+                      <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">
+                        • 12 Hours/month • Vetted University Scholar (CGPA ≥ 3.00)
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right; min-width: 95px;">
+                    <div style="font-size: 1.15rem; font-weight: 900; color: #34d399; font-family: monospace;">3,000 ETB</div>
+                    <div style="font-size: 0.68rem; color: #94a3b8;">per month</div>
+                  </div>
+                </div>
+              </label>
+
+              <!-- OPTION 2: 5,000 ETB / MONTH - INTENSIVE WEEKEND BOOSTER -->
+              <label class="package-option-card" id="card-pkg-5000-weekend" style="display: block; position: relative; padding: 0.9rem; border-radius: 12px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(16, 185, 129, 0.4); cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;">
+                  <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <input type="radio" name="p_package" value="5000_INTENSIVE" onchange="updateSelectedPackage(5000, '3 Days / Week + 1 Weekend Day', 'Intensive Weekend Booster')">
+                    <div>
+                      <div style="font-size: 0.95rem; font-weight: 850; color: #f8fafc;">
+                        🥈 Intensive + Weekend Booster (የተጠናከረ + ቅዳሜ/እሁድ)
+                      </div>
+                      <div style="font-size: 0.78rem; color: #34d399; font-weight: 700; margin-top: 0.15rem;">
+                        📅 3 Days / Week + 1 Weekend Day (በሳምንት 3 ቀናት + 1 የቅዳሜ/እሁድ ቀን)
+                      </div>
+                      <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">
+                        • 4 Days per Week • Extended exam revision & homework support
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right; min-width: 95px;">
+                    <div style="font-size: 1.15rem; font-weight: 900; color: #34d399; font-family: monospace;">5,000 ETB</div>
+                    <div style="font-size: 0.68rem; color: #94a3b8;">per month</div>
+                  </div>
+                </div>
+              </label>
+
+              <!-- OPTION 3: 5,000 ETB / MONTH - GOLDEN SCHOLAR TIER -->
+              <label class="package-option-card" id="card-pkg-5000-golden" style="display: block; position: relative; padding: 0.9rem; border-radius: 12px; background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(245, 158, 11, 0.5); cursor: pointer; transition: all 0.2s ease;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;">
+                  <div style="display: flex; align-items: center; gap: 0.65rem;">
+                    <input type="radio" name="p_package" value="5000_GOLDEN" onchange="updateSelectedPackage(5000, '3 Days a Week (Golden Scholars)', 'Golden Scholars Tier')">
+                    <div>
+                      <div style="font-size: 0.95rem; font-weight: 850; color: #fbbf24;">
+                        🥇 Golden Scholar Tier (ጎልደን ከፍተኛ ውጤት ምሁራን)
+                      </div>
+                      <div style="font-size: 0.78rem; color: #fbbf24; font-weight: 700; margin-top: 0.15rem;">
+                        👑 3 Days a Week with Top Honors Scholars (በሳምንት 3 ቀናት በጎልደን ምሁራን)
+                      </div>
+                      <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">
+                        • University Top 5% (CGPA ≥ 3.50+) • Specialized National Exam Coach
+                      </div>
+                    </div>
+                  </div>
+                  <div style="text-align: right; min-width: 95px;">
+                    <div style="font-size: 1.15rem; font-weight: 900; color: #fbbf24; font-family: monospace;">5,000 ETB</div>
+                    <div style="font-size: 0.68rem; color: #94a3b8;">per month</div>
+                  </div>
+                </div>
+              </label>
+
+            </div>
+
+            <!-- Hidden input for exact amount and package string -->
+            <input type="hidden" id="p_monthly_fee" value="3000">
+            <input type="hidden" id="p_package_name" value="Standard Package (3,000 ETB • 3 Days/week)">
+            <input type="hidden" id="p_package_schedule" value="3 Days a Week (1 hr/day)">
+          </div>
+
           <!-- MANDATORY ID VERIFICATION: Front & Back -->
           <div class="field" style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1.2rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
@@ -2276,9 +2371,19 @@
             <!-- Render All Assigned Families -->
             ${matchesList.map((m, mIdx) => {
               const formattedDate = m.date ? new Date(m.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently Matched';
-              const feeText = m.monthlyFee ? `${Number(m.monthlyFee).toLocaleString()} ETB / Month` : 'Agreed Rate';
+              const feeNum = Number(m.monthlyFee) || 3000;
+              const feeText = `${feeNum.toLocaleString()} ETB / Month`;
+              const tutorNetTakeHome = Math.round(feeNum * 0.75); // 75% Net take-home to tutor!
+              const startDate = m.date ? new Date(m.date) : new Date();
+              const cycleStartDate = m.lastPayoutDate ? new Date(m.lastPayoutDate) : startDate;
+              const daysInCycle = Math.max(0, Math.floor((Date.now() - cycleStartDate.getTime()) / (1000 * 60 * 60 * 24)));
+              const daysRemaining = Math.max(0, 30 - daysInCycle);
+              const isMonthReached = (daysInCycle >= 30);
+              const currentMonthNum = (Number(m.monthsPaid) || 0) + 1;
+              const cycleDueDate = new Date(cycleStartDate.getTime() + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
               return `
-                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem; text-align: left;">
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1.5px solid ${isMonthReached ? '#ef4444' : 'rgba(56, 189, 248, 0.35)'}; border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem; text-align: left;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.35rem;">
                     <span style="font-weight: 850; color: #38bdf8; font-size: 0.88rem;">👨‍👩‍👧 Family #${mIdx + 1}: ${escapeHtml(m.parentName || 'Assigned Family')}</span>
                     <span style="font-size: 0.72rem; color: #94a3b8;">📅 Linked: ${formattedDate}</span>
@@ -2290,7 +2395,7 @@
                   </a>
 
                   <!-- Family Bento Grid -->
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.7rem; border-radius: 10px;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.7rem; border-radius: 10px; margin-bottom: 0.75rem;">
                     <div>
                       <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📍 Location</div>
                       <div style="font-size: 0.82rem; font-weight: 800; color: #fff;">${escapeHtml(m.parentArea || 'Addis Ababa')}</div>
@@ -2304,8 +2409,29 @@
                       <div style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;">${escapeHtml(m.subjects || 'General')}</div>
                     </div>
                     <div>
-                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Tuition</div>
+                      <div style="font-size: 0.65rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Tuition Plan</div>
                       <div style="font-size: 0.82rem; font-weight: 800; color: #fbbf24;">${feeText}</div>
+                    </div>
+                  </div>
+
+                  <!-- 30-Day Monthly Billing Cycle & Tutor Payout Tracker -->
+                  <div style="background: rgba(15, 23, 42, 0.95); border: 1.5px solid ${isMonthReached ? '#ef4444' : 'rgba(56, 189, 248, 0.3)'}; border-radius: 12px; padding: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; flex-wrap: wrap; gap: 0.35rem;">
+                      <span style="font-size: 0.8rem; font-weight: 850; color: ${isMonthReached ? '#f87171' : '#38bdf8'}; display: flex; align-items: center; gap: 0.35rem;">
+                        ${isMonthReached ? '🚨 1 MONTH COMPLETED • PAYOUT READY' : `📅 Month #${currentMonthNum} Progress: Day ${daysInCycle} of 30`}
+                      </span>
+                      <span style="font-size: 0.78rem; color: #34d399; font-weight: 850;">
+                        💰 Your Take-Home: ${tutorNetTakeHome.toLocaleString()} ETB (75%)
+                      </span>
+                    </div>
+
+                    <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden; margin-bottom: 0.45rem;">
+                      <div style="width: ${Math.min(100, Math.round((daysInCycle / 30) * 100))}%; height: 100%; background: ${isMonthReached ? 'linear-gradient(90deg, #ef4444, #f59e0b)' : 'linear-gradient(90deg, #38bdf8, #10b981)'}; border-radius: 999px;"></div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: #cbd5e1; flex-wrap: wrap; gap: 0.35rem;">
+                      <span>${isMonthReached ? '✓ 30 Days Reached - Ethio-21 Ops disbursing via Telebirr' : `⏳ ${daysRemaining} day(s) until tutor payout`}</span>
+                      <span>Target Due Date: <b style="color: #38bdf8;">${cycleDueDate}</b></span>
                     </div>
                   </div>
                 </div>
@@ -3748,6 +3874,37 @@
       } catch (err) {}
     }
 
+    function updateSelectedPackage(fee, schedule, title) {
+      const feeInput = document.getElementById('p_monthly_fee');
+      const nameInput = document.getElementById('p_package_name');
+      const schedInput = document.getElementById('p_package_schedule');
+      if (feeInput) feeInput.value = fee;
+      if (nameInput) nameInput.value = title;
+      if (schedInput) schedInput.value = schedule;
+
+      document.querySelectorAll('.package-option-card').forEach(c => {
+        c.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+        c.style.background = 'rgba(15, 23, 42, 0.85)';
+      });
+
+      const checked = document.querySelector('input[name="p_package"]:checked');
+      if (checked) {
+        const card = checked.closest('.package-option-card');
+        if (card) {
+          if (title.includes('Golden')) {
+            card.style.borderColor = '#fbbf24';
+            card.style.background = 'rgba(245, 158, 11, 0.12)';
+          } else if (title.includes('Intensive')) {
+            card.style.borderColor = '#10b981';
+            card.style.background = 'rgba(16, 185, 129, 0.12)';
+          } else {
+            card.style.borderColor = '#38bdf8';
+            card.style.background = 'rgba(56, 189, 248, 0.12)';
+          }
+        }
+      }
+    }
+
     // Submission Handlers
     async function handleParentSubmit(e) {
       e.preventDefault();
@@ -3854,6 +4011,10 @@
 
       // Save offline backup
       try {
+        const monthlyFee = Number(document.getElementById('p_monthly_fee')?.value || 3000);
+        const packageTitle = document.getElementById('p_package_name')?.value || 'Standard Package (3,000 ETB • 3 Days/week)';
+        const packageSchedule = document.getElementById('p_package_schedule')?.value || '3 Days a Week (1 hr/day)';
+
         const item = { 
           id: trackingId,
           trackingId: trackingId,
@@ -3867,6 +4028,9 @@
           childGender: studentGender, 
           grade, 
           subjs, 
+          monthlyFee,
+          packageTitle,
+          packageSchedule,
           idType: pIdType,
           idFrontAttached: !!frontFile,
           idBackAttached: !!backFile,
@@ -3888,6 +4052,9 @@
           studentGender: studentGender,
           grade: grade,
           subjects: subjs,
+          monthlyFee: monthlyFee,
+          packageTitle: packageTitle,
+          packageSchedule: packageSchedule,
           idType: pIdType,
           status: 'Pending',
           type: 'addParent',
@@ -3914,6 +4081,10 @@
         ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
 
+      const currentMonthlyFee = Number(document.getElementById('p_monthly_fee')?.value || 3000);
+      const currentPkgTitle = document.getElementById('p_package_name')?.value || 'Standard Package (3,000 ETB • 3 Days/week)';
+      const currentPkgSched = document.getElementById('p_package_schedule')?.value || '3 Days a Week (1 hr/day)';
+
       const plainText = `🏷️ ID: ${trackingId}\n` +
                         `📌 SEARCH TAG: ${tgTag}\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -3924,6 +4095,8 @@
                         `🧒 Student Gender: ${studentGender}\n` +
                         `🎓 Academic Grade: ${grade}\n` +
                         `📖 Subjects: ${subjs}\n` +
+                        `💰 Selected Plan: ${currentPkgTitle} (${currentMonthlyFee.toLocaleString()} ETB/month)\n` +
+                        `📅 Schedule: ${currentPkgSched}\n` +
                         `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Parents (@AstegniParents) to find this record instantly.`;
@@ -3949,6 +4122,9 @@
         studentGender: studentGender,
         grade: grade,
         subjects: subjs,
+        monthlyFee: currentMonthlyFee,
+        packageTitle: currentPkgTitle,
+        packageSchedule: currentPkgSched,
         idType: pIdType,
         status: 'Pending',
         createdAt: new Date().toISOString()
