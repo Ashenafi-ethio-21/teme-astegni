@@ -5364,6 +5364,15 @@ function rowsToJson(sheet) {
     // SEED & DEMO DATA MANAGEMENT (100% REAL MODE)
     // ==========================================
     function initializeSeedData() {
+      // Pristine clean slate enforcement for 100% fresh production launch
+      const hasCleaned = localStorage.getItem('teme_fresh_launch_2026');
+      if (!hasCleaned) {
+        localStorage.setItem('astegni_parent_leads', JSON.stringify([]));
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify([]));
+        localStorage.setItem('astegni_matches', JSON.stringify([]));
+        localStorage.setItem('astegni_upgrade_ledger', JSON.stringify([]));
+        localStorage.setItem('teme_fresh_launch_2026', 'true');
+      }
       if (!localStorage.getItem('astegni_parent_leads')) {
         localStorage.setItem('astegni_parent_leads', JSON.stringify([]));
       }
@@ -5376,14 +5385,13 @@ function rowsToJson(sheet) {
       if (!localStorage.getItem('astegni_upgrade_ledger')) {
         localStorage.setItem('astegni_upgrade_ledger', JSON.stringify([]));
       }
-      // Purge any old placeholder demo records from local storage
       purgeSeedPlaceholdersSilently();
     }
 
     function purgeSeedPlaceholdersSilently() {
       try {
-        const seedTrackingIds = ['AST-P-1042', 'AST-P-2051', 'AST-T-8419', 'AST-T-7204', 'AST-T-5190'];
-        const seedNames = ['ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)', 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)', 'ቤተልሔም ሰለሞን (Bethelhem S.)', 'ናትናኤል አለማየሁ (Natnael A.)', 'ዮሐንስ መላኩ (Yohannes M.)', 'ጴጥሮስ ኃይሌ (Petros H.)', 'ዳዊት ግርማ (Dawit Girma)'];
+        const seedTrackingIds = ['AST-P-1042', 'AST-P-2051', 'AST-T-8419', 'AST-T-7204', 'AST-T-5190', 'AST-T-0000', 'AST-P-0000'];
+        const seedNames = ['ዶ/ር ተስፋዬ በቀለ (Dr. Tesfaye)', 'ወ/ሮ ሮዛ ሙሉጌታ (W/ro Roza)', 'ቤተልሔም ሰለሞን (Bethelhem S.)', 'ናትናኤል አለማየሁ (Natnael A.)', 'ዮሐንስ መላኩ (Yohannes M.)', 'ጴጥሮስ ኃይሌ (Petros H.)', 'ዳዊት ግርማ (Dawit Girma)', 'Test User', 'Test Tutor', 'Test Parent'];
         
         const rawParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
         const cleanParents = rawParents.filter(p => !seedTrackingIds.includes(p.trackingId) && !seedTrackingIds.includes(p.id) && !seedNames.includes(p.name));
@@ -5400,16 +5408,23 @@ function rowsToJson(sheet) {
     }
 
     function purgeDemoDataNow() {
-      if (confirm('Clear all demo/mock placeholder records and reset to 0 for real tutors and parents?')) {
+      if (confirm('Clear all registered tutor, parent, and match records to start 100% fresh?')) {
         localStorage.setItem('astegni_parent_leads', JSON.stringify([]));
         localStorage.setItem('astegni_tutor_leads', JSON.stringify([]));
         localStorage.setItem('astegni_matches', JSON.stringify([]));
         localStorage.setItem('astegni_upgrade_ledger', JSON.stringify([]));
-        renderOverviewDashboard();
-        renderParents();
-        renderTutors();
-        renderMatches();
-        alert('✨ All demo placeholders deleted! System is completely clean and ready for real applicants.');
+        
+        // Also clear cloud database if connected
+        if (db) {
+          ['astegni_tutor_leads', 'astegni_parent_leads', 'astegni_matches'].forEach(col => {
+            db.collection(col).get().then(snapshot => {
+              snapshot.forEach(doc => doc.ref.delete());
+            }).catch(() => {});
+          });
+        }
+
+        renderAll();
+        showToast('✨ All records cleared! System is 100% clean and ready for real applicants.');
       }
     }
 
