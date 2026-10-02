@@ -6033,10 +6033,14 @@ function rowsToJson(sheet) {
 
     // DISPATCH ADMIN ACTION LOG TO TELEGRAM OPS (TRACING UNIQUE ID)
     async function dispatchTelegramOpsLog(htmlMessage) {
+      const defaultToken = '8808218998:AAF-xCF8eYt2S0J58G1i4XKcvO1qdJ5puTU';
+      const defaultChatId = '@AstegniTutors';
       const token = localStorage.getItem('teme_astegni_tg_bot_token') || 
-                    (document.getElementById('tg-bot-token-input') ? document.getElementById('tg-bot-token-input').value.trim() : '');
+                    (document.getElementById('tg-bot-token-input') ? document.getElementById('tg-bot-token-input').value.trim() : '') ||
+                    defaultToken;
       const chatId = localStorage.getItem('teme_astegni_tg_chat_id') || 
-                     (document.getElementById('tg-chat-id-input') ? document.getElementById('tg-chat-id-input').value.trim() : '');
+                     (document.getElementById('tg-chat-id-input') ? document.getElementById('tg-chat-id-input').value.trim() : '') ||
+                     defaultChatId;
       const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || 
                          (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
 
