@@ -1503,12 +1503,6 @@
               </div>
             </div>
 
-            <!-- Specific Local Neighborhood (e.g. Bole, Gerji, Arat Kilo, Saris) -->
-            <div class="field" style="margin-bottom: 0; margin-top: 0.5rem;">
-              <label id="i18n-f-pneighborhood" style="font-size: 0.8rem; color: #94a3b8;">Specific Neighborhood / Kebele / Area (የተለየ ሰፈር / መንደር) (Optional)</label>
-              <input type="text" id="p_neighborhood" placeholder="e.g. Bole Medhanialem, Gerji, 4 Kilo, Kazanchis, Posta..." oninput="updateCombinedParentArea()">
-            </div>
-
             <!-- Hidden input maintaining 100% backward compatibility for p_area -->
             <input type="hidden" id="p_area" required>
           </div>
@@ -3558,7 +3552,6 @@
       const campusSelect = document.getElementById('p_campus_select');
       const customUni = document.getElementById('p_custom_uni')?.value.trim() || '';
       const customCampus = document.getElementById('p_custom_campus')?.value.trim() || '';
-      const neighborhood = document.getElementById('p_neighborhood')?.value.trim() || '';
       const hiddenArea = document.getElementById('p_area');
 
       let uniName = uniSelect ? uniSelect.value : '';
@@ -3578,15 +3571,11 @@
         combined = uniName;
       }
 
-      if (neighborhood) {
-        combined = combined ? `${combined} • ${neighborhood}` : neighborhood;
-      }
-
       if (hiddenArea) {
         hiddenArea.value = combined;
       }
 
-      return { uniName, campusName, neighborhood, combined };
+      return { uniName, campusName, combined };
     }
 
     function handleCampusChange() {
@@ -3687,7 +3676,6 @@
         fParea: "የመኖሪያ ሰፈር (ከግቢ አቅራቢያ) *",
         fPuni: "🏛️ የቅርብ ዩኒቨርሲቲ (Nearest University) *",
         fPcampus: "🏫 የቅርብ ካምፓስ (Nearest Campus) *",
-        fPneighborhood: "የተለየ የመኖሪያ ሰፈር / መንደር (ምሳሌ፡ ቦሌ፣ ገርጂ፣ 4 ኪሎ...) (አማራጭ)",
         fPchildGender: "የሚማረው ተማሪ ፆታ (የተማሪው ፆታ) *",
         poptSelChild: "የተማሪውን ፆታ ይምረጡ *",
         poptFemChild: "ሴት ተማሪ (Female Student)",
@@ -3803,7 +3791,6 @@
         fParea: "Residential Neighborhood (Near Campus) *",
         fPuni: "🏛️ Nearest University *",
         fPcampus: "🏫 Nearest Campus *",
-        fPneighborhood: "Specific Neighborhood / Kebele / Area (Optional)",
         fPchildGender: "Student Gender (The Student Who Will Be Tutored) *",
         poptSelChild: "Select Student's Gender *",
         poptFemChild: "Female Student",
@@ -3919,7 +3906,6 @@
         fParea: "Naannoo Jiraattan (Kaampaasii Dhihoo) *",
         fPuni: "🏛️ Yuunivarsitii Dhihoo *",
         fPcampus: "🏫 Kaampaasii Dhihoo *",
-        fPneighborhood: "Ganda / Naannoo Addaa (Fkn: Boolee, Garjii...) (Filannoo)",
         fPchildGender: "Saala Barataa/Barattuu (Isa Baratamu) *",
         poptSelChild: "Saala barataa filadhaa *",
         poptFemChild: "Barattuu (Female Student)",
@@ -4056,7 +4042,6 @@
       if (document.getElementById('i18n-f-parea')) document.getElementById('i18n-f-parea').innerText = t.fParea;
       if (document.getElementById('i18n-f-puni')) document.getElementById('i18n-f-puni').innerText = t.fPuni;
       if (document.getElementById('i18n-f-pcampus')) document.getElementById('i18n-f-pcampus').innerText = t.fPcampus;
-      if (document.getElementById('i18n-f-pneighborhood')) document.getElementById('i18n-f-pneighborhood').innerText = t.fPneighborhood;
       if (document.getElementById('i18n-f-pchild-gender')) document.getElementById('i18n-f-pchild-gender').innerText = t.fPchildGender;
       if (document.getElementById('i18n-popt-sel-child')) document.getElementById('i18n-popt-sel-child').innerText = t.poptSelChild;
       if (document.getElementById('i18n-popt-fem-child')) document.getElementById('i18n-popt-fem-child').innerText = t.poptFemChild;
