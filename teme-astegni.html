@@ -2711,7 +2711,7 @@
     // Active Submission Tracking State
     window.lastSubmittedRecord = null;
 
-    // Silent Background Google Sheet Cloud Ledger Sync (Strict 2-Column: [Date, Tracking ID])
+    // Silent Background Google Sheet Cloud Ledger Sync (Rich Record)
     function pushCurrentApplicationToSheetSilent() {
       if (!window.lastSubmittedRecord || !window.lastSubmittedRecord.trackingId) return;
       const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
@@ -2721,23 +2721,20 @@
       const action = rec.type === 'addParent' ? 'addParent' : 'addTutor';
 
       try {
-        // Channel 1: POST
+        // Channel 1: POST (Rich data)
         fetch(webhookUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ 
             action: action, 
-            data: { 
-              id: rec.trackingId, 
-              trackingId: rec.trackingId
-            } 
+            data: rec
           })
         }).catch(() => {});
 
         // Channel 2: GET Fallback Beacon
         const sep = webhookUrl.includes('?') ? '&' : '?';
-        fetch(`${webhookUrl}${sep}action=${action}&id=${encodeURIComponent(rec.trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+        fetch(`${webhookUrl}${sep}action=${action}&id=${encodeURIComponent(rec.trackingId)}&name=${encodeURIComponent(rec.name||'')}&phone=${encodeURIComponent(rec.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
       } catch (err) {}
     }
 
@@ -2944,7 +2941,24 @@
         list.push(item);
         localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
 
-        // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
+        const parentPayload = {
+          id: trackingId,
+          trackingId: trackingId,
+          tgTag: tgTag,
+          name: name,
+          applicantType: applicantType,
+          phone: phone,
+          area: area,
+          studentGender: studentGender,
+          grade: grade,
+          subjects: subjs,
+          idType: pIdType,
+          status: 'Pending',
+          type: 'addParent',
+          createdAt: new Date().toISOString()
+        };
+
+        // Asynchronously register in Google Sheets Cloud Ledger
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
         if (webhookUrl && webhookUrl.startsWith('http')) {
           // Channel 1: POST
@@ -2954,17 +2968,14 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ 
               action: 'addParent', 
-              data: {
-                id: trackingId,
-                trackingId: trackingId
-              }
+              data: parentPayload
             })
           }).catch(() => {});
 
           // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
           try {
             const sep = webhookUrl.includes('?') ? '&' : '?';
-            fetch(`${webhookUrl}${sep}action=addParent&id=${encodeURIComponent(trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+            fetch(`${webhookUrl}${sep}action=addParent&id=${encodeURIComponent(trackingId)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`, { mode: 'no-cors' }).catch(() => {});
           } catch(e) {}
         }
 
@@ -3004,14 +3015,10 @@
       sendTextMessageToTelegramBot(plainText, '@AstegniParents');
 
       // Record active lead for silent background sync
-      window.lastSubmittedRecord = {
-        type: 'addParent',
-        trackingId: trackingId,
-        name: name,
-        phone: phone,
+      window.lastSubmittedRecord = Object.assign({}, parentPayload, {
         plainText: plainText,
         tgGroupUrl: 'https://t.me/AstegniParents'
-      };
+      });
 
       // 1. Save directly to Firebase Firestore Cloud (Unlimited Scale)
       saveParentToCloud({
@@ -3235,7 +3242,24 @@
         list.push(item);
         localStorage.setItem('astegni_tutor_leads', JSON.stringify(list));
 
-        // Asynchronously register ONLY the Unique ID in Google Sheets Cloud Ledger
+        const tutorPayload = {
+          id: trackingId,
+          trackingId: trackingId,
+          tgTag: tgTag,
+          name: name,
+          phone: phone,
+          university: uni,
+          year: year,
+          cgpa: cgpa,
+          gender: gender,
+          subjects: subj,
+          govtId: govtType,
+          status: 'Interview Pending',
+          type: 'addTutor',
+          createdAt: new Date().toISOString()
+        };
+
+        // Asynchronously register in Google Sheets Cloud Ledger
         const webhookUrl = localStorage.getItem('teme_astegni_db_webhook') || window.TEME_DEFAULT_WEBHOOK_URL;
         if (webhookUrl && webhookUrl.startsWith('http')) {
           // Channel 1: POST
@@ -3245,17 +3269,14 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ 
               action: 'addTutor', 
-              data: {
-                id: trackingId,
-                trackingId: trackingId
-              }
+              data: tutorPayload
             })
           }).catch(() => {});
 
           // Channel 2: GET Fallback Beacon (Guaranteed on restrictive mobile webviews)
           try {
             const sep = webhookUrl.includes('?') ? '&' : '?';
-            fetch(`${webhookUrl}${sep}action=addTutor&id=${encodeURIComponent(trackingId)}`, { mode: 'no-cors' }).catch(() => {});
+            fetch(`${webhookUrl}${sep}action=addTutor&id=${encodeURIComponent(trackingId)}&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`, { mode: 'no-cors' }).catch(() => {});
           } catch(e) {}
         }
 
@@ -3316,14 +3337,10 @@
       sendTextMessageToTelegramBot(plainText, '@AstegniTutors');
 
       // Record active lead for silent background sync
-      window.lastSubmittedRecord = {
-        type: 'addTutor',
-        trackingId: trackingId,
-        name: name,
-        phone: phone,
+      window.lastSubmittedRecord = Object.assign({}, tutorPayload, {
         plainText: plainText,
         tgGroupUrl: 'https://t.me/AstegniTutors'
-      };
+      });
 
       // 1. Save directly to Firebase Firestore Cloud (Unlimited Scale)
       saveTutorToCloud({
