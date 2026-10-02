@@ -1595,14 +1595,17 @@
           Coordinate student requests, arrange 1-day free in-home trials, and manage accredited university tutors across campuses.
         </p>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act btn-act-call">
-            ✈️ Open Astegni Ops Telegram
+          <a href="https://t.me/AstegniTutors" target="_blank" class="btn-act" style="background: rgba(2, 132, 199, 0.2); border-color: rgba(2, 132, 199, 0.4); color: #38bdf8;">
+            ✈️ @AstegniTutors
+          </a>
+          <a href="https://t.me/AstegniParents" target="_blank" class="btn-act" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #34d399;">
+            ✈️ @AstegniParents
+          </a>
+          <a href="https://t.me/+u0IdrknHN5A4ZGI0" target="_blank" class="btn-act" style="background: rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;">
+            🔒 Private Matches Hub
           </a>
           <button class="btn-act" onclick="switchView('view-parents')">
             📥 Review Parent Leads ›
-          </button>
-          <button class="btn-act owner-only-feature" onclick="syncCloudDatabase()">
-            🔄 Force Cloud Sync
           </button>
         </div>
       </div>
@@ -2191,7 +2194,7 @@
       <div class="modal-actions">
         <button type="button" class="btn-modal-sec" onclick="closeModal('modal-id-inspect')">Close Inspector</button>
         <button type="button" class="btn-act" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4);" onclick="confirmIdAuditInTelegram()">🛡️ Approve &amp; Log to Telegram Ops</button>
-        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-modal-primary" id="inspect-tg-vault-link" style="text-decoration: none; text-align: center;">✈️ Open in Ops Room ›</a>
+        <a href="https://t.me/AstegniTutors" target="_blank" class="btn-modal-primary" id="inspect-tg-vault-link" style="text-decoration: none; text-align: center;">✈️ Open in Tutors Hub ›</a>
       </div>
     </div>
   </div>
@@ -3694,7 +3697,7 @@ function rowsToJson(sheet) {
             <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
             <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
             <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
-            <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" style="text-decoration:none;" class="tag-badge" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ ${escapeHtml(pTgTag)}</a>
+            <a href="https://t.me/AstegniParents" target="_blank" class="tag-badge" style="text-decoration:none; background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in @AstegniParents">✈️ ${escapeHtml(pTgTag)}</a>
           </div>
 
           <!-- Bento Grid Details -->
@@ -3956,7 +3959,7 @@ function rowsToJson(sheet) {
             </div>
             <div class="bento-item">
               <span class="bento-label">✈️ Telegram Tag</span>
-              <div class="bento-value"><a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" style="color: #24a1de; text-decoration: none; font-weight: 750;">${escapeHtml(tTgTag)}</a></div>
+              <div class="bento-value"><a href="https://t.me/AstegniTutors" target="_blank" style="color: #24a1de; text-decoration: none; font-weight: 750;" title="Search ${escapeHtml(tTgTag)} in @AstegniTutors">${escapeHtml(tTgTag)}</a></div>
             </div>
             ${t.examNotes ? `<div class="record-notes-box">📝 <b>Evaluation Notes:</b> "${escapeHtml(t.examNotes)}"</div>` : ''}
           </div>
