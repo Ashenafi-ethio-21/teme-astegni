@@ -1728,12 +1728,17 @@
 
     <!-- VIEW 4: MATCHES & COMMISSION TRACKER -->
     <section id="view-matches" class="view-panel">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
-          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">🤝 Active Pairings & Commission</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Track tutoring contracts and 25% revenue shares.</p>
+          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">🤝 Active Pairings &amp; Commission</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Track tutoring contracts, fees, and 20-25% revenue shares.</p>
         </div>
-        <button class="btn-act btn-act-primary" onclick="openNewMatchModal()">+ New Match</button>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <a href="https://t.me/+u0IdrknHN5A4ZGI0" target="_blank" rel="noopener noreferrer" class="btn-act" style="background: rgba(36, 161, 222, 0.18); color: #38bdf8; border: 1.5px solid rgba(56, 189, 248, 0.4); text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem;">
+            ✈️ Private Matches Vault
+          </a>
+          <button class="btn-act btn-act-primary" onclick="openNewMatchModal()">+ New Match</button>
+        </div>
       </div>
 
       <div id="matches-cards-container">
@@ -2982,12 +2987,12 @@ function rowsToJson(sheet) {
                       `🎙️ Exam / Interview: ${t.examStatus === 'passed' ? 'Passed / Verified' : 'Pending'}\n` +
                       `🆔 Govt / Campus ID: Verified in Local Vault\n` +
                       `━━━━━━━━━━━━━━━━━━━━\n` +
-                      `🔍 Search "${tTrackingId}" or "${tTgTag}" in Ethio - 21 Astegni Ops to view full photo attachments.`;
+                      `🔍 Search "${tTrackingId}" or "${tTgTag}" in Ethio - 21 Astegni Tutors (@AstegniTutors) to view full photo attachments.`;
 
       copyToClipboardUniversal(dossier);
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(dossier)}`;
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/AstegniTutors')}&text=${encodeURIComponent(dossier)}`;
       window.open(shareUrl, '_blank');
-      showToast('✈️ Tutor dossier copied and opening Telegram Ops Group!');
+      showToast('✈️ Tutor dossier copied and opening @AstegniTutors!');
     }
 
     function forwardParentDossierToTelegram(phone) {
@@ -3011,12 +3016,38 @@ function rowsToJson(sheet) {
                       `📊 Status: ${p.status || 'Pending'}\n` +
                       `🆔 Household ID: Verified in Local Vault\n` +
                       `━━━━━━━━━━━━━━━━━━━━\n` +
-                      `🔍 Search "${pTrackingId}" or "${pTgTag}" in Ethio - 21 Astegni Ops to track this family.`;
+                      `🔍 Search "${pTrackingId}" or "${pTgTag}" in Ethio - 21 Astegni Parents (@AstegniParents) to track this family.`;
 
       copyToClipboardUniversal(dossier);
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(dossier)}`;
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/AstegniParents')}&text=${encodeURIComponent(dossier)}`;
       window.open(shareUrl, '_blank');
-      showToast('✈️ Parent lead dossier copied and opening Telegram Ops Group!');
+      showToast('✈️ Parent lead dossier copied and opening @AstegniParents!');
+    }
+
+    function forwardMatchDossierToTelegram(matchId) {
+      const matches = getMatches();
+      const m = matches.find(item => item.id === matchId);
+      if (!m) return;
+
+      const dossier = `🤝 CONFIRMED TUTOR-PARENT MATCH (Teme Astegni)\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `🏷️ Deal ID: ${m.id}\n` +
+                      `👨‍👩‍👧 Parent: ${m.parentName} (${m.parentPhone})\n` +
+                      `   • Tracking ID: ${m.parentId || 'N/A'}\n` +
+                      `🎓 Tutor: ${m.tutorName} (${m.tutorPhone})\n` +
+                      `   • Tracking ID: ${m.tutorId || 'N/A'}\n` +
+                      `💵 Agreed Monthly Fee: ${Number(m.monthlyFee || 0).toLocaleString()} ETB\n` +
+                      `💼 Ethio-21 Commission (${m.rate || 25}%): ${Number(m.commission || 0).toLocaleString()} ETB\n` +
+                      `📊 Status: ${m.status || '1-Day Trial Pending'}\n` +
+                      `💳 Telebirr Proof: ${m.paymentProof ? 'Verified ✓' : 'Pending Screenshot'}\n` +
+                      `📅 Date: ${new Date(m.date).toLocaleDateString()}\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `🔒 PRIVATE FOUNDER VAULT • Ethio-21 Operations`;
+
+      copyToClipboardUniversal(dossier);
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+u0IdrknHN5A4ZGI0')}&text=${encodeURIComponent(dossier)}`;
+      window.open(shareUrl, '_blank');
+      showToast('✈️ Match contract dossier copied and opening Private Operations Group!');
     }
 
     // ==========================================
@@ -3979,6 +4010,7 @@ function rowsToJson(sheet) {
               <option value="Commission Paid" ${m.status === 'Commission Paid' ? 'selected' : ''}>💰 Commission Paid (ኮሚሽን ተከፍሏል)</option>
             </select>
             <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Screenshot Verified ✓' : 'Verify Screenshot'}</button>
+            <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardMatchDossierToTelegram('${m.id}')" title="Send match contract to Private Matches Ops Group">✈️ Private Ops</button>
             ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteMatch('${m.id}')">🗑️ Remove</button>` : ''}
           </div>
         `;
@@ -4536,7 +4568,7 @@ function rowsToJson(sheet) {
         `⏳ <b>Initial Status:</b> 1-Day Trial Pending\n` +
         `👮 <b>Matchmaker Admin:</b> ${escapeHtml(adminName)}\n` +
         `📅 <b>Timestamp:</b> ${new Date().toLocaleString()}\n\n` +
-        `🔍 <i>Trace either ${pTgTag} or ${tTgTag} in Telegram Ops</i>`;
+        `🔍 <i>Private Matches Group: https://t.me/+u0IdrknHN5A4ZGI0</i>`;
 
       dispatchTelegramOpsLog(msg);
 
@@ -4560,7 +4592,9 @@ function rowsToJson(sheet) {
         }).catch(e => console.warn(e));
       }
 
-      alert(`🤝 Match successfully created!\n\nParent: ${p.name} (${pTrackingId})\nTutor: ${t.name} (${tTrackingId})\n\nDispatched to Telegram Ops!`);
+      if (confirm(`🤝 Match successfully created!\n\nParent: ${p.name} (${pTrackingId})\nTutor: ${t.name} (${tTrackingId})\nMonthly Fee: ${fee.toLocaleString()} ETB | Commission: ${commission.toLocaleString()} ETB\n\nWould you like to open the Private Matches Group now?`)) {
+        window.open('https://t.me/+u0IdrknHN5A4ZGI0', '_blank');
+      }
     }
 
     // CLOUD DATABASE
