@@ -1862,16 +1862,28 @@
           </div>
         </div>
 
-        <!-- Telegram Ops Group -->
-        <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="hotline-item" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08); margin-top: 1.2rem;">
+        <!-- Telegram Tutors Group -->
+        <a href="https://t.me/AstegniTutors" target="_blank" class="hotline-item" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); margin-top: 1.2rem;">
           <div style="display: flex; align-items: center; gap: 0.85rem;">
-            <div style="font-size: 1.8rem;">✈️</div>
+            <div style="font-size: 1.8rem;">🎓</div>
             <div>
-              <div style="font-size: 0.98rem; font-weight: 800; color: #38bdf8;">Ethio - 21 Astegni Ops</div>
-              <div style="font-size: 0.8rem; color: #94a3b8;" id="i18n-ops-desc">Live Dispatch & ID Lookup Operations Room</div>
+              <div style="font-size: 0.98rem; font-weight: 800; color: #34d399;">@AstegniTutors</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">University Tutors Official Community Hub</div>
             </div>
           </div>
-          <span class="hotline-btn-pill" style="background: #0284c7;" id="i18n-ops-btn">Join Ops</span>
+          <span class="hotline-btn-pill" style="background: #059669;">Join Tutors</span>
+        </a>
+
+        <!-- Telegram Parents Group -->
+        <a href="https://t.me/AstegniParents" target="_blank" class="hotline-item" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08);">
+          <div style="display: flex; align-items: center; gap: 0.85rem;">
+            <div style="font-size: 1.8rem;">👨‍👩‍👧</div>
+            <div>
+              <div style="font-size: 0.98rem; font-weight: 800; color: #38bdf8;">@AstegniParents</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">Parents &amp; Students Tutoring Request Hub</div>
+            </div>
+          </div>
+          <span class="hotline-btn-pill" style="background: #0284c7;">Join Parents</span>
         </a>
 
         <!-- Official Telegram Channel -->
@@ -1880,7 +1892,7 @@
             <div style="font-size: 1.8rem;">📢</div>
             <div>
               <div style="font-size: 0.98rem; font-weight: 800;">@teme_astegni</div>
-              <div style="font-size: 0.8rem; color: #94a3b8;" id="i18n-ch-desc">Official Announcements & Updates Channel</div>
+              <div style="font-size: 0.8rem; color: #94a3b8;" id="i18n-ch-desc">Official Announcements &amp; Updates Channel</div>
             </div>
           </div>
           <span class="hotline-btn-pill" style="background: rgba(255, 255, 255, 0.12);" id="i18n-ch-btn">View</span>
@@ -2922,7 +2934,7 @@
                         `📖 Subjects: ${subjs}\n` +
                         `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
-                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
+                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Parents (@AstegniParents) to find this record instantly.`;
       sendTextMessageToTelegramBot(plainText);
 
       // Record active lead for 1-Click Push to Google Sheets and Single Dispatch
@@ -2931,23 +2943,29 @@
         trackingId: trackingId,
         name: name,
         phone: phone,
-        plainText: plainText
+        plainText: plainText,
+        tgGroupUrl: 'https://t.me/AstegniParents'
       };
 
       // Automatically execute silent background push to Google Sheets
       pushCurrentApplicationToSheetSilent();
 
-      // Configure THE ONE AND ONLY ACTION BUTTON to forward applicant & all info to Ethio - 21 Astegni Ops
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(plainText)}`;
+      // Configure THE ONE AND ONLY ACTION BUTTON to forward applicant & all info to Ethio - 21 Astegni Parents
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/AstegniParents')}&text=${encodeURIComponent(plainText)}`;
       const btnSingle = document.getElementById('btn-single-submit');
       if (btnSingle) {
         btnSingle.href = shareUrl;
       }
+      const btnDirectGroup = document.getElementById('btn-direct-group-link');
+      if (btnDirectGroup) {
+        btnDirectGroup.href = 'https://t.me/AstegniParents';
+        btnDirectGroup.innerText = '✈️ Direct Group: t.me/AstegniParents';
+      }
       const btnSingleText = document.getElementById('btn-single-submit-text');
       if (btnSingleText) {
         btnSingleText.innerText = (currentLang === 'am')
-          ? '🚀 ማመልከቻዬን ወደ "Ethio - 21 Astegni Ops" ላክ ›'
-          : (currentLang === 'or' ? '🚀 Iyyannoo koo gara "Ethio - 21 Astegni Ops" ergi ›' : '🚀 Send to "Ethio - 21 Astegni Ops" ›');
+          ? '🚀 ማመልከቻዬን ወደ "Ethio - 21 Astegni Parents" ላክ ›'
+          : (currentLang === 'or' ? '🚀 Iyyannoo koo gara "Ethio - 21 Astegni Parents" ergi ›' : '🚀 Send to "Ethio - 21 Astegni Parents" ›');
       }
 
       const modalTitle = (currentLang === 'am') 
@@ -2955,10 +2973,10 @@
         : (currentLang === 'or' ? 'Gaaffiin Keessan Galmaa\'eera!' : 'Registration Successfully Submitted!');
       
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ ጥያቄዎ በሲስተማችን ውስጥ ተመዝግቧል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>መለያ ቁጥርዎ በጀርባ ወደ Google Sheet Cloud Ledger ተመዝግቧል። ከታች ያለውን አንድ ቁልፍ በመጫን ሙሉ ማመልከቻዎን በቀጥታ ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩ።`
+        ? `ውድ <b>${name}</b>፣ ጥያቄዎ በሲስተማችን ውስጥ ተመዝግቧል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>መለያ ቁጥርዎ በጀርባ ወደ Google Sheet Cloud Ledger ተመዝግቧል። ከታች ያለውን አንድ ቁልፍ በመጫን ሙሉ ማመልከቻዎን በቀጥታ ወደ <b>Ethio - 21 Astegni Parents (@AstegniParents)</b> ይላኩ።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan galmaa'eera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Lakkoofsi eenyummaa keessan duubatti Google Sheet irratti galmaa'eera. Odeeffannoo guutuu gara <b>Ethio - 21 Astegni Ops</b> erguuf qabduu armaan gadii cuqqaalaa.`
-          : `Dear <b>${name}</b>, your request has been registered.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Your ID has been synced to Google Sheet in the background. Tap the single button below to dispatch your application and credentials directly to <b>Ethio - 21 Astegni Ops</b>.`);
+          ? `Kabajamoo <b>${name}</b>, gaaffiin keessan galmaa'eera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Lakkoofsi eenyummaa keessan duubatti Google Sheet irratti galmaa'eera. Odeeffannoo guutuu gara <b>Ethio - 21 Astegni Parents (@AstegniParents)</b> erguuf qabduu armaan gadii cuqqaalaa.`
+          : `Dear <b>${name}</b>, your request has been registered.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.35); border-radius: 8px; color: #38bdf8; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Your ID has been synced to Google Sheet in the background. Tap the single button below to dispatch your application and credentials directly to <b>Ethio - 21 Astegni Parents (@AstegniParents)</b>.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
@@ -3214,7 +3232,7 @@
                         `📄 Grade Report: ${gradeFile ? 'Attached' : 'Not attached'}\n` +
                         `🆔 Govt ID (Front & Back): Attached (${govtType} • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
-                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Ops to find this record instantly.`;
+                        `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Tutors (@AstegniTutors) to find this record instantly.`;
       sendTextMessageToTelegramBot(plainText);
 
       // Record active lead for 1-Click Push to Google Sheets and Single Dispatch
@@ -3223,23 +3241,29 @@
         trackingId: trackingId,
         name: name,
         phone: phone,
-        plainText: plainText
+        plainText: plainText,
+        tgGroupUrl: 'https://t.me/AstegniTutors'
       };
 
       // Automatically execute silent background push to Google Sheets
       pushCurrentApplicationToSheetSilent();
 
-      // Configure THE ONE AND ONLY ACTION BUTTON to forward applicant & all info to Ethio - 21 Astegni Ops
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(plainText)}`;
+      // Configure THE ONE AND ONLY ACTION BUTTON to forward applicant & all info to Ethio - 21 Astegni Tutors
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/AstegniTutors')}&text=${encodeURIComponent(plainText)}`;
       const btnSingle = document.getElementById('btn-single-submit');
       if (btnSingle) {
         btnSingle.href = shareUrl;
       }
+      const btnDirectGroup = document.getElementById('btn-direct-group-link');
+      if (btnDirectGroup) {
+        btnDirectGroup.href = 'https://t.me/AstegniTutors';
+        btnDirectGroup.innerText = '✈️ Direct Group: t.me/AstegniTutors';
+      }
       const btnSingleText = document.getElementById('btn-single-submit-text');
       if (btnSingleText) {
         btnSingleText.innerText = (currentLang === 'am')
-          ? '🚀 ማመልከቻዬን ወደ "Ethio - 21 Astegni Ops" ላክ ›'
-          : (currentLang === 'or' ? '🚀 Iyyannoo koo gara "Ethio - 21 Astegni Ops" ergi ›' : '🚀 Send to "Ethio - 21 Astegni Ops" ›');
+          ? '🚀 ማመልከቻዬን ወደ "Ethio - 21 Astegni Tutors" ላክ ›'
+          : (currentLang === 'or' ? '🚀 Iyyannoo koo gara "Ethio - 21 Astegni Tutors" ergi ›' : '🚀 Send to "Ethio - 21 Astegni Tutors" ›');
       }
 
       const modalTitle = (currentLang === 'am') 
@@ -3247,10 +3271,10 @@
         : (currentLang === 'or' ? 'Iyyannoon Barsiisummaa Galmaa\'eera!' : 'Application Successfully Submitted & Registered!');
       
       const modalDesc = (currentLang === 'am')
-        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ በሲስተማችን ውስጥ ተመዝግቧል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>መለያ ቁጥርዎ በጀርባ ወደ Google Sheet Cloud Ledger ተመዝግቧል። ከታች ያለውን አንድ ቁልፍ በመጫን ሙሉ ማመልከቻዎንና የትምህርት ማስረጃዎችዎን በቀጥታ ወደ <b>Ethio - 21 Astegni Ops</b> ይላኩ።`
+        ? `ውድ <b>${name}</b>፣ የ <b>${tierEmoji} ${tierName} Tier</b> ማመልከቻዎ በሲስተማችን ውስጥ ተመዝግቧል።<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ መለያ ቁጥር (Tracking ID): ${trackingId} (${tgTag})</span><br><br>መለያ ቁጥርዎ በጀርባ ወደ Google Sheet Cloud Ledger ተመዝግቧል። ከታች ያለውን አንድ ቁልፍ በመጫን ሙሉ ማመልከቻዎንና የትምህርት ማስረጃዎችዎን በቀጥታ ወደ <b>Ethio - 21 Astegni Tutors (@AstegniTutors)</b> ይላኩ።`
         : (currentLang === 'or'
-          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) galmaa'eera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Lakkoofsi eenyummaa keessan duubatti Google Sheet irratti galmaa'eera. Odeeffannoo guutuu gara <b>Ethio - 21 Astegni Ops</b> erguuf qabduu armaan gadii cuqqaalaa.`
-          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) has been registered.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Your ID has been synced to Google Sheet in the background. Tap the single button below to dispatch your application and credentials directly to <b>Ethio - 21 Astegni Ops</b>.`);
+          ? `Kabajamoo <b>${name}</b>, iyyannoon keessan (Sadarkaa <b>${tierEmoji} ${tierName}</b>) galmaa'eera.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Lakkoofsa Eenyummaa: ${trackingId} (${tgTag})</span><br><br>Lakkoofsi eenyummaa keessan duubatti Google Sheet irratti galmaa'eera. Odeeffannoo guutuu gara <b>Ethio - 21 Astegni Tutors (@AstegniTutors)</b> erguuf qabduu armaan gadii cuqqaalaa.`
+          : `Dear <b>${name}</b>, your application (<b>${tierEmoji} ${tierName} Tier</b>) has been registered.<br><br><span style="display:inline-block; padding: 0.35rem 0.65rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35); border-radius: 8px; color: #10b981; font-weight: 800;">🏷️ Tracking ID: ${trackingId} (${tgTag})</span><br><br>Your ID has been synced to Google Sheet in the background. Tap the single button below to dispatch your application and credentials directly to <b>Ethio - 21 Astegni Tutors (@AstegniTutors)</b>.`);
 
       document.getElementById('modal-title').innerText = modalTitle;
       document.getElementById('modal-desc').innerHTML = modalDesc;
