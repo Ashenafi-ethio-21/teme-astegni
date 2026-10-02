@@ -1396,9 +1396,121 @@
             <input type="tel" id="p_phone" required>
           </div>
 
-          <div class="field">
-            <label id="i18n-f-parea">Residential Neighborhood &amp; City (Near Campus) *</label>
-            <input type="text" id="p_area" required>
+          <!-- Residential Neighborhood (Near Campus) with University & Campus Cascading Selection -->
+          <div style="background: rgba(56, 189, 248, 0.05); border: 1.5px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.65rem;">
+              <span style="font-size: 1.15rem;">📍</span>
+              <label id="i18n-f-parea" style="font-size: 0.95rem; font-weight: 850; color: #38bdf8; margin: 0;">Residential Neighborhood (Near Campus) *</label>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="field" style="margin-bottom: 0;">
+                <label id="i18n-f-puni" style="font-size: 0.8rem; color: #cbd5e1;">🏛️ Nearest University (የቅርብ ዩኒቨርሲቲ) *</label>
+                <select id="p_uni_select" required onchange="handleParentUniversityChange()">
+                  <option value="" disabled selected>-- ዩኒቨርሲቲ ይምረጡ (Select University) --</option>
+                  <option value="Addis Ababa University (AAU)">Addis Ababa University (AAU)</option>
+                  <option value="Addis Ababa Science & Technology University (AASTU)">Addis Ababa Science & Technology University (AASTU)</option>
+                  <option value="Adama Science & Technology University (ASTU)">Adama Science & Technology University (ASTU)</option>
+                  <option value="Jimma University (JU)">Jimma University (JU)</option>
+                  <option value="Hawassa University (HU)">Hawassa University (HU)</option>
+                  <option value="Bahir Dar University (BDU)">Bahir Dar University (BDU)</option>
+                  <option value="University of Gondar (UoG)">University of Gondar (UoG)</option>
+                  <option value="Haramaya University (HU)">Haramaya University (HU)</option>
+                  <option value="Arba Minch University (AMU)">Arba Minch University (AMU)</option>
+                  <option value="Mekelle University (MU)">Mekelle University (MU)</option>
+                  <option value="Wollo University (WU)">Wollo University (WU)</option>
+                  <option value="Debre Birhan University (DBU)">Debre Birhan University (DBU)</option>
+                  <option value="Debre Markos University (DMU)">Debre Markos University (DMU)</option>
+                  <option value="Debre Tabor University (DTU)">Debre Tabor University (DTU)</option>
+                  <option value="Dire Dawa University (DDU)">Dire Dawa University (DDU)</option>
+                  <option value="Wollega University (WLU)">Wollega University (WLU)</option>
+                  <option value="Ambo University (AU)">Ambo University (AU)</option>
+                  <option value="Dilla University (DU)">Dilla University (DU)</option>
+                  <option value="Arsi University (Asella)">Arsi University (Asella)</option>
+                  <option value="Madda Walabu University (MWU)">Madda Walabu University (MWU)</option>
+                  <option value="Mattu University (MeU)">Mattu University (MeU)</option>
+                  <option value="Woldia University (WDU)">Woldia University (WDU)</option>
+                  <option value="Axum University (Aksum University - AkU)">Axum University (Aksum University - AkU)</option>
+                  <option value="Adigrat University (AGU)">Adigrat University (AGU)</option>
+                  <option value="Kotebe University of Education (KUE)">Kotebe University of Education (KUE)</option>
+                  <option value="Jigjiga University (JJU)">Jigjiga University (JJU)</option>
+                  <option value="Semera University (SU)">Semera University (SU)</option>
+                  <option value="Assosa University (ASU)">Assosa University (ASU)</option>
+                  <option value="Gambella University (GMU)">Gambella University (GMU)</option>
+                  <option value="Mizan-Tepi University (MTU)">Mizan-Tepi University (MTU)</option>
+                  <option value="Wachemo University (WCU)">Wachemo University (WCU)</option>
+                  <option value="Wolkite University (WKU)">Wolkite University (WKU)</option>
+                  <option value="Bule Hora University (BHU)">Bule Hora University (BHU)</option>
+                  <option value="Oda Bultum University (OBU)">Oda Bultum University (OBU)</option>
+                  <option value="Kebri Dehar University (KDU)">Kebri Dehar University (KDU)</option>
+                  <option value="Raya University (RU)">Raya University (RU)</option>
+                  <option value="Debark University (DKU)">Debark University (DKU)</option>
+                  <option value="Injibara University (IU)">Injibara University (IU)</option>
+                  <option value="Jinka University (JKU)">Jinka University (JKU)</option>
+                  <option value="Bonga University (BU)">Bonga University (BU)</option>
+                  <option value="Werabe University (WRU)">Werabe University (WRU)</option>
+                  <option value="Selale University (SLU)">Selale University (SLU)</option>
+                  <option value="Dembi Dolo University (DeDU)">Dembi Dolo University (DeDU)</option>
+                  <option value="Borana University (BU)">Borana University (BU)</option>
+                  <option value="Ethiopian Civil Service University (ECSU)">Ethiopian Civil Service University (ECSU)</option>
+                  <option value="FDRE Defense University">FDRE Defense University</option>
+                  <option value="Ethiopian Police University (EPU)">Ethiopian Police University (EPU)</option>
+                  <option value="Ethiopian Aviation University">Ethiopian Aviation University</option>
+                  <option value="Federal Technical & Vocational Training Institute (FTVETI)">Federal Technical & Vocational Training Institute (FTVETI)</option>
+                  <option value="Oromia State University (Batu)">Oromia State University (Batu)</option>
+                  <option value="St. Mary's University">St. Mary's University</option>
+                  <option value="Unity University">Unity University</option>
+                  <option value="Rift Valley University (RVU)">Rift Valley University (RVU)</option>
+                  <option value="Admas University">Admas University</option>
+                  <option value="HilCoE School of Computer Science & Technology">HilCoE School of Computer Science & Technology</option>
+                  <option value="Alpha University College">Alpha University College</option>
+                  <option value="CPU Business & Information Technology College">CPU Business & Information Technology College</option>
+                  <option value="Hope University College">Hope University College</option>
+                  <option value="Yardstick International College">Yardstick International College</option>
+                  <option value="MicroLink Information Technology College">MicroLink Information Technology College</option>
+                  <option value="Queen's College">Queen's College</option>
+                  <option value="Leadstar University College">Leadstar University College</option>
+                  <option value="Gage College">Gage College</option>
+                  <option value="Kiamed Health Sciences College">Kiamed Health Sciences College</option>
+                  <option value="New Generation University College">New Generation University College</option>
+                  <option value="Dynamic University College">Dynamic University College</option>
+                  <option value="Universal Medical College">Universal Medical College</option>
+                  <option value="Bethel Medical College">Bethel Medical College</option>
+                  <option value="Other Ethiopian University / College">Other Ethiopian University / College</option>
+                </select>
+              </div>
+
+              <div class="field" style="margin-bottom: 0;">
+                <label id="i18n-f-pcampus" style="font-size: 0.8rem; color: #cbd5e1;">🏫 Nearest Campus (የቅርብ ካምፓስ) *</label>
+                <select id="p_campus_select" required onchange="handleParentCampusChange()" disabled>
+                  <option value="" disabled selected>-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Custom "Other" fields for Parent if "Other" is chosen -->
+            <div id="p_custom_uni_box" style="display: none; margin-bottom: 0.75rem;">
+              <div class="field" style="margin-bottom: 0;">
+                <label style="color: #38bdf8; font-weight: 700; font-size: 0.8rem;">✍️ የዩኒቨርሲቲ / የኮሌጅ ስም ያስገቡ (Specify University / College) *</label>
+                <input type="text" id="p_custom_uni" placeholder="e.g. Hope University College, MicroLink, etc." oninput="updateCombinedParentArea()">
+              </div>
+            </div>
+
+            <div id="p_custom_campus_box" style="display: none; margin-bottom: 0.75rem;">
+              <div class="field" style="margin-bottom: 0;">
+                <label style="color: #38bdf8; font-weight: 700; font-size: 0.8rem;">✍️ የካምፓስ ስም ያስገቡ (Specify Campus Name) *</label>
+                <input type="text" id="p_custom_campus" placeholder="e.g. Bole Campus, Saris Campus, etc." oninput="updateCombinedParentArea()">
+              </div>
+            </div>
+
+            <!-- Specific Local Neighborhood (e.g. Bole, Gerji, Arat Kilo, Saris) -->
+            <div class="field" style="margin-bottom: 0; margin-top: 0.5rem;">
+              <label id="i18n-f-pneighborhood" style="font-size: 0.8rem; color: #94a3b8;">Specific Neighborhood / Kebele / Area (የተለየ ሰፈር / መንደር) (Optional)</label>
+              <input type="text" id="p_neighborhood" placeholder="e.g. Bole Medhanialem, Gerji, 4 Kilo, Kazanchis, Posta..." oninput="updateCombinedParentArea()">
+            </div>
+
+            <!-- Hidden input maintaining 100% backward compatibility for p_area -->
+            <input type="hidden" id="p_area" required>
           </div>
 
           <!-- STUDENT GENDER SECTION (The student who will be tutored) -->
@@ -1669,6 +1781,75 @@
               <label id="i18n-f-tuni">🏛️ ዩኒቨርሲቲ (University) *</label>
               <select id="t_uni_select" required onchange="handleUniversityChange()">
                 <option value="" disabled selected>-- ዩኒቨርሲቲ ይምረጡ (Select University) --</option>
+                <option value="Addis Ababa University (AAU)">Addis Ababa University (AAU)</option>
+                <option value="Addis Ababa Science & Technology University (AASTU)">Addis Ababa Science & Technology University (AASTU)</option>
+                <option value="Adama Science & Technology University (ASTU)">Adama Science & Technology University (ASTU)</option>
+                <option value="Jimma University (JU)">Jimma University (JU)</option>
+                <option value="Hawassa University (HU)">Hawassa University (HU)</option>
+                <option value="Bahir Dar University (BDU)">Bahir Dar University (BDU)</option>
+                <option value="University of Gondar (UoG)">University of Gondar (UoG)</option>
+                <option value="Haramaya University (HU)">Haramaya University (HU)</option>
+                <option value="Arba Minch University (AMU)">Arba Minch University (AMU)</option>
+                <option value="Mekelle University (MU)">Mekelle University (MU)</option>
+                <option value="Wollo University (WU)">Wollo University (WU)</option>
+                <option value="Debre Birhan University (DBU)">Debre Birhan University (DBU)</option>
+                <option value="Debre Markos University (DMU)">Debre Markos University (DMU)</option>
+                <option value="Debre Tabor University (DTU)">Debre Tabor University (DTU)</option>
+                <option value="Dire Dawa University (DDU)">Dire Dawa University (DDU)</option>
+                <option value="Wollega University (WLU)">Wollega University (WLU)</option>
+                <option value="Ambo University (AU)">Ambo University (AU)</option>
+                <option value="Dilla University (DU)">Dilla University (DU)</option>
+                <option value="Arsi University (Asella)">Arsi University (Asella)</option>
+                <option value="Madda Walabu University (MWU)">Madda Walabu University (MWU)</option>
+                <option value="Mattu University (MeU)">Mattu University (MeU)</option>
+                <option value="Woldia University (WDU)">Woldia University (WDU)</option>
+                <option value="Axum University (Aksum University - AkU)">Axum University (Aksum University - AkU)</option>
+                <option value="Adigrat University (AGU)">Adigrat University (AGU)</option>
+                <option value="Kotebe University of Education (KUE)">Kotebe University of Education (KUE)</option>
+                <option value="Jigjiga University (JJU)">Jigjiga University (JJU)</option>
+                <option value="Semera University (SU)">Semera University (SU)</option>
+                <option value="Assosa University (ASU)">Assosa University (ASU)</option>
+                <option value="Gambella University (GMU)">Gambella University (GMU)</option>
+                <option value="Mizan-Tepi University (MTU)">Mizan-Tepi University (MTU)</option>
+                <option value="Wachemo University (WCU)">Wachemo University (WCU)</option>
+                <option value="Wolkite University (WKU)">Wolkite University (WKU)</option>
+                <option value="Bule Hora University (BHU)">Bule Hora University (BHU)</option>
+                <option value="Oda Bultum University (OBU)">Oda Bultum University (OBU)</option>
+                <option value="Kebri Dehar University (KDU)">Kebri Dehar University (KDU)</option>
+                <option value="Raya University (RU)">Raya University (RU)</option>
+                <option value="Debark University (DKU)">Debark University (DKU)</option>
+                <option value="Injibara University (IU)">Injibara University (IU)</option>
+                <option value="Jinka University (JKU)">Jinka University (JKU)</option>
+                <option value="Bonga University (BU)">Bonga University (BU)</option>
+                <option value="Werabe University (WRU)">Werabe University (WRU)</option>
+                <option value="Selale University (SLU)">Selale University (SLU)</option>
+                <option value="Dembi Dolo University (DeDU)">Dembi Dolo University (DeDU)</option>
+                <option value="Borana University (BU)">Borana University (BU)</option>
+                <option value="Ethiopian Civil Service University (ECSU)">Ethiopian Civil Service University (ECSU)</option>
+                <option value="FDRE Defense University">FDRE Defense University</option>
+                <option value="Ethiopian Police University (EPU)">Ethiopian Police University (EPU)</option>
+                <option value="Ethiopian Aviation University">Ethiopian Aviation University</option>
+                <option value="Federal Technical & Vocational Training Institute (FTVETI)">Federal Technical & Vocational Training Institute (FTVETI)</option>
+                <option value="Oromia State University (Batu)">Oromia State University (Batu)</option>
+                <option value="St. Mary's University">St. Mary's University</option>
+                <option value="Unity University">Unity University</option>
+                <option value="Rift Valley University (RVU)">Rift Valley University (RVU)</option>
+                <option value="Admas University">Admas University</option>
+                <option value="HilCoE School of Computer Science & Technology">HilCoE School of Computer Science & Technology</option>
+                <option value="Alpha University College">Alpha University College</option>
+                <option value="CPU Business & Information Technology College">CPU Business & Information Technology College</option>
+                <option value="Hope University College">Hope University College</option>
+                <option value="Yardstick International College">Yardstick International College</option>
+                <option value="MicroLink Information Technology College">MicroLink Information Technology College</option>
+                <option value="Queen's College">Queen's College</option>
+                <option value="Leadstar University College">Leadstar University College</option>
+                <option value="Gage College">Gage College</option>
+                <option value="Kiamed Health Sciences College">Kiamed Health Sciences College</option>
+                <option value="New Generation University College">New Generation University College</option>
+                <option value="Dynamic University College">Dynamic University College</option>
+                <option value="Universal Medical College">Universal Medical College</option>
+                <option value="Bethel Medical College">Bethel Medical College</option>
+                <option value="Other Ethiopian University / College">Other Ethiopian University / College</option>
               </select>
             </div>
             <div class="field">
@@ -2275,6 +2456,11 @@
       });
       if (typeof updateLiveTrackingBanners === 'function') {
         updateLiveTrackingBanners();
+      }
+      if (screenId === 'screen-tutor' || screenId === 'screen-parent') {
+        if (typeof initUniversityDropdown === 'function') {
+          initUniversityDropdown();
+        }
       }
     }
 
@@ -3189,26 +3375,59 @@
     ];
 
     function initUniversityDropdown(preselectedUni, preselectedCampus) {
-      const uniSelect = document.getElementById('t_uni_select');
-      const campusSelect = document.getElementById('t_campus_select');
-      if (!uniSelect || !campusSelect) return;
+      const tUniSelect = document.getElementById('t_uni_select');
+      const tCampusSelect = document.getElementById('t_campus_select');
+      const pUniSelect = document.getElementById('p_uni_select');
+      const pCampusSelect = document.getElementById('p_campus_select');
 
-      const promptAm = '-- ዩኒቨርሲቲ ይምረጡ (Select University) --';
-      uniSelect.innerHTML = `<option value="" disabled selected>${promptAm}</option>`;
-      ETHIOPIAN_UNIVERSITIES.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u.name;
-        opt.textContent = u.name;
-        uniSelect.appendChild(opt);
-      });
+      const promptUni = (currentLang === 'en') ? '-- Select University --' : (currentLang === 'or' ? '-- Yuunivarsitii Filadhaa --' : '-- ዩኒቨርሲቲ ይምረጡ (Select University) --');
+      const promptCampus = (currentLang === 'en') ? '-- Select University First --' : (currentLang === 'or' ? '-- Dura Yuunivarsitii Filadhaa --' : '-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --');
 
-      campusSelect.disabled = true;
-      campusSelect.innerHTML = '<option value="" disabled selected>-- አስቀድመው ዩኒቨርሲቲ ይምረጡ --</option>';
+      // 1. Setup Tutor Select
+      if (tUniSelect) {
+        if (tUniSelect.options.length <= 1) {
+          tUniSelect.innerHTML = `<option value="" disabled selected>${promptUni}</option>`;
+          ETHIOPIAN_UNIVERSITIES.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u.name;
+            opt.textContent = u.name;
+            tUniSelect.appendChild(opt);
+          });
+        }
+        if (tCampusSelect && !tUniSelect.value) {
+          tCampusSelect.disabled = true;
+          tCampusSelect.innerHTML = `<option value="" disabled selected>${promptCampus}</option>`;
+        }
+      }
 
-      if (preselectedUni) {
-        uniSelect.value = preselectedUni;
+      // 2. Setup Parent Select
+      if (pUniSelect) {
+        if (pUniSelect.options.length <= 1) {
+          pUniSelect.innerHTML = `<option value="" disabled selected>${promptUni}</option>`;
+          ETHIOPIAN_UNIVERSITIES.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u.name;
+            opt.textContent = u.name;
+            pUniSelect.appendChild(opt);
+          });
+        }
+        if (pCampusSelect && !pUniSelect.value) {
+          pCampusSelect.disabled = true;
+          pCampusSelect.innerHTML = `<option value="" disabled selected>${promptCampus}</option>`;
+        }
+      }
+
+      if (preselectedUni && tUniSelect) {
+        tUniSelect.value = preselectedUni;
         handleUniversityChange(preselectedCampus);
       }
+    }
+
+    // Call immediately upon script evaluation
+    try {
+      initUniversityDropdown();
+    } catch (e) {
+      console.warn('Immediate initUniversityDropdown warning:', e);
     }
 
     function handleUniversityChange(preselectedCampus) {
@@ -3232,7 +3451,8 @@
       }
 
       const uniObj = ETHIOPIAN_UNIVERSITIES.find(u => u.name === selectedUni);
-      campusSelect.innerHTML = '<option value="" disabled selected>-- ካምፓስ ይምረጡ (Select Campus) --</option>';
+      const campusPrompt = (currentLang === 'en') ? '-- Select Campus --' : (currentLang === 'or' ? '-- Kaampaasii Filadhaa --' : '-- ካምፓስ ይምረጡ (Select Campus) --');
+      campusSelect.innerHTML = `<option value="" disabled selected>${campusPrompt}</option>`;
 
       if (uniObj && uniObj.campuses && uniObj.campuses.length > 0) {
         campusSelect.disabled = false;
@@ -3252,13 +3472,121 @@
       } else {
         campusSelect.disabled = false;
         campusSelect.innerHTML = `
-          <option value="" disabled selected>-- ካምፓስ ይምረጡ (Select Campus) --</option>
+          <option value="" disabled selected>${campusPrompt}</option>
           <option value="Main Campus">Main Campus</option>
           <option value="Other Campus / Specify">Other Campus / Specify</option>
         `;
       }
 
       updateCombinedUni();
+    }
+
+    // PARENT Cascading University & Campus Handlers
+    function handleParentUniversityChange(preselectedCampus) {
+      const uniSelect = document.getElementById('p_uni_select');
+      const campusSelect = document.getElementById('p_campus_select');
+      const customUniBox = document.getElementById('p_custom_uni_box');
+      const customCampusBox = document.getElementById('p_custom_campus_box');
+      if (!uniSelect || !campusSelect) return;
+
+      const selectedUni = uniSelect.value;
+      if (selectedUni === 'Other Ethiopian University / College') {
+        if (customUniBox) customUniBox.style.display = 'block';
+        const inp = document.getElementById('p_custom_uni');
+        if (inp) inp.focus();
+      } else {
+        if (customUniBox) {
+          customUniBox.style.display = 'none';
+          const inp = document.getElementById('p_custom_uni');
+          if (inp) inp.value = '';
+        }
+      }
+
+      const uniObj = ETHIOPIAN_UNIVERSITIES.find(u => u.name === selectedUni);
+      const campusPrompt = (currentLang === 'en') ? '-- Select Campus --' : (currentLang === 'or' ? '-- Kaampaasii Filadhaa --' : '-- ካምፓስ ይምረጡ (Select Campus) --');
+      campusSelect.innerHTML = `<option value="" disabled selected>${campusPrompt}</option>`;
+
+      if (uniObj && uniObj.campuses && uniObj.campuses.length > 0) {
+        campusSelect.disabled = false;
+        uniObj.campuses.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          campusSelect.appendChild(opt);
+        });
+
+        if (preselectedCampus) {
+          campusSelect.value = preselectedCampus;
+          handleParentCampusChange();
+        } else {
+          campusSelect.focus();
+        }
+      } else {
+        campusSelect.disabled = false;
+        campusSelect.innerHTML = `
+          <option value="" disabled selected>${campusPrompt}</option>
+          <option value="Main Campus">Main Campus</option>
+          <option value="Other Campus / Specify">Other Campus / Specify</option>
+        `;
+      }
+
+      updateCombinedParentArea();
+    }
+
+    function handleParentCampusChange() {
+      const campusSelect = document.getElementById('p_campus_select');
+      const customCampusBox = document.getElementById('p_custom_campus_box');
+      if (!campusSelect) return;
+
+      if (campusSelect.value === 'Other Campus / Specify') {
+        if (customCampusBox) customCampusBox.style.display = 'block';
+        const inp = document.getElementById('p_custom_campus');
+        if (inp) inp.focus();
+      } else {
+        if (customCampusBox) {
+          customCampusBox.style.display = 'none';
+          const inp = document.getElementById('p_custom_campus');
+          if (inp) inp.value = '';
+        }
+      }
+
+      updateCombinedParentArea();
+    }
+
+    function updateCombinedParentArea() {
+      const uniSelect = document.getElementById('p_uni_select');
+      const campusSelect = document.getElementById('p_campus_select');
+      const customUni = document.getElementById('p_custom_uni')?.value.trim() || '';
+      const customCampus = document.getElementById('p_custom_campus')?.value.trim() || '';
+      const neighborhood = document.getElementById('p_neighborhood')?.value.trim() || '';
+      const hiddenArea = document.getElementById('p_area');
+
+      let uniName = uniSelect ? uniSelect.value : '';
+      if (uniName === 'Other Ethiopian University / College') {
+        uniName = customUni || 'Other University';
+      }
+
+      let campusName = campusSelect ? campusSelect.value : '';
+      if (campusName === 'Other Campus / Specify') {
+        campusName = customCampus || 'Specified Campus';
+      }
+
+      let combined = '';
+      if (uniName && campusName && !campusName.startsWith('--')) {
+        combined = `${uniName} (${campusName})`;
+      } else if (uniName) {
+        combined = uniName;
+      }
+
+      if (neighborhood) {
+        combined = combined ? `${combined} • ${neighborhood}` : neighborhood;
+      }
+
+      if (hiddenArea) {
+        hiddenArea.value = combined;
+      }
+
+      return { uniName, campusName, neighborhood, combined };
     }
 
     function handleCampusChange() {
@@ -3356,7 +3684,10 @@
         fPidDesc: "የልጅዎን ደህንነት እና ወደ ቤት የሚመጡ አስጠኚዎችን ጥበቃ 100% ለማረጋገጥ የሚሰራ ብሔራዊ (ፋይዳ) ወይም የቀበሌ መታወቂያ ያያይዙ። መታወቂያው ቢያንስ 1 ወር የሚሰራ መሆን አለበት።",
         fPname: "የወላጅ ሙሉ ስም *",
         fPphone: "ስልክ ቁጥር (ቴሌብር / ጥሪ) *",
-        fParea: "የሚኖሩበት አካባቢ / ሰፈር (ከግቢ አቅራቢያ) *",
+        fParea: "የመኖሪያ ሰፈር (ከግቢ አቅራቢያ) *",
+        fPuni: "🏛️ የቅርብ ዩኒቨርሲቲ (Nearest University) *",
+        fPcampus: "🏫 የቅርብ ካምፓስ (Nearest Campus) *",
+        fPneighborhood: "የተለየ የመኖሪያ ሰፈር / መንደር (ምሳሌ፡ ቦሌ፣ ገርጂ፣ 4 ኪሎ...) (አማራጭ)",
         fPchildGender: "የሚማረው ተማሪ ፆታ (የተማሪው ፆታ) *",
         poptSelChild: "የተማሪውን ፆታ ይምረጡ *",
         poptFemChild: "ሴት ተማሪ (Female Student)",
@@ -3469,7 +3800,10 @@
         fPidDesc: "To protect both your household and university scholars entering residential homes, please provide a valid National Fayda or Kebele ID (minimum 1 month validity).",
         fPname: "Parent / Guardian Full Name *",
         fPphone: "Phone Number (Calls & Telebirr) *",
-        fParea: "Residential Neighborhood & City (Near Campus) *",
+        fParea: "Residential Neighborhood (Near Campus) *",
+        fPuni: "🏛️ Nearest University *",
+        fPcampus: "🏫 Nearest Campus *",
+        fPneighborhood: "Specific Neighborhood / Kebele / Area (Optional)",
         fPchildGender: "Student Gender (The Student Who Will Be Tutored) *",
         poptSelChild: "Select Student's Gender *",
         poptFemChild: "Female Student",
@@ -3582,7 +3916,10 @@
         fPidDesc: "Nageenya maatii fi barsiisota yuunivarsitii mana seenan eeguuf, waraqaa eenyummaa Fayidaa ykn Gandaa yoo xiqqaate ji'a 1 kan qabu fe'aa.",
         fPname: "Maqaa Guutuu Maatii / Guddistuu *",
         fPphone: "Lakkoofsa Bilbilaa (Telebirr / Waamicha) *",
-        fParea: "Naannoo / Ganda Jiraattan (Kaampaasii Dhihoo) *",
+        fParea: "Naannoo Jiraattan (Kaampaasii Dhihoo) *",
+        fPuni: "🏛️ Yuunivarsitii Dhihoo *",
+        fPcampus: "🏫 Kaampaasii Dhihoo *",
+        fPneighborhood: "Ganda / Naannoo Addaa (Fkn: Boolee, Garjii...) (Filannoo)",
         fPchildGender: "Saala Barataa/Barattuu (Isa Baratamu) *",
         poptSelChild: "Saala barataa filadhaa *",
         poptFemChild: "Barattuu (Female Student)",
@@ -3714,9 +4051,12 @@
       if (document.getElementById('i18n-opt-app-adult')) document.getElementById('i18n-opt-app-adult').innerText = t.optAppAdult;
       if (document.getElementById('i18n-f-pid-title')) document.getElementById('i18n-f-pid-title').innerText = t.fPidTitle;
       if (document.getElementById('i18n-f-pid-desc')) document.getElementById('i18n-f-pid-desc').innerText = t.fPidDesc;
-      document.getElementById('i18n-f-pname').innerText = t.fPname;
-      document.getElementById('i18n-f-pphone').innerText = t.fPphone;
-      document.getElementById('i18n-f-parea').innerText = t.fParea;
+      if (document.getElementById('i18n-f-pname')) document.getElementById('i18n-f-pname').innerText = t.fPname;
+      if (document.getElementById('i18n-f-pphone')) document.getElementById('i18n-f-pphone').innerText = t.fPphone;
+      if (document.getElementById('i18n-f-parea')) document.getElementById('i18n-f-parea').innerText = t.fParea;
+      if (document.getElementById('i18n-f-puni')) document.getElementById('i18n-f-puni').innerText = t.fPuni;
+      if (document.getElementById('i18n-f-pcampus')) document.getElementById('i18n-f-pcampus').innerText = t.fPcampus;
+      if (document.getElementById('i18n-f-pneighborhood')) document.getElementById('i18n-f-pneighborhood').innerText = t.fPneighborhood;
       if (document.getElementById('i18n-f-pchild-gender')) document.getElementById('i18n-f-pchild-gender').innerText = t.fPchildGender;
       if (document.getElementById('i18n-popt-sel-child')) document.getElementById('i18n-popt-sel-child').innerText = t.poptSelChild;
       if (document.getElementById('i18n-popt-fem-child')) document.getElementById('i18n-popt-fem-child').innerText = t.poptFemChild;
@@ -4247,13 +4587,41 @@
       const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value || 'PARENT';
       const name = document.getElementById('p_name').value.trim();
       const phone = document.getElementById('p_phone').value.trim();
-      const area = document.getElementById('p_area').value.trim();
+      
+      const { uniName: pUni, campusName: pCampus, combined: pAreaCombined } = updateCombinedParentArea();
+      let area = document.getElementById('p_area')?.value.trim() || pAreaCombined;
 
       if (!name) {
         const msg = (currentLang === 'am') 
           ? 'እባክዎ ስምዎን ያስገቡ።' 
           : 'Please enter your name.';
         abortParentValidation(msg, document.getElementById('p_name'));
+        return;
+      }
+
+      const pUniEl = document.getElementById('p_uni_select');
+      if (pUniEl && !pUniEl.value) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ መኖሪያዎ የሚገኝበትን የቅርብ ዩኒቨርሲቲ ይምረጡ።' 
+          : (currentLang === 'or' ? 'Maaloo yuunivarsitii dhihoo filadhaa.' : 'Please select your nearest university.');
+        abortParentValidation(msg, pUniEl);
+        return;
+      }
+
+      const pCampusEl = document.getElementById('p_campus_select');
+      if (pCampusEl && !pCampusEl.value) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የቅርብ ካምፓስ ይምረጡ።' 
+          : (currentLang === 'or' ? 'Maaloo kaampaasii dhihoo filadhaa.' : 'Please select your nearest campus.');
+        abortParentValidation(msg, pCampusEl);
+        return;
+      }
+
+      if (!area) {
+        const msg = (currentLang === 'am') 
+          ? 'እባክዎ የመኖሪያ ሰፈርዎን ያስገቡ።' 
+          : 'Please specify your residential neighborhood.';
+        abortParentValidation(msg, pUniEl);
         return;
       }
 
