@@ -31,8 +31,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  
+  <!-- Google Firebase Cloud SDK (Serverless Database & Real-Time Sync) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
   <!-- =========================================================================
        ETHIO 21 PROPRIETARY ANTI-INSPECT & ACTIVE DEVTOOLS DEFENSE SHIELD
        ========================================================================= -->
@@ -2551,56 +2553,158 @@
     window.TEME_TG_TUTORS_CHAT = '@AstegniTutors';
     window.TEME_TG_PARENTS_CHAT = '@AstegniParents';
 
-    // Send Photo to Telegram Bot / Channel (100% Free Unlimited Storage)
-    async function sendPhotoToTelegramBot(blob, caption, targetChatId) {
-      const botToken = localStorage.getItem('teme_astegni_tg_bot_token') || window.TEME_DEFAULT_TG_BOT_TOKEN;
-      const primaryChat = targetChatId || localStorage.getItem('teme_astegni_tg_chat_id') || window.TEME_DEFAULT_TG_CHAT_ID;
-      if (!botToken || !primaryChat || !blob) return false;
+    // ==========================================
+    // GOOGLE FIREBASE FIRESTORE CLOUD ENGINE
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBF4JQgol1l1zpdOFc-dU5JMi_gKpdYF6E",
+      authDomain: "teme-astegni-cloud.firebaseapp.com",
+      projectId: "teme-astegni-cloud",
+      storageBucket: "teme-astegni-cloud.firebasestorage.app",
+      messagingSenderId: "875975401923",
+      appId: "1:875975401923:web:4657b2dfc62bca1c765d76",
+      measurementId: "G-DZ2XMSKS22"
+    };
+
+    let db = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        console.log("🟢 Firebase Firestore connected in client:", firebaseConfig.projectId);
+      }
+    } catch (e) {
+      console.warn("Firebase client init skipped:", e);
+    }
+
+    // Direct Cloud Lead Persistence Helpers
+    async function saveTutorToCloud(tutorData) {
+      if (!db || !tutorData) return false;
+      const id = tutorData.id || tutorData.trackingId;
+      if (!id) return false;
       try {
-        const formData = new FormData();
-        formData.append('chat_id', primaryChat);
-        formData.append('caption', (caption || '').substring(0, 1024));
-        formData.append('photo', blob, 'doc_verification.jpg');
-        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-          method: 'POST',
-          body: formData
-        });
-        return res.ok;
+        await db.collection('astegni_tutor_leads').doc(id).set(tutorData, { merge: true });
+        console.log("✓ Tutor safely stored in Firebase Cloud:", id);
+        return true;
       } catch (err) {
-        console.warn('Telegram bot upload skipped:', err);
+        console.warn("Cloud tutor save fallback:", err);
         return false;
       }
     }
 
-    // Send Formatted Applicant Dossier Text to Telegram Bot / Channel
-    async function sendTextMessageToTelegramBot(text, targetChatId) {
+    async function saveParentToCloud(parentData) {
+      if (!db || !parentData) return false;
+      const id = parentData.id || parentData.trackingId;
+      if (!id) return false;
+      try {
+        await db.collection('astegni_parent_leads').doc(id).set(parentData, { merge: true });
+        console.log("✓ Parent safely stored in Firebase Cloud:", id);
+        return true;
+      } catch (err) {
+        console.warn("Cloud parent save fallback:", err);
+        return false;
+      }
+    }
+
+    // ==========================================
+    // SMART TELEGRAM DISPATCH QUEUE (RATE PROTECTION)
+    // ==========================================
+    const telegramDispatchQueue = [];
+    let isProcessingTgQueue = false;
+
+    async function processTelegramQueue() {
+      if (isProcessingTgQueue || telegramDispatchQueue.length === 0) return;
+      isProcessingTgQueue = true;
+
+      while (telegramDispatchQueue.length > 0) {
+        const taskItem = telegramDispatchQueue.shift();
+        try {
+          const res = await taskItem.fn();
+          if (res && res.status === 429) {
+            const errData = await res.json().catch(() => ({}));
+            const waitSeconds = (errData.parameters && errData.parameters.retry_after) ? errData.parameters.retry_after : 2;
+            console.warn(`Telegram 429 Rate Limit. Pausing for ${waitSeconds}s...`);
+            await new Promise(r => setTimeout(r, waitSeconds * 1000));
+            telegramDispatchQueue.unshift(taskItem);
+          } else {
+            await new Promise(r => setTimeout(r, 1100)); // Respect 1 msg/sec supergroup limit
+          }
+        } catch (err) {
+          console.warn("Telegram dispatch error:", err);
+        }
+      }
+      isProcessingTgQueue = false;
+    }
+
+    function enqueueTelegramDispatch(fn) {
+      telegramDispatchQueue.push({ fn });
+      processTelegramQueue();
+    }
+
+    // Send Photo to Telegram Bot / Channel (Queued & Rate-Protected)
+    function sendPhotoToTelegramBot(blob, caption, targetChatId) {
       const botToken = localStorage.getItem('teme_astegni_tg_bot_token') || window.TEME_DEFAULT_TG_BOT_TOKEN;
       const primaryChat = targetChatId || localStorage.getItem('teme_astegni_tg_chat_id') || window.TEME_DEFAULT_TG_CHAT_ID;
-      if (!botToken || !primaryChat || !text) return false;
+      if (!botToken || !primaryChat || !blob) return;
 
-      const sendTo = async (chatId) => {
+      enqueueTelegramDispatch(async () => {
         try {
-          const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          const formData = new FormData();
+          formData.append('chat_id', primaryChat);
+          formData.append('caption', (caption || '').substring(0, 1024));
+          formData.append('photo', blob, 'doc_verification.jpg');
+          return await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+          });
+        } catch (err) {
+          console.warn('Telegram photo upload skipped:', err);
+          return null;
+        }
+      });
+    }
+
+    // Send Formatted Applicant Dossier Text to Telegram Bot / Channel (Queued & Rate-Protected)
+    function sendTextMessageToTelegramBot(text, targetChatId) {
+      const botToken = localStorage.getItem('teme_astegni_tg_bot_token') || window.TEME_DEFAULT_TG_BOT_TOKEN;
+      const primaryChat = targetChatId || localStorage.getItem('teme_astegni_tg_chat_id') || window.TEME_DEFAULT_TG_CHAT_ID;
+      if (!botToken || !primaryChat || !text) return;
+
+      enqueueTelegramDispatch(async () => {
+        try {
+          return await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chat_id: chatId,
+              chat_id: primaryChat,
               text: text
             })
           });
-          return res.ok;
         } catch (err) {
-          console.warn('Telegram bot text message skipped:', err);
-          return false;
+          console.warn('Telegram text message skipped:', err);
+          return null;
         }
-      };
-
-      await sendTo(primaryChat);
+      });
 
       // Deliver duplicate copy to admin/ops chat if separate chatId configured
       const opsChat = localStorage.getItem('teme_astegni_tg_chat_id');
       if (opsChat && opsChat !== primaryChat) {
-        sendTo(opsChat).catch(() => {});
+        enqueueTelegramDispatch(async () => {
+          try {
+            return await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: opsChat,
+                text: text
+              })
+            });
+          } catch (err) {
+            return null;
+          }
+        });
       }
     }
 
@@ -2909,7 +3013,24 @@
         tgGroupUrl: 'https://t.me/AstegniParents'
       };
 
-      // Automatically execute silent background push to Google Sheets
+      // 1. Save directly to Firebase Firestore Cloud (Unlimited Scale)
+      saveParentToCloud({
+        id: trackingId,
+        trackingId: trackingId,
+        tgTag: tgTag,
+        name: name,
+        applicantType: applicantType,
+        phone: phone,
+        area: area,
+        studentGender: studentGender,
+        grade: grade,
+        subjects: subjs,
+        idType: pIdType,
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+      });
+
+      // 2. Automatically execute silent background push to Google Sheets
       pushCurrentApplicationToSheetSilent();
 
       // Configure Action Button to directly join the community
@@ -3204,7 +3325,30 @@
         tgGroupUrl: 'https://t.me/AstegniTutors'
       };
 
-      // Automatically execute silent background push to Google Sheets
+      // 1. Save directly to Firebase Firestore Cloud (Unlimited Scale)
+      saveTutorToCloud({
+        id: trackingId,
+        trackingId: trackingId,
+        tgTag: tgTag,
+        name: name,
+        gender: gender,
+        phone: phone,
+        uni: uni,
+        university: uni,
+        year: year,
+        cgpa: cgpa,
+        tier: tierName,
+        tierEmoji: tierEmoji,
+        level: 0,
+        subjects: subj,
+        examStatus: examOptIn ? 'pending' : 'none',
+        examOptIn: examOptIn,
+        govtIdType: govtType,
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+      });
+
+      // 2. Automatically execute silent background push to Google Sheets
       pushCurrentApplicationToSheetSilent();
 
       // Configure Action Button to directly join the community
