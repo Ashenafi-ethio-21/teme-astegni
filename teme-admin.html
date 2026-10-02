@@ -6362,13 +6362,15 @@ function rowsToJson(sheet) {
         document.getElementById('webhook-url-input').value = savedWebhook;
       }
 
-      const savedTgToken = localStorage.getItem('teme_astegni_tg_bot_token');
-      if (savedTgToken && document.getElementById('tg-bot-token-input')) {
+      const defaultTgToken = '8808218998:AAF-xCF8eYt2S0J58G1i4XKcvO1qdJ5puTU';
+      const defaultTgChat = '@AstegniTutors';
+      const savedTgToken = localStorage.getItem('teme_astegni_tg_bot_token') || defaultTgToken;
+      if (document.getElementById('tg-bot-token-input')) {
         document.getElementById('tg-bot-token-input').value = savedTgToken;
       }
 
-      const savedTgChat = localStorage.getItem('teme_astegni_tg_chat_id');
-      if (savedTgChat && document.getElementById('tg-chat-id-input')) {
+      const savedTgChat = localStorage.getItem('teme_astegni_tg_chat_id') || defaultTgChat;
+      if (document.getElementById('tg-chat-id-input')) {
         document.getElementById('tg-chat-id-input').value = savedTgChat;
       }
 
