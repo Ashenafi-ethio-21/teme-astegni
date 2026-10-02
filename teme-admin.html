@@ -1622,6 +1622,12 @@
           <div class="kpi-val" id="kpi-commission-val">0 ETB</div>
           <div class="kpi-sub" id="kpi-commission-sub">25% Ethio21 Margin</div>
         </div>
+        <!-- 1-Month Payout Due KPI Card -->
+        <div class="kpi-card" id="kpi-payout-due-card" style="border-color: rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); cursor: pointer;" onclick="switchView('view-matches'); setMatchFilter('MONTH_REACHED');" title="Click to view pairs reaching 1 month">
+          <div class="kpi-label" style="color: #f87171;">🚨 Month 1 Payout Due</div>
+          <div class="kpi-val" id="kpi-payout-due-count" style="color: #f87171;">0 Pairs</div>
+          <div class="kpi-sub" id="kpi-payout-due-sub">Tutors ready for pay</div>
+        </div>
       </div>
 
       <!-- Quick Operations Banner -->
@@ -1778,6 +1784,22 @@
             ✈️ Private Matches Vault
           </a>
           <button class="btn-act btn-act-primary" onclick="openNewMatchModal()">+ New Match</button>
+        </div>
+      </div>
+
+      <!-- Pairing Filter & Month 1 Payout Tracker Toolbar -->
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 0.85rem 1rem; margin-bottom: 1.1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.4rem;">
+          <span style="font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Pairing Status &amp; 30-Day Billing Cycle</span>
+          <span id="matches-due-alert-banner" style="display: none; font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; padding: 0.2rem 0.65rem; border-radius: 8px; font-weight: 850;">
+            🚨 Action Required: Tutor Payout Due Now
+          </span>
+        </div>
+        <div class="filter-pills" id="matches-filter-pills" style="gap: 0.45rem; flex-wrap: wrap;">
+          <button class="pill-btn active" onclick="setMatchFilter('ALL', this)">All Pairings (<span id="m-pill-all-count">0</span>)</button>
+          <button class="pill-btn" style="border-color: rgba(239, 68, 68, 0.6); color: #f87171; font-weight: 850;" onclick="setMatchFilter('MONTH_REACHED', this)">🚨 1 Month Reached • Payout Due (<span id="m-pill-due-count">0</span>)</button>
+          <button class="pill-btn" onclick="setMatchFilter('ACTIVE', this)">✅ Active Contracts</button>
+          <button class="pill-btn" onclick="setMatchFilter('TRIAL', this)">⏳ 1-Day Trials</button>
         </div>
       </div>
 
@@ -1996,7 +2018,12 @@
 
       <div class="form-group">
         <label class="form-label">Monthly Tuition Fee (ETB)</label>
-        <input type="number" id="match-price-input" class="form-ctrl" value="3500" oninput="calculateCommissionPreview()">
+        <input type="number" id="match-price-input" class="form-ctrl" value="3000" oninput="calculateCommissionPreview()">
+        <div style="display: flex; gap: 0.4rem; margin-top: 0.45rem; flex-wrap: wrap;">
+          <button type="button" class="btn-act" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);" onclick="setMatchPrice(3000)">🥉 3,000 ETB (Standard 3d/wk)</button>
+          <button type="button" class="btn-act" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);" onclick="setMatchPrice(5000)">🥈 5,000 ETB (Intensive 4d/wk)</button>
+          <button type="button" class="btn-act" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);" onclick="setMatchPrice(5000)">🥇 5,000 ETB (Golden Scholar)</button>
+        </div>
       </div>
 
       <div class="form-group" id="match-rate-group">
@@ -4024,6 +4051,32 @@ function rowsToJson(sheet) {
       document.getElementById('kpi-tutors-count').innerText = tutors.length;
       document.getElementById('kpi-matches-count').innerText = matches.length;
 
+      // 30-Day Monthly Billing Cycle & Tutor Payout Due Calculation
+      const nowMs = Date.now();
+      const MS_PER_DAY = 24 * 60 * 60 * 1000;
+      const matchesDue = matches.filter(m => {
+        if (m.status === 'Terminated' || m.status === 'Cancelled') return false;
+        const cycleStart = m.lastPayoutDate ? new Date(m.lastPayoutDate).getTime() : (m.date ? new Date(m.date).getTime() : nowMs);
+        const days = Math.max(0, Math.floor((nowMs - cycleStart) / MS_PER_DAY));
+        return days >= 30;
+      });
+
+      const dueCountEl = document.getElementById('kpi-payout-due-count');
+      const dueSubEl = document.getElementById('kpi-payout-due-sub');
+      if (dueCountEl) dueCountEl.innerText = `${matchesDue.length} Pair${matchesDue.length === 1 ? '' : 's'}`;
+      if (dueSubEl) {
+        dueSubEl.innerText = matchesDue.length > 0 
+          ? `🚨 Action: 75% Net Pay Ready` 
+          : `All tutor cycles on track`;
+      }
+
+      const alertBanner = document.getElementById('matches-due-alert-banner');
+      const duePillCount = document.getElementById('m-pill-due-count');
+      const allPillCount = document.getElementById('m-pill-all-count');
+      if (alertBanner) alertBanner.style.display = matchesDue.length > 0 ? 'inline-block' : 'none';
+      if (duePillCount) duePillCount.innerText = matchesDue.length;
+      if (allPillCount) allPillCount.innerText = matches.length;
+
       if (user && (user.role === 'owner' || user.permissions.viewFinancials)) {
         const matchesCommission = matches.reduce((sum, m) => sum + (Number(m.commission) || 0), 0);
         const upgradeLedger = JSON.parse(localStorage.getItem('astegni_upgrade_ledger') || '[]');
@@ -4180,6 +4233,7 @@ function rowsToJson(sheet) {
           <div id="${detailsId}" class="card-expandable-body" style="display: none; margin-top: 1rem; padding-top: 0.95rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
             <!-- Meta Ribbon Bar -->
             <div class="record-meta-ribbon">
+              ${(p.monthlyFee || p.packageName) ? `<span class="tag-badge" style="background: rgba(234, 179, 8, 0.18); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.45); font-weight: 800;">💰 ${Number(p.monthlyFee || 3000).toLocaleString()} ETB/mo (${escapeHtml(p.packageName || 'Standard 3d/wk')})</span>` : ''}
               <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
               <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
               <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
@@ -4189,6 +4243,13 @@ function rowsToJson(sheet) {
 
             <!-- Bento Grid Details -->
             <div class="record-bento-grid">
+              ${(p.monthlyFee || p.packageName) ? `
+              <div class="bento-item" style="grid-column: 1 / -1; background: rgba(234, 179, 8, 0.08); border-color: rgba(234, 179, 8, 0.25);">
+                <span class="bento-label" style="color: #fbbf24;">💳 Selected Tutoring Plan &amp; Schedule</span>
+                <div class="bento-value" style="color: #fef08a; font-weight: 800; font-size: 0.95rem;">
+                  💰 ${Number(p.monthlyFee || 3000).toLocaleString()} ETB / Month • ${escapeHtml(p.packageName || 'Standard Plan')} (${escapeHtml(p.packageSchedule || '3 Days A Week • 1 hr/day')})
+                </div>
+              </div>` : ''}
               <div class="bento-item" style="grid-column: 1 / -1;">
                 <span class="bento-label">📖 Requested Subjects</span>
                 <div class="subj-pill-list">${subjChipsHtml}</div>
@@ -4742,6 +4803,74 @@ function rowsToJson(sheet) {
       alert(`🚀 Success! ${tutor.name} has been promoted to ${tier.emoji} ${tier.name} Level ${targetLevel}!\n\nTelegram Ops notified with Search Tag: ${tTgTag}`);
     }
 
+    let currentMatchFilter = 'ALL';
+
+    function setMatchFilter(filter, btn) {
+      currentMatchFilter = filter;
+      const pills = document.querySelectorAll('#matches-filter-pills .pill-btn');
+      pills.forEach(p => p.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        pills.forEach(p => {
+          if (p.getAttribute('onclick') && p.getAttribute('onclick').includes(filter)) {
+            p.classList.add('active');
+          }
+        });
+      }
+      renderMatches();
+    }
+
+    function setMatchPrice(amt) {
+      const inp = document.getElementById('match-price-input');
+      if (inp) {
+        inp.value = amt;
+        calculateCommissionPreview();
+      }
+    }
+
+    function markMatchMonthPaid(matchId) {
+      const matches = getMatches();
+      const m = matches.find(item => item.id === matchId);
+      if (!m) return;
+      const fee = Number(m.monthlyFee) || 3000;
+      const rate = Number(m.rate) || 25;
+      const comm = Number(m.commission) || Math.round(fee * (rate / 100));
+      const tutorNet = fee - comm;
+      const nextMonth = (m.monthsPaid || 0) + 1;
+
+      if (!confirm(`💸 Confirm Month ${nextMonth} Payout to Tutor "${m.tutorName}"?\n\n• Tutor Take-Home (75%): ${tutorNet.toLocaleString()} ETB via Telebirr\n• Ethio-21 Retained: ${comm.toLocaleString()} ETB\n\nThis marks Month ${nextMonth} as completed and restarts the 30-day billing cycle for the upcoming month.`)) {
+        return;
+      }
+
+      m.monthsPaid = nextMonth;
+      m.lastPayoutDate = new Date().toISOString();
+      m.lastPayoutAmount = tutorNet;
+      m.status = 'Active Contract';
+      saveMatches(matches);
+
+      // Dispatch to Telegram Ops
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+      const msg = 
+        `💸 <b>TUTOR MONTHLY PAYOUT CONFIRMED (MONTH ${nextMonth})</b>\n\n` +
+        `🎓 <b>Tutor:</b> ${escapeHtml(m.tutorName)} (📞 ${escapeHtml(m.tutorPhone)})\n` +
+        `👨‍👩‍👧 <b>Parent / Student:</b> ${escapeHtml(m.parentName)} (📞 ${escapeHtml(m.parentPhone)})\n` +
+        `📅 <b>Cycle:</b> 30 Days Completed (Month ${nextMonth})\n` +
+        `💵 <b>Tutor Net Paid (75%):</b> <b>${tutorNet.toLocaleString()} ETB</b> via Telebirr\n` +
+        `💼 <b>Ethio-21 Retained:</b> ${comm.toLocaleString()} ETB\n` +
+        `🔄 <b>Upcoming:</b> Month ${nextMonth + 1} Billing Cycle Active\n` +
+        `👮 <b>Authorized By:</b> ${escapeHtml(adminName)}\n` +
+        `⏰ <b>Timestamp:</b> ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Addis_Ababa' })}`;
+
+      if (typeof sendTelegramNotification === 'function') {
+        sendTelegramNotification(msg);
+      }
+
+      alert(`✅ Success! Month ${nextMonth} marked paid. Payout of ${tutorNet.toLocaleString()} ETB recorded for ${m.tutorName} and the 30-day cycle has renewed!`);
+      renderAll();
+    }
+
     function renderMatches() {
       const matches = getMatches();
       const container = document.getElementById('matches-cards-container');
@@ -4751,22 +4880,103 @@ function rowsToJson(sheet) {
 
       container.innerHTML = '';
 
-      if (matches.length === 0) {
+      // Update toolbar pill counts
+      const nowMs = Date.now();
+      const MS_PER_DAY = 24 * 60 * 60 * 1000;
+      const dueCount = matches.filter(m => {
+        if (m.status === 'Terminated' || m.status === 'Cancelled') return false;
+        const cycleStart = m.lastPayoutDate ? new Date(m.lastPayoutDate).getTime() : (m.date ? new Date(m.date).getTime() : nowMs);
+        return Math.floor((nowMs - cycleStart) / MS_PER_DAY) >= 30;
+      }).length;
+
+      const duePill = document.getElementById('m-pill-due-count');
+      const allPill = document.getElementById('m-pill-all-count');
+      const banner = document.getElementById('matches-due-alert-banner');
+      if (duePill) duePill.innerText = dueCount;
+      if (allPill) allPill.innerText = matches.length;
+      if (banner) banner.style.display = dueCount > 0 ? 'inline-block' : 'none';
+
+      // Filter matches
+      let filtered = [...matches];
+      if (currentMatchFilter === 'MONTH_REACHED') {
+        filtered = filtered.filter(m => {
+          if (m.status === 'Terminated' || m.status === 'Cancelled') return false;
+          const cycleStart = m.lastPayoutDate ? new Date(m.lastPayoutDate).getTime() : (m.date ? new Date(m.date).getTime() : nowMs);
+          return Math.floor((nowMs - cycleStart) / MS_PER_DAY) >= 30;
+        });
+      } else if (currentMatchFilter === 'ACTIVE') {
+        filtered = filtered.filter(m => m.status === 'Active Contract' || m.status === 'Commission Paid');
+      } else if (currentMatchFilter === 'TRIAL') {
+        filtered = filtered.filter(m => (m.status || '').includes('Trial'));
+      }
+
+      if (filtered.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); background: var(--card-bg); border-radius: 16px; border: 1px solid var(--card-border);">
-            No matches created yet. Click "+ New Match" above to link a parent and tutor!
+            ${currentMatchFilter === 'MONTH_REACHED' ? '🎉 Great news! No tutor pairings currently have Month 1 payouts due.' : 'No matches found in this filter. Click "+ New Match" above to link a parent and tutor!'}
           </div>
         `;
         return;
       }
 
-      matches.reverse().forEach((m) => {
+      filtered.reverse().forEach((m) => {
         const card = document.createElement('div');
         card.className = 'record-card';
 
+        const cycleStartDate = m.lastPayoutDate ? new Date(m.lastPayoutDate) : (m.date ? new Date(m.date) : new Date());
+        const daysInCycle = Math.max(0, Math.floor((Date.now() - cycleStartDate.getTime()) / MS_PER_DAY));
+        const isMonthReached = daysInCycle >= 30;
+        const daysRemaining = Math.max(0, 30 - daysInCycle);
+        const progressPercent = Math.min(100, Math.round((daysInCycle / 30) * 100));
+
+        const fee = Number(m.monthlyFee) || 3000;
+        const rate = Number(m.rate) || 25;
+        const comm = Number(m.commission) || Math.round(fee * (rate / 100));
+        const tutorNet = fee - comm;
+
         const financialText = canViewFin 
-          ? `Monthly Fee: ${Number(m.monthlyFee).toLocaleString()} ETB | Commission (${m.rate || 25}%): ${Number(m.commission).toLocaleString()} ETB`
+          ? `Monthly Fee: ${fee.toLocaleString()} ETB | Commission (${rate}%): ${comm.toLocaleString()} ETB | Tutor Net (75%): ${tutorNet.toLocaleString()} ETB`
           : `Tutoring Pair • Active In-Home Term`;
+
+        let cycleMarkup = '';
+        if (isMonthReached) {
+          cycleMarkup = `
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 12px; padding: 0.85rem 1rem; margin-top: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+                <div>
+                  <div style="font-weight: 850; color: #f87171; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
+                    🚨 1-MONTH CYCLE COMPLETED (Day ${daysInCycle} of 30)
+                  </div>
+                  <div style="font-size: 0.8rem; color: #e2e8f0; margin-top: 0.25rem;">
+                    Tutor Take-Home (75% Net): <strong style="color: #34d399; font-size: 0.95rem;">${tutorNet.toLocaleString()} ETB</strong> • Ethio-21 Retained: <strong>${comm.toLocaleString()} ETB</strong>
+                  </div>
+                  <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.15rem;">
+                    Cycle Start: ${cycleStartDate.toLocaleDateString()} • Months Paid to Date: <strong style="color: #fff;">${m.monthsPaid || 0}</strong>
+                  </div>
+                </div>
+                <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 850; border: none; padding: 0.55rem 1rem; border-radius: 9px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); cursor: pointer;" onclick="markMatchMonthPaid('${m.id}')">
+                  💸 Mark Month Paid &amp; Renew (የወሩን ክፈል)
+                </button>
+              </div>
+            </div>
+          `;
+        } else {
+          cycleMarkup = `
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 0.7rem 0.9rem; margin-top: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 750; color: #94a3b8; margin-bottom: 0.35rem;">
+                <span>⏳ 30-Day Monthly Cycle: Day ${daysInCycle} / 30</span>
+                <span style="color: #38bdf8;">${daysRemaining} Days Until Next Payout</span>
+              </div>
+              <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
+                <div style="height: 100%; width: ${progressPercent}%; background: ${progressPercent >= 80 ? '#f59e0b' : '#38bdf8'}; transition: width 0.3s;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #64748b; margin-top: 0.35rem;">
+                <span>Tutor 75% Net: <strong style="color: #34d399;">${tutorNet.toLocaleString()} ETB</strong></span>
+                <span>Months Completed: <strong>${m.monthsPaid || 0}</strong></span>
+              </div>
+            </div>
+          `;
+        }
 
         card.innerHTML = `
           <div class="record-top">
@@ -4778,7 +4988,10 @@ function rowsToJson(sheet) {
                 ${financialText}
               </div>
             </div>
-            <span class="tag-badge ${getStatusBadgeClass(m.status)}">${m.status}</span>
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              ${isMonthReached ? `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-weight: 850;">🚨 Month Reached</span>` : ''}
+              <span class="tag-badge ${getStatusBadgeClass(m.status)}">${m.status}</span>
+            </div>
           </div>
 
           <div class="record-details">
@@ -4788,7 +5001,9 @@ function rowsToJson(sheet) {
             <div class="detail-item"><span class="detail-label">💳 Payment Proof:</span> <span class="tag-badge ${m.paymentProof ? 'tag-active' : 'tag-trial'}">${m.paymentProof ? '✓ Telebirr Verified' : '⏳ Awaiting Ops Screenshot'}</span></div>
           </div>
 
-          <div class="record-actions">
+          ${cycleMarkup}
+
+          <div class="record-actions" style="margin-top: 0.85rem;">
             <select class="status-dropdown" onchange="updateMatchStatus('${m.id}', this.value)">
               <option value="1-Day Trial Pending" ${m.status === '1-Day Trial Pending' ? 'selected' : ''}>⏳ Trial Pending (የ 1 ቀን ሙከራ)</option>
               <option value="Trial Completed" ${m.status === 'Trial Completed' ? 'selected' : ''}>🎯 Trial Done (ሙከራ አልቋል)</option>
@@ -5221,7 +5436,26 @@ function rowsToJson(sheet) {
       const pSelect = document.getElementById('match-select-parent');
       const tSelect = document.getElementById('match-select-tutor');
 
-      pSelect.innerHTML = parents.map((p, i) => `<option value="${i}">${escapeHtml(p.name)} (${escapeHtml(p.grade)} - ${escapeHtml(p.area)})</option>`).join('');
+      pSelect.innerHTML = parents.map((p, i) => {
+        const pkgText = p.monthlyFee ? ` • 💰 ${Number(p.monthlyFee).toLocaleString()} ETB (${escapeHtml(p.packageName || 'Plan')})` : '';
+        return `<option value="${i}">${escapeHtml(p.name)} (${escapeHtml(p.grade)} - ${escapeHtml(p.area)})${pkgText}</option>`;
+      }).join('');
+
+      pSelect.onchange = function() {
+        const selP = parents[this.value];
+        if (selP && selP.monthlyFee) {
+          const inp = document.getElementById('match-price-input');
+          if (inp) {
+            inp.value = selP.monthlyFee;
+            calculateCommissionPreview();
+          }
+        }
+      };
+
+      if (parents.length > 0 && parents[0].monthlyFee) {
+        const inp = document.getElementById('match-price-input');
+        if (inp) inp.value = parents[0].monthlyFee;
+      }
 
       // Sort tutors by composite score: Metal Tier (Golden > Silver > Bronze) & Level (L5 down to L0) & CGPA
       const sortedTutorsWithIndex = tutors.map((t, originalIndex) => ({ tutor: t, originalIndex }))
