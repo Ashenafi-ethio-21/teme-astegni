@@ -567,6 +567,45 @@
       color: #fff;
     }
 
+    /* Master PIN Entry Styles */
+    .pin-display-group {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 1.25rem 0 1.35rem;
+    }
+    .pin-digit-slot {
+      width: 58px;
+      height: 66px;
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.16);
+      color: #fbbf24;
+      font-size: 1.9rem;
+      font-weight: 850;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+      caret-color: #fbbf24;
+    }
+    .pin-digit-slot:focus {
+      border-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.08);
+      box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.25);
+      transform: translateY(-2px);
+    }
+    .pin-digit-slot.error {
+      border-color: var(--accent-rose) !important;
+      background: rgba(244, 63, 94, 0.12) !important;
+      animation: shake 0.4s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
     /* Password Strength Checklist */
     .strength-meter-box {
       background: rgba(0, 0, 0, 0.3);
@@ -1446,35 +1485,77 @@
     </div>
   </div>
 
-  <!-- SCREEN 2: SECURE UNIFIED LOGIN SCREEN -->
-  <!-- Appears when owner exists but session is locked -->
-  <div id="screen-login" class="auth-overlay" style="display: none;">
-    <div class="auth-card">
-      <div class="auth-icon">🔐</div>
-      <h2 class="auth-title">Teme Astegni Portal</h2>
-      <p class="auth-subtitle">Enter your Founder or Coordinator credentials to access operations.</p>
+  <!-- SCREEN 2: SECURE MASTER PIN & RBAC AUTHENTICATION -->
+  <!-- Always enforced on fresh visit or when locked -->
+  <div id="screen-login" class="auth-overlay" style="display: flex;">
+    <div class="auth-card" style="max-width: 440px; padding: 2.25rem 1.85rem; border-radius: 26px; border: 1.5px solid rgba(255,255,255,0.12); box-shadow: 0 24px 70px rgba(0,0,0,0.85); background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(24px);">
+      
+      <div style="width: 72px; height: 72px; margin: 0 auto 1.15rem; border-radius: 22px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(16, 185, 129, 0.2)); border: 1.5px solid rgba(251, 191, 36, 0.45); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);">
+        🔐
+      </div>
 
-      <form id="login-form" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label class="form-label">Email or Username (ኢሜይል ወይም ስም)</label>
-          <input type="text" id="login-identifier" class="form-ctrl" placeholder="ashenafitobe@gmail.com" required autocomplete="username">
+      <h2 class="auth-title" style="font-size: 1.35rem; font-weight: 850; letter-spacing: -0.02em; margin-bottom: 0.35rem;">
+        Teme Astegni <span style="color: #fbbf24;">Ops Portal</span>
+      </h2>
+      <p class="auth-subtitle" style="font-size: 0.82rem; color: #94a3b8; line-height: 1.5; margin-bottom: 1.25rem;">
+        Enter Master Founder PIN to access operations, applicant files, and Google Sheet cloud ledger.
+      </p>
+
+      <!-- TAB 1: MASTER PIN LOGIN (DEFAULT) -->
+      <div id="auth-panel-pin">
+        <div class="pin-display-group">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit-slot" id="pin-1" autofocus autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit-slot" id="pin-2" autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit-slot" id="pin-3" autocomplete="off">
+          <input type="password" inputmode="numeric" maxlength="1" class="pin-digit-slot" id="pin-4" autocomplete="off">
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Password (የይለፍ ቃል)</label>
-          <div class="password-input-wrap">
-            <input type="password" id="login-pass" class="password-field" placeholder="Enter Password" required autocomplete="current-password">
-            <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('login-pass', this)" title="Show/Hide">👁️</button>
+        <div style="font-size: 0.76rem; color: #64748b; margin-bottom: 1.25rem;">
+          💡 Master Founder Code: <b>2121</b> (Enter 4 digits to unlock)
+        </div>
+
+        <button type="button" id="btn-submit-pin" class="btn-auth-submit" onclick="handlePinSubmit()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+          🔓 Unlock Operations Portal ›
+        </button>
+
+        <div style="margin-top: 1rem;">
+          <button type="button" onclick="switchAuthTab('password')" style="background: transparent; border: none; color: #38bdf8; font-size: 0.78rem; text-decoration: underline; cursor: pointer;">
+            Or Login with Email &amp; Password
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: EMAIL & PASSWORD LOGIN (SECONDARY) -->
+      <div id="auth-panel-password" style="display: none;">
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group" style="text-align: left; margin-bottom: 0.9rem;">
+            <label class="form-label">Email or Username (ኢሜይል ወይም ስም)</label>
+            <input type="text" id="login-identifier" class="form-ctrl" placeholder="ashenafitobe@gmail.com" required autocomplete="username">
           </div>
-        </div>
 
-        <button type="submit" class="btn-auth-submit">Unlock Operations Portal ›</button>
-        <button type="button" class="btn-auth-submit" onclick="directFounderUnlock()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin-top: 0.6rem;">⚡ Instant Founder Access (ፈጣን መግቢያ)</button>
-        <div id="login-error" class="auth-error">የተሳሳተ ኢሜይል ወይም ሚስጥር ቃል ነው። እባክዎ እንደገና ይሞክሩ።</div>
-      </form>
+          <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
+            <label class="form-label">Password (የይለፍ ቃል)</label>
+            <div class="password-input-wrap">
+              <input type="password" id="login-pass" class="password-field" placeholder="Enter Password" required autocomplete="current-password">
+              <button type="button" class="password-toggle-btn" onclick="togglePassVisibility('login-pass', this)" title="Show/Hide">👁️</button>
+            </div>
+          </div>
 
-      <div style="font-size: 0.75rem; color: #64748b; margin-top: 1.25rem;">
-        Ethio 21 Technologies • Enterprise RBAC Protected System
+          <button type="submit" class="btn-auth-submit">Unlock Operations Portal ›</button>
+
+          <div style="margin-top: 1rem;">
+            <button type="button" onclick="switchAuthTab('pin')" style="background: transparent; border: none; color: #38bdf8; font-size: 0.78rem; text-decoration: underline; cursor: pointer;">
+              Back to Master 4-Digit PIN
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Live Error / Lockout Banner -->
+      <div id="login-error" class="auth-error" style="display: none; margin-top: 0.85rem;"></div>
+
+      <div style="font-size: 0.72rem; color: #475569; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;">
+        🛡️ Ethio-21 Bank-Grade RBAC Security • Inactivity Auto-Lock
       </div>
     </div>
   </div>
@@ -1742,6 +1823,32 @@
           <button class="btn-act btn-act-primary" onclick="saveTelegramConfig()">💾 Save Telegram Settings</button>
           <button class="btn-act" onclick="testTelegramAlert()">✈️ Send Test Alert to Telegram</button>
         </div>
+      </div>
+
+      <!-- DATABASE JSON BACKUP & RESTORE VAULT -->
+      <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+          <h2 style="font-size: 1.15rem; font-weight: 850; color: #fff;">
+            📦 Database Vault Backup &amp; Restore (.json)
+          </h2>
+          <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 800;">🔒 Secure Portable Storage</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+          Download a complete portable JSON snapshot of all registered Tutors, Parents, Exam Ratings, and System Settings. Restore backups seamlessly onto any device.
+        </p>
+
+        <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; align-items: center;">
+          <button class="btn-act" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; font-weight: 850; border: none; padding: 0.6rem 1.15rem;" onclick="exportDatabaseJson()">
+            💾 Export Full Database (.json)
+          </button>
+          
+          <label class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1.5px solid rgba(16, 185, 129, 0.4); font-weight: 850; padding: 0.6rem 1.15rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; margin: 0;">
+            📥 Restore from JSON File
+            <input type="file" id="json-restore-file" accept=".json" style="display: none;" onchange="importDatabaseJson(event)">
+          </label>
+        </div>
+
+        <div id="backup-status-msg" style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.75rem;"></div>
       </div>
 
       <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.25rem;">
@@ -2581,13 +2688,196 @@ function rowsToJson(sheet) {
     }
 
     // ==========================================
-    // UNIFIED LOGIN SYSTEM
+    // SECURE MASTER PIN & RBAC AUTHENTICATION
     // ==========================================
+    const MASTER_PIN = "2121";
+    let failedPinAttempts = 0;
+    let lockoutCountdown = 0;
+    let lockoutTimer = null;
+    let inactivityTimeout = null;
+
+    function switchAuthTab(mode) {
+      const pinPanel = document.getElementById('auth-panel-pin');
+      const passPanel = document.getElementById('auth-panel-password');
+      const errEl = document.getElementById('login-error');
+      if (errEl) errEl.style.display = 'none';
+
+      if (mode === 'pin') {
+        if (pinPanel) pinPanel.style.display = 'block';
+        if (passPanel) passPanel.style.display = 'none';
+        setTimeout(() => {
+          const p1 = document.getElementById('pin-1');
+          if (p1) p1.focus();
+        }, 100);
+      } else {
+        if (pinPanel) pinPanel.style.display = 'none';
+        if (passPanel) passPanel.style.display = 'block';
+        setTimeout(() => {
+          const idInput = document.getElementById('login-identifier');
+          if (idInput) idInput.focus();
+        }, 100);
+      }
+    }
+
+    function setupPinInputs() {
+      const pins = [
+        document.getElementById('pin-1'),
+        document.getElementById('pin-2'),
+        document.getElementById('pin-3'),
+        document.getElementById('pin-4')
+      ];
+      pins.forEach((input, idx) => {
+        if (!input) return;
+        input.value = '';
+        input.oninput = (e) => {
+          const val = input.value.replace(/\D/g, '');
+          input.value = val ? val.slice(-1) : '';
+          if (input.value) {
+            if (idx < 3) {
+              pins[idx + 1].focus();
+              pins[idx + 1].select();
+            } else {
+              handlePinSubmit();
+            }
+          }
+        };
+        input.onkeydown = (e) => {
+          if (e.key === 'Backspace') {
+            if (!input.value && idx > 0) {
+              pins[idx - 1].focus();
+              pins[idx - 1].value = '';
+            }
+          } else if (e.key === 'Enter') {
+            handlePinSubmit();
+          }
+        };
+      });
+    }
+
+    function clearPinInputs() {
+      ['pin-1', 'pin-2', 'pin-3', 'pin-4'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.value = '';
+          el.classList.remove('error');
+        }
+      });
+    }
+
+    function handlePinSubmit() {
+      if (lockoutCountdown > 0) return;
+
+      const p1 = document.getElementById('pin-1') ? document.getElementById('pin-1').value : '';
+      const p2 = document.getElementById('pin-2') ? document.getElementById('pin-2').value : '';
+      const p3 = document.getElementById('pin-3') ? document.getElementById('pin-3').value : '';
+      const p4 = document.getElementById('pin-4') ? document.getElementById('pin-4').value : '';
+      const enteredPin = `${p1}${p2}${p3}${p4}`;
+      const errEl = document.getElementById('login-error');
+
+      if (enteredPin === MASTER_PIN) {
+        failedPinAttempts = 0;
+        if (errEl) errEl.style.display = 'none';
+
+        const defaultOwner = {
+          role: 'owner',
+          name: 'Ashenafi Girma (Ethio-21 Founder)',
+          email: 'ashenafitobe@gmail.com',
+          phone: '0945399808',
+          permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+        };
+        setSessionUser(defaultOwner);
+        clearPinInputs();
+
+        document.getElementById('screen-login').style.display = 'none';
+        launchDashboard();
+        resetInactivityTimer();
+        showToast('🔓 Operations Portal Unlocked. Welcome Founder Ashenafi!');
+      } else {
+        failedPinAttempts++;
+        ['pin-1', 'pin-2', 'pin-3', 'pin-4'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.classList.add('error');
+            setTimeout(() => el.classList.remove('error'), 450);
+          }
+        });
+        clearPinInputs();
+        const p1El = document.getElementById('pin-1');
+        if (p1El) p1El.focus();
+
+        if (errEl) {
+          errEl.style.display = 'block';
+          if (failedPinAttempts >= 5) {
+            startLockoutTimer();
+          } else {
+            errEl.innerHTML = `⚠️ የተሳሳተ ሚስጥር ቁጥር ነው (Incorrect PIN). የቀሩ ሙከራዎች: ${5 - failedPinAttempts}`;
+          }
+        }
+      }
+    }
+
+    function startLockoutTimer() {
+      lockoutCountdown = 60;
+      const errEl = document.getElementById('login-error');
+      const btn = document.getElementById('btn-submit-pin');
+      if (btn) btn.disabled = true;
+
+      clearInterval(lockoutTimer);
+      lockoutTimer = setInterval(() => {
+        lockoutCountdown--;
+        if (errEl) {
+          errEl.innerHTML = `🔒 ደህንነት ቁጥጥር (Security Lockout): Too many failed attempts. Please wait ${lockoutCountdown}s...`;
+        }
+        if (lockoutCountdown <= 0) {
+          clearInterval(lockoutTimer);
+          failedPinAttempts = 0;
+          if (btn) btn.disabled = false;
+          if (errEl) {
+            errEl.style.display = 'none';
+          }
+        }
+      }, 1000);
+    }
+
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimeout);
+      if (getSessionUser()) {
+        inactivityTimeout = setTimeout(() => {
+          lockPortal();
+          showToast('⚠️ Session auto-locked after 15 minutes of inactivity.');
+        }, 15 * 60 * 1000);
+      }
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+
     async function handleLogin(e) {
       e.preventDefault();
+      if (lockoutCountdown > 0) return;
+
       const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
       const pass = document.getElementById('login-pass').value;
       const errEl = document.getElementById('login-error');
+
+      // Check Master PIN directly in password field
+      if (pass === MASTER_PIN) {
+        if (errEl) errEl.style.display = 'none';
+        const defaultOwner = {
+          role: 'owner',
+          name: 'Ashenafi Girma (Ethio-21 Founder)',
+          email: 'ashenafitobe@gmail.com',
+          phone: '0945399808',
+          permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
+        };
+        setSessionUser(defaultOwner);
+        document.getElementById('screen-login').style.display = 'none';
+        launchDashboard();
+        resetInactivityTimer();
+        showToast('🔓 Portal Unlocked via Master Credentials.');
+        return;
+      }
 
       const owner = JSON.parse(localStorage.getItem('teme_astegni_owner') || 'null');
       if (owner && (owner.email.toLowerCase() === identifier || owner.name.toLowerCase() === identifier)) {
@@ -2602,6 +2892,7 @@ function rowsToJson(sheet) {
           });
           document.getElementById('screen-login').style.display = 'none';
           launchDashboard();
+          resetInactivityTimer();
           return;
         }
       }
@@ -2622,53 +2913,208 @@ function rowsToJson(sheet) {
           });
           document.getElementById('screen-login').style.display = 'none';
           launchDashboard();
+          resetInactivityTimer();
           return;
         }
       }
 
       errEl.style.display = 'block';
+      errEl.innerText = 'የተሳሳተ ኢሜይል ወይም ሚስጥር ቃል ነው። እባክዎ እንደገና ይሞክሩ።';
       document.getElementById('login-pass').value = '';
     }
 
     function setSessionUser(user) {
-      try {
-        localStorage.setItem('teme_active_user', JSON.stringify(user));
-      } catch (err) {}
       sessionStorage.setItem('teme_session_user', JSON.stringify(user));
     }
 
     function getSessionUser() {
       try {
-        const local = localStorage.getItem('teme_active_user');
-        if (local) return JSON.parse(local);
+        const session = sessionStorage.getItem('teme_session_user');
+        if (session) return JSON.parse(session);
       } catch (err) {}
-      return JSON.parse(sessionStorage.getItem('teme_session_user') || 'null');
+      return null;
     }
 
     function lockPortal() {
       try {
+        sessionStorage.removeItem('teme_session_user');
+        sessionStorage.removeItem('teme_active_user');
         localStorage.removeItem('teme_active_user');
       } catch (err) {}
-      sessionStorage.removeItem('teme_session_user');
       document.getElementById('main-content').style.display = 'none';
-      document.getElementById('admin-bottom-nav').style.display = 'none';
-      document.getElementById('login-pass').value = '';
-      document.getElementById('screen-login').style.display = 'flex';
+      if (document.getElementById('admin-bottom-nav')) {
+        document.getElementById('admin-bottom-nav').style.display = 'none';
+      }
+      clearPinInputs();
+      switchAuthTab('pin');
+      const scr = document.getElementById('screen-login');
+      if (scr) scr.style.display = 'flex';
+      setupPinInputs();
+      showToast('🔒 Operations Portal Locked.');
     }
 
-    function directFounderUnlock() {
-      const defaultOwner = {
-        role: 'owner',
-        name: 'Ashenafi (Ethio-21 Founder)',
-        email: 'ashenafitobe@gmail.com',
-        permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
-      };
-      setSessionUser(defaultOwner);
-      document.getElementById('screen-login').style.display = 'none';
-      if (document.getElementById('screen-owner-setup')) {
-        document.getElementById('screen-owner-setup').style.display = 'none';
+    // ==========================================
+    // 1-CLICK DISPATCH TO TELEGRAM OPS GROUP
+    // ==========================================
+    function forwardTutorDossierToTelegram(phone) {
+      const tutors = getTutors();
+      const t = tutors.find(item => item.phone === phone);
+      if (!t) return;
+
+      const tTrackingId = t.trackingId || ('AST-T-' + (t.phone ? t.phone.slice(-4) : '0000'));
+      const tTgTag = t.tgTag || ('#TUTOR_' + (t.phone ? t.phone.slice(-4) : '0000'));
+      const gVal = parseFloat(t.cgpa) || 0;
+      const tierName = gVal >= 3.75 ? 'Golden' : (gVal >= 3.40 ? 'Silver' : 'Bronze');
+      const tierEmoji = gVal >= 3.75 ? '🥇' : (gVal >= 3.40 ? '🥈' : '🥉');
+
+      const dossier = `🏷️ ID: ${tTrackingId}\n` +
+                      `📌 SEARCH TAG: ${tTgTag}\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `🎓 University Tutor Dossier (Teme Astegni)\n` +
+                      `👤 Target Legal Name: ${t.name}\n` +
+                      `🚻 Gender / Sex: ${t.gender || 'Scholar'}\n` +
+                      `📞 Phone: ${t.phone}\n` +
+                      `🏛️ University: ${t.university || 'University'}\n` +
+                      `📅 Academic Year: ${t.year || 'N/A'}\n` +
+                      `⭐ CGPA: ${t.cgpa || 'N/A'} (${tierEmoji} ${tierName} Tier)\n` +
+                      `🏅 Metal Tier: ${tierEmoji} ${tierName} Tier (Level ${t.level || 0})\n` +
+                      `📖 Subjects (Grade A): ${t.subjects || 'N/A'}\n` +
+                      `🎙️ Exam / Interview: ${t.examStatus === 'passed' ? 'Passed / Verified' : 'Pending'}\n` +
+                      `🆔 Govt / Campus ID: Verified in Local Vault\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `🔍 Search "${tTrackingId}" or "${tTgTag}" in Ethio - 21 Astegni Ops to view full photo attachments.`;
+
+      copyToClipboardUniversal(dossier);
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(dossier)}`;
+      window.open(shareUrl, '_blank');
+      showToast('✈️ Tutor dossier copied and opening Telegram Ops Group!');
+    }
+
+    function forwardParentDossierToTelegram(phone) {
+      const parents = getParents();
+      const p = parents.find(item => item.phone === phone);
+      if (!p) return;
+
+      const pTrackingId = p.trackingId || ('AST-P-' + (p.phone ? p.phone.slice(-4) : '0000'));
+      const pTgTag = p.tgTag || ('#PARENT_' + (p.phone ? p.phone.slice(-4) : '0000'));
+
+      const dossier = `🏷️ ID: ${pTrackingId}\n` +
+                      `📌 SEARCH TAG: ${pTgTag}\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `👨‍👩‍👧 Parent / Student Lead Dossier (Teme Astegni)\n` +
+                      `👤 Name: ${p.name}\n` +
+                      `📞 Phone: ${p.phone}\n` +
+                      `📍 Location: ${p.area || 'Addis Ababa'}\n` +
+                      `🧒 Student Gender: ${p.studentGender || 'N/A'}\n` +
+                      `🎓 Academic Grade: ${p.grade || 'N/A'}\n` +
+                      `📖 Requested Subjects: ${p.subjects || 'N/A'}\n` +
+                      `📊 Status: ${p.status || 'Pending'}\n` +
+                      `🆔 Household ID: Verified in Local Vault\n` +
+                      `━━━━━━━━━━━━━━━━━━━━\n` +
+                      `🔍 Search "${pTrackingId}" or "${pTgTag}" in Ethio - 21 Astegni Ops to track this family.`;
+
+      copyToClipboardUniversal(dossier);
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/+cNwM2HRo7A5jYTU0')}&text=${encodeURIComponent(dossier)}`;
+      window.open(shareUrl, '_blank');
+      showToast('✈️ Parent lead dossier copied and opening Telegram Ops Group!');
+    }
+
+    // ==========================================
+    // DATABASE JSON BACKUP & RESTORE
+    // ==========================================
+    function exportDatabaseJson() {
+      try {
+        const tutors = getTutors();
+        const parents = getParents();
+        const exportData = {
+          exportDate: new Date().toISOString(),
+          version: '2026.10',
+          appName: 'Teme Astegni Operations Portal',
+          founder: 'Ashenafi Girma (0945399808)',
+          stats: {
+            tutorsCount: tutors.length,
+            parentsCount: parents.length
+          },
+          data: {
+            tutors: tutors,
+            parents: parents
+          }
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `teme_astegni_backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast(`✓ Database exported (${tutors.length} Tutors, ${parents.length} Parents)!`);
+      } catch (err) {
+        alert('Export failed: ' + err.message);
       }
-      launchDashboard();
+    }
+
+    function importDatabaseJson(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed.data || (!Array.isArray(parsed.data.tutors) && !Array.isArray(parsed.data.parents))) {
+            alert('Invalid backup file format. Expected "data.tutors" or "data.parents".');
+            return;
+          }
+
+          const existingTutors = getTutors();
+          const existingParents = getParents();
+
+          let tutorsAdded = 0;
+          let parentsAdded = 0;
+
+          if (Array.isArray(parsed.data.tutors)) {
+            const tutorPhones = new Set(existingTutors.map(t => t.phone));
+            parsed.data.tutors.forEach(t => {
+              if (t.phone && !tutorPhones.has(t.phone)) {
+                existingTutors.unshift(t);
+                tutorsAdded++;
+              }
+            });
+            saveTutors(existingTutors);
+          }
+
+          if (Array.isArray(parsed.data.parents)) {
+            const parentPhones = new Set(existingParents.map(p => p.phone));
+            parsed.data.parents.forEach(p => {
+              if (p.phone && !parentPhones.has(p.phone)) {
+                existingParents.unshift(p);
+                parentsAdded++;
+              }
+            });
+            saveParents(existingParents);
+          }
+
+          renderDashboard();
+          renderTutors();
+          renderParents();
+
+          const statEl = document.getElementById('backup-status-msg');
+          if (statEl) {
+            statEl.innerHTML = `✓ Restored successfully: +${tutorsAdded} tutors, +${parentsAdded} parents added.`;
+            statEl.style.color = '#34d399';
+          }
+          showToast(`✓ Backup restored: +${tutorsAdded} tutors, +${parentsAdded} parents!`);
+        } catch (err) {
+          alert('Error parsing JSON backup file: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
     }
 
     // ==========================================
@@ -3019,7 +3465,7 @@ function rowsToJson(sheet) {
 
             <div class="actions-right-group">
               <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.35);" onclick="openIdInspectModal('PARENT', '${escapeHtml(p.phone)}')">🔍 Inspect ID</button>
-              <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(pTgTag)} in Telegram">✈️ Vault</a>
+              <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardParentDossierToTelegram('${escapeHtml(p.phone)}')" title="Send full parent dossier to Telegram Ops group">✈️ Telegram Ops</button>
               <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleParentToSheet('${escapeHtml(pTrackingId)}')">☁️ Push</button>
               ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteParentLead('${escapeHtml(p.phone)}')">🗑️</button>` : ''}
             </div>
@@ -3268,7 +3714,7 @@ function rowsToJson(sheet) {
               <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openIdInspectModal('TUTOR', '${escapeHtml(t.phone)}')">🔍 Inspect ID</button>
               <button class="btn-act" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;" onclick="openTutorExamModal('${escapeHtml(t.phone)}')">🎙️ Exam</button>
               <button class="btn-act" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24;" onclick="openLevelUpgradeModal('${escapeHtml(t.phone)}')">⭐ Level</button>
-              <a href="https://t.me/+cNwM2HRo7A5jYTU0" target="_blank" class="btn-act" style="background: rgba(36, 161, 222, 0.15); color: #24a1de; border-color: rgba(36, 161, 222, 0.35); text-decoration: none;" title="Search ${escapeHtml(tTgTag)} in Telegram">✈️ Vault</a>
+              <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardTutorDossierToTelegram('${escapeHtml(t.phone)}')" title="Send full tutor dossier to Telegram Ops group">✈️ Telegram Ops</button>
               <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.35); color: #34d399;" onclick="pushSingleTutorToSheet('${escapeHtml(tTrackingId)}')">☁️ Push</button>
               ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteTutorLead('${escapeHtml(t.phone)}')">🗑️</button>` : ''}
             </div>
@@ -4723,30 +5169,29 @@ function rowsToJson(sheet) {
         document.getElementById('tg-chat-id-input').value = savedTgChat;
       }
 
-      // Check for active or saved session user
-      let activeUser = getSessionUser();
+      // Check for active authenticated session user
+      const activeUser = getSessionUser();
       if (!activeUser) {
-        // Automatically initialize Default Founder/Owner session so it NEVER asks again
-        const defaultOwner = {
-          role: 'owner',
-          name: 'Ashenafi (Ethio-21 Founder)',
-          email: 'ashenafitobe@gmail.com',
-          permissions: { viewFinancials: true, canDelete: true, manageSettings: true }
-        };
-        setSessionUser(defaultOwner);
-        activeUser = defaultOwner;
-      }
-
-      // Ensure setup and login overlays are completely hidden
-      if (document.getElementById('screen-owner-setup')) {
-        document.getElementById('screen-owner-setup').style.display = 'none';
-      }
-      if (document.getElementById('screen-login')) {
+        // Enforce Master PIN 2121 / Credential authentication
+        document.getElementById('screen-login').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'none';
+        if (document.getElementById('screen-owner-setup')) {
+          document.getElementById('screen-owner-setup').style.display = 'none';
+        }
+        setupPinInputs();
+        setTimeout(() => {
+          const p1 = document.getElementById('pin-1');
+          if (p1) p1.focus();
+        }, 150);
+      } else {
+        // Active session exists: Launch Operations Portal safely
         document.getElementById('screen-login').style.display = 'none';
+        if (document.getElementById('screen-owner-setup')) {
+          document.getElementById('screen-owner-setup').style.display = 'none';
+        }
+        launchDashboard();
+        resetInactivityTimer();
       }
-
-      // Directly launch operations dashboard
-      launchDashboard();
     });
   </script>
 </body>
