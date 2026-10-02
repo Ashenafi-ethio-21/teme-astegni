@@ -2266,11 +2266,22 @@ function doGet(e) {
 
   if (action === 'addTutor' || action === 'addTutorId') {
     var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
-    var trackingId = (e && e.parameter) ? (e.parameter.id || e.parameter.trackingId || '') : '';
+    var p = (e && e.parameter) ? e.parameter : {};
+    var trackingId = p.id || p.trackingId || '';
     if (trackingId) {
-      tSheet.appendRow([new Date(), trackingId]);
+      tSheet.appendRow([
+        new Date(), 
+        trackingId, 
+        p.name || '', 
+        p.phone || '', 
+        p.university || p.uni || '', 
+        p.year || '', 
+        p.cgpa || '', 
+        p.subjects || '', 
+        p.status || 'Interview Pending'
+      ]);
       formatLastRow(tSheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_T_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + (p.phone || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2278,11 +2289,22 @@ function doGet(e) {
 
   if (action === 'addParent' || action === 'addParentId') {
     var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
-    var trackingId = (e && e.parameter) ? (e.parameter.id || e.parameter.trackingId || '') : '';
+    var p = (e && e.parameter) ? e.parameter : {};
+    var trackingId = p.id || p.trackingId || '';
     if (trackingId) {
-      pSheet.appendRow([new Date(), trackingId]);
+      pSheet.appendRow([
+        new Date(), 
+        trackingId, 
+        p.name || '', 
+        p.phone || '', 
+        p.area || p.location || '', 
+        p.grade || '', 
+        p.subjects || '', 
+        p.studentGender || p.childGender || '', 
+        p.status || 'Pending'
+      ]);
       formatLastRow(pSheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_P_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (p.name || '') + '\n📞 <b>Phone:</b> ' + (p.phone || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
       .setMimeType(ContentService.MimeType.JSON);
@@ -2290,7 +2312,7 @@ function doGet(e) {
   
   return ContentService.createTextOutput(JSON.stringify({ 
     status: 'OK', 
-    message: 'Teme Astegni ID-Only Cloud API Active' 
+    message: 'Teme Astegni Rich Cloud API Active' 
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -2317,11 +2339,18 @@ function doPost(e) {
       var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
-        trackingId
+        trackingId,
+        d.name || d.parentName || '',
+        d.phone || d.parentPhone || '',
+        d.area || d.location || '',
+        d.grade || '',
+        d.subjects || '',
+        d.studentGender || d.childGender || '',
+        d.status || 'Pending'
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_P_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm') + '\n\n🔍 Search this ID in Ethio - 21 Astegni Ops to view complete file.');
+      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + (d.phone || '') + '\n📍 <b>Location:</b> ' + (d.area || '') + '\n🎒 <b>Grade:</b> ' + (d.grade || '') + '\n📖 <b>Subjects:</b> ' + (d.subjects || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     } 
     else if (action === 'addTutor') {
       var sheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
@@ -2329,26 +2358,39 @@ function doPost(e) {
       var trackingId = d.trackingId || d.id || '';
       var newRow = [
         new Date(),
-        trackingId
+        trackingId,
+        d.name || d.tutorName || '',
+        d.phone || d.tutorPhone || '',
+        d.university || d.uni || '',
+        d.year || '',
+        d.cgpa || '',
+        d.subjects || '',
+        d.status || 'Interview Pending'
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📌 <b>Search Tag:</b> #AST_T_' + (trackingId.split('-')[2] || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm') + '\n\n🔍 Search this ID in Ethio - 21 Astegni Ops to view verified documents.');
+      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n👤 <b>Name:</b> ' + (d.name || '') + '\n📞 <b>Phone:</b> ' + (d.phone || '') + '\n🏛️ <b>University:</b> ' + (d.university || '') + '\n⭐ <b>CGPA:</b> ' + (d.cgpa || '') + '\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     else if (action === 'addMatch') {
       var sheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
       var d = postData.data || postData;
       var newRow = [
         new Date(),
-        d.parentId || d.parentName || '',
-        d.tutorId || d.tutorName || '',
+        d.matchId || ('M-' + new Date().getTime()),
+        d.parentName || d.parentId || '',
+        d.parentPhone || '',
+        d.parentId || '',
+        d.tutorName || d.tutorId || '',
+        d.tutorPhone || '',
+        d.tutorId || '',
+        d.subjects || '',
         d.monthlyFee || '',
         d.commission || '',
-        d.status || 'Active'
+        d.status || '1-Day Trial Pending'
       ];
       sheet.appendRow(newRow);
       formatLastRow(sheet, '#1e40af');
-      sendTelegramNotification('🤝 <b>NEW MATCH CREATED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + (d.parentId || '') + '</code>\n🏷️ <b>Tutor ID:</b> <code>' + (d.tutorId || '') + '</code>\n💵 <b>Fee:</b> ' + (d.monthlyFee || '') + ' ETB\n💼 <b>Commission:</b> ' + (d.commission || '') + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
+      sendTelegramNotification('🤝 <b>NEW MATCH CREATED</b>\n\n🏷️ <b>Parent:</b> ' + (d.parentName || '') + ' (<code>' + (d.parentId || '') + '</code>)\n📞 <b>Parent Phone:</b> ' + (d.parentPhone || '') + '\n🎓 <b>Tutor:</b> ' + (d.tutorName || '') + ' (<code>' + (d.tutorId || '') + '</code>)\n📞 <b>Tutor Phone:</b> ' + (d.tutorPhone || '') + '\n💵 <b>Fee:</b> ' + (d.monthlyFee || '') + ' ETB\n💼 <b>Commission:</b> ' + (d.commission || '') + ' ETB\n📅 <b>Date:</b> ' + Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm'));
     }
     else if (action === 'logAdminAction') {
       sendTelegramNotification(postData.text || '');
@@ -2365,7 +2407,7 @@ function doPost(e) {
 function setupCleanArchitecture() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   setupCleanArchitectureSilently(ss);
-  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Strict 2-Column Index Architecture!\n\n- Parents_Index: [Registration Date, Parent ID]\n- Tutors_Index: [Registration Date, Tutor ID]\n- Matches_Ledger: [Timestamp, Parent ID, Tutor ID, Fee, Commission, Status]\n- All old tabs deleted.');
+  SpreadsheetApp.getUi().alert('🎉 SUCCESS!\n\nYour Google Sheet has been converted to the Complete Cloud Ledger Architecture!\n\n• Parents_Index: [Date, Parent ID, Name, Phone, Area, Grade, Subjects, Gender, Status]\n• Tutors_Index: [Date, Tutor ID, Name, Phone, University, Year, CGPA, Subjects, Status]\n• Matches_Ledger: [Timestamp, Match ID, Parent Name, Parent Phone, Parent ID, Tutor Name, Tutor Phone, Tutor ID, Subjects, Fee, Commission, Status]\n• All legacy tabs safely managed.');
 }
 
 function setupCleanArchitectureSilently(ss) {
@@ -2378,11 +2420,8 @@ function setupCleanArchitectureSilently(ss) {
 function createParentsSheet(ss) {
   var s = ss.getSheetByName('Parents_Index') || ss.insertSheet('Parents_Index');
   if (s.getLastRow() === 0) {
-    var headers = ['Registration Date', 'Parent ID'];
+    var headers = ['Registration Date', 'Parent ID', 'Parent Name', 'Phone Number', 'Location / Area', 'Student Grade', 'Requested Subjects', 'Student Gender', 'Status'];
     s.appendRow(headers);
-    if (s.getMaxColumns() > 2) {
-      s.deleteColumns(3, s.getMaxColumns() - 2);
-    }
     applyModernHeader(s, '#0f172a');
   }
   return s;
@@ -2391,11 +2430,8 @@ function createParentsSheet(ss) {
 function createTutorsSheet(ss) {
   var s = ss.getSheetByName('Tutors_Index') || ss.insertSheet('Tutors_Index');
   if (s.getLastRow() === 0) {
-    var headers = ['Registration Date', 'Tutor ID'];
+    var headers = ['Registration Date', 'Tutor ID', 'Tutor Name', 'Phone Number', 'University', 'Academic Year', 'CGPA', 'Subjects (Grade A)', 'Status'];
     s.appendRow(headers);
-    if (s.getMaxColumns() > 2) {
-      s.deleteColumns(3, s.getMaxColumns() - 2);
-    }
     applyModernHeader(s, '#065f46');
   }
   return s;
@@ -2404,11 +2440,8 @@ function createTutorsSheet(ss) {
 function createMatchesSheet(ss) {
   var s = ss.getSheetByName('Matches_Ledger') || ss.insertSheet('Matches_Ledger');
   if (s.getLastRow() === 0) {
-    var headers = ['Timestamp', 'Parent ID', 'Tutor ID', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
+    var headers = ['Timestamp', 'Match ID', 'Parent Name', 'Parent Phone', 'Parent ID', 'Tutor Name', 'Tutor Phone', 'Tutor ID', 'Subjects', 'Monthly Fee (ETB)', 'Commission (ETB)', 'Status'];
     s.appendRow(headers);
-    if (s.getMaxColumns() > 6) {
-      s.deleteColumns(7, s.getMaxColumns() - 6);
-    }
     applyModernHeader(s, '#1e40af');
   }
   return s;
@@ -4816,8 +4849,14 @@ function rowsToJson(sheet) {
           body: JSON.stringify({
             action: 'addMatch',
             data: {
+              matchId: newMatch.id,
+              parentName: p.name || '',
+              parentPhone: p.phone || '',
               parentId: pTrackingId,
+              tutorName: t.name || '',
+              tutorPhone: t.phone || '',
               tutorId: tTrackingId,
+              subjects: p.subjects || t.subjects || '',
               monthlyFee: fee,
               commission: commission,
               status: '1-Day Trial Pending'
@@ -4985,6 +5024,7 @@ function rowsToJson(sheet) {
 
       let tSuccess = 0;
       let pSuccess = 0;
+      let mSuccess = 0;
 
       for (const t of tutors) {
         const id = t.trackingId || t.id || ('AST-T-' + (t.phone || '').slice(-4));
@@ -4994,10 +5034,23 @@ function rowsToJson(sheet) {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'addTutor', data: { id: id, trackingId: id } })
+            body: JSON.stringify({ 
+              action: 'addTutor', 
+              data: { 
+                id: id, 
+                trackingId: id,
+                name: t.name || '',
+                phone: t.phone || '',
+                university: t.university || t.uni || '',
+                year: t.year || '',
+                cgpa: t.cgpa || '',
+                subjects: t.subjects || '',
+                status: t.status || 'Interview Pending'
+              } 
+            })
           });
           const sep = url.includes('?') ? '&' : '?';
-          fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(id)}`, { mode: 'no-cors' }).catch(() => {});
+          fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(id)}&name=${encodeURIComponent(t.name||'')}&phone=${encodeURIComponent(t.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
           tSuccess++;
           await new Promise(r => setTimeout(r, 350));
         } catch(e) {}
@@ -5011,11 +5064,53 @@ function rowsToJson(sheet) {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'addParent', data: { id: id, trackingId: id } })
+            body: JSON.stringify({ 
+              action: 'addParent', 
+              data: { 
+                id: id, 
+                trackingId: id,
+                name: p.name || '',
+                phone: p.phone || '',
+                area: p.area || p.location || '',
+                grade: p.grade || '',
+                subjects: p.subjects || '',
+                studentGender: p.studentGender || p.childGender || '',
+                status: p.status || 'Pending'
+              } 
+            })
           });
           const sep = url.includes('?') ? '&' : '?';
-          fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(id)}`, { mode: 'no-cors' }).catch(() => {});
+          fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(id)}&name=${encodeURIComponent(p.name||'')}&phone=${encodeURIComponent(p.phone||'')}`, { mode: 'no-cors' }).catch(() => {});
           pSuccess++;
+          await new Promise(r => setTimeout(r, 350));
+        } catch(e) {}
+      }
+
+      const matches = getMatches();
+      for (const m of matches) {
+        try {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'addMatch',
+              data: {
+                matchId: m.id || ('M-' + Date.now()),
+                parentName: m.parentName || '',
+                parentPhone: m.parentPhone || '',
+                parentId: m.parentId || '',
+                tutorName: m.tutorName || '',
+                tutorPhone: m.tutorPhone || '',
+                tutorId: m.tutorId || '',
+                subjects: m.subjects || '',
+                monthlyFee: m.monthlyFee || '',
+                commission: m.commission || '',
+                status: m.status || '1-Day Trial Pending'
+              }
+            })
+          });
+          mSuccess++;
           await new Promise(r => setTimeout(r, 350));
         } catch(e) {}
       }
@@ -5024,7 +5119,7 @@ function rowsToJson(sheet) {
         btn.disabled = false;
         btn.innerText = '📤 Sync & Push All Leads to Sheet';
       }
-      alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed to Google Sheet Cloud Ledger:\n• ${tSuccess} Tutor ID(s) to Tutors_Index\n• ${pSuccess} Parent ID(s) to Parents_Index\n\nPlease check your Google Sheet now!`);
+      alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed to Google Sheet Cloud Ledger:\n• ${tSuccess} Tutor Record(s) to Tutors_Index\n• ${pSuccess} Parent Record(s) to Parents_Index\n• ${mSuccess} Match Record(s) to Matches_Ledger\n\nPlease check your Google Sheet now!`);
     }
 
     async function pushSingleIdToGoogleSheet() {
