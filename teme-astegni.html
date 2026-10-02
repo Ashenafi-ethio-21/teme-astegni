@@ -25,9 +25,16 @@
   <meta name="twitter:description" content="Ethiopia's trusted university home tutoring platform. Verified credentials, nearby campus scholars, zero-risk free trial.">
   <meta name="twitter:image" content="https://ashenafi-ethio-21.github.io/teme-astegni/assets/teme_astegni_logo.jpg">
 
-  <!-- Favicon & Touch Icons -->
+  <!-- Web App Manifest & Progressive Web App (PWA) -->
+  <link rel="manifest" href="manifest-teme.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Teme Astegni">
   <link rel="icon" type="image/jpeg" href="assets/teme_astegni_logo.jpg">
   <link rel="apple-touch-icon" href="assets/teme_astegni_logo.jpg">
+  <link rel="apple-touch-icon" sizes="192x192" href="assets/teme_astegni_logo.jpg">
+  <link rel="apple-touch-icon" sizes="512x512" href="assets/teme_astegni_logo.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1199,6 +1206,211 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
     }
+
+    /* PWA Floating Install Banner */
+    .pwa-install-banner {
+      position: fixed;
+      bottom: 74px;
+      left: 14px;
+      right: 14px;
+      max-width: 520px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.96) 0%, rgba(10, 15, 26, 0.98) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 20px;
+      padding: 0.85rem 1.05rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(56, 189, 248, 0.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 150;
+      transform: translateY(150%);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .pwa-install-banner.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .pwa-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      min-width: 0;
+    }
+    .pwa-banner-logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      object-fit: cover;
+      border: 1.5px solid rgba(56, 189, 248, 0.5);
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25);
+      flex-shrink: 0;
+    }
+    .pwa-banner-text {
+      min-width: 0;
+    }
+    .pwa-banner-title {
+      font-size: 0.95rem;
+      font-weight: 850;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pwa-banner-sub {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      line-height: 1.3;
+      margin-top: 0.15rem;
+    }
+    .pwa-banner-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .pwa-btn-install {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #fff;
+      border: none;
+      font-weight: 850;
+      font-size: 0.82rem;
+      padding: 0.6rem 0.95rem;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .pwa-btn-install:hover {
+      background: #38bdf8;
+      color: #04101e;
+      transform: translateY(-1px);
+    }
+    .pwa-btn-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .pwa-btn-close:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    /* Top Header Install Quick Pill */
+    .header-install-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(2, 132, 199, 0.22) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: auto;
+      margin-right: 0.35rem;
+      white-space: nowrap;
+    }
+    .header-install-btn:hover {
+      background: #38bdf8;
+      color: #090d16;
+    }
+    .header-install-btn img {
+      width: 17px;
+      height: 17px;
+      border-radius: 5px;
+      object-fit: cover;
+    }
+
+    /* iOS Safari Install Guide Modal */
+    .ios-install-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 250;
+      padding: 1rem;
+    }
+    .ios-install-modal.active {
+      display: flex;
+    }
+    .ios-install-sheet {
+      background: linear-gradient(180deg, #162033 0%, #0d1523 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 26px;
+      max-width: 480px;
+      width: 100%;
+      padding: 1.6rem 1.4rem;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.85);
+      position: relative;
+      animation: sheetUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .ios-step {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 0.8rem 0.95rem;
+      margin-bottom: 0.65rem;
+      text-align: left;
+    }
+    .ios-step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #0284c7;
+      color: #fff;
+      font-weight: 850;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ios-step-text {
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      line-height: 1.4;
+    }
+    .ios-step-text strong {
+      color: #38bdf8;
+    }
   </style>
 </head>
 <body>
@@ -1214,6 +1426,12 @@
           <span id="i18n-header-sub">Verified University Home Tutors</span>
         </div>
       </div>
+
+      <!-- Quick Install App Action -->
+      <button id="btn-header-install" class="header-install-btn" onclick="triggerPwaInstall()" title="Install App to Home Screen">
+        <img src="assets/teme_astegni_logo.jpg" alt="App">
+        <span id="i18n-header-install">Install</span>
+      </button>
 
       <!-- 3-Language Toggle: Amharic / English / Afaan Oromoo -->
       <div class="lang-switcher">
@@ -2377,7 +2595,65 @@
   </nav>
 
   <!-- ========================================== -->
-  <!-- RESULT DISPATCH MODAL                      -->
+  <!-- FLOATING APP INSTALL BANNER (WITH LOGO)   -->
+  <!-- ========================================== -->
+  <div id="pwa-install-banner" class="pwa-install-banner" role="alert" aria-live="polite">
+    <div class="pwa-banner-left">
+      <img src="assets/teme_astegni_logo.jpg" alt="Teme Astegni Logo" class="pwa-banner-logo">
+      <div class="pwa-banner-text">
+        <div class="pwa-banner-title">
+          <span>Teme Astegni</span>
+          <span style="font-size: 0.72rem; color: #38bdf8; font-weight: 700;">• ተሜ አስጠኚ</span>
+        </div>
+        <div class="pwa-banner-sub" id="i18n-pwa-sub">Install app to your home screen for quick offline access</div>
+      </div>
+    </div>
+    <div class="pwa-banner-actions">
+      <button class="pwa-btn-install" id="btn-pwa-install-action" onclick="triggerPwaInstall()">
+        <span>📲</span>
+        <span id="i18n-pwa-btn">Install</span>
+      </button>
+      <button class="pwa-btn-close" onclick="dismissPwaBanner()" title="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- iOS SAFARI ADD TO HOME SCREEN MODAL        -->
+  <!-- ========================================== -->
+  <div class="ios-install-modal" id="pwa-ios-modal" onclick="if(event.target === this) closeIosModal()">
+    <div class="ios-install-sheet">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <img src="assets/teme_astegni_logo.jpg" alt="Teme Astegni" style="width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid #38bdf8; object-fit: cover;">
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 850; color: #fff;">Install Teme Astegni</div>
+            <div style="font-size: 0.76rem; color: #94a3b8;">Add to your iPhone / iPad Home Screen</div>
+          </div>
+        </div>
+        <button onclick="closeIosModal()" style="background: rgba(255,255,255,0.08); border:none; color:#cbd5e1; width:32px; height:32px; border-radius:50%; cursor:pointer; font-weight:700;">✕</button>
+      </div>
+
+      <div class="ios-step">
+        <div class="ios-step-num">1</div>
+        <div class="ios-step-text">Tap the <strong>Share button</strong> at the bottom of your Safari browser (<span style="font-size: 1.1rem; color: #38bdf8;">⎋</span> or square with arrow pointing up).</div>
+      </div>
+
+      <div class="ios-step">
+        <div class="ios-step-num">2</div>
+        <div class="ios-step-text">Scroll down the sharing options and tap <strong>"Add to Home Screen"</strong> (<span style="font-size: 1.05rem; color: #38bdf8;">⊞</span> ወደ ዋና ገጽ ጨምር).</div>
+      </div>
+
+      <div class="ios-step">
+        <div class="ios-step-num">3</div>
+        <div class="ios-step-text">Tap <strong>"Add"</strong> in the top right corner. The <strong>Teme Astegni logo</strong> will appear right on your phone home screen!</div>
+      </div>
+
+      <button onclick="closeIosModal()" style="width: 100%; margin-top: 0.8rem; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; border:none; padding: 0.85rem; border-radius: 14px; font-weight: 800; font-size: 0.92rem; cursor:pointer;">
+        Got It (ገባኝ)
+      </button>
+    </div>
+  </div>
+
   <!-- ========================================== -->
   <!-- RESULT DISPATCH MODAL                      -->
   <!-- ========================================== -->
@@ -3742,7 +4018,10 @@
         chDesc: "ኦፊሴላዊ የቴሌግራም ቻናልና ማስታወቂያዎች",
         opsBtn: "ቴሌግራም Ops",
         chBtn: "ቻናል",
-        modalClose: "ዝጋ / ተጠናቋል"
+        modalClose: "ዝጋ / ተጠናቋል",
+        headerInstall: "ጫን",
+        pwaSub: "ለቀላል እና ከመስመር ውጭ አጠቃቀም ወደ ዋና ስክሪን ይጫኑ",
+        pwaBtn: "አፑን ጫን"
       },
 
       en: {
@@ -3857,7 +4136,10 @@
         chDesc: "Official Announcements & Updates Channel",
         opsBtn: "Join Ops",
         chBtn: "Channel",
-        modalClose: "Close / Done"
+        modalClose: "Close / Done",
+        headerInstall: "Install",
+        pwaSub: "Install app to your home screen for quick offline access",
+        pwaBtn: "Install App"
       },
 
       or: {
@@ -3972,7 +4254,10 @@
         chDesc: "Chaanaalii Beeksisootaa fi Oduuwwan",
         opsBtn: "Ops Galmoomaa",
         chBtn: "Chaanaalii",
-        modalClose: "Cufaa / Xumurameera"
+        modalClose: "Cufaa / Xumurameera",
+        headerInstall: "Fe'aa",
+        pwaSub: "Itti fayyadama salphaaf gara iskiriinii duraatti fe'aa",
+        pwaBtn: "Appii Fe'aa"
       }
     };
 
@@ -4020,6 +4305,11 @@
       document.getElementById('i18n-tab-tutor').innerText = t.tabTutor;
       document.getElementById('i18n-tab-vetting').innerText = t.tabVetting;
       document.getElementById('i18n-tab-hotline').innerText = t.tabHotline;
+
+      // PWA Install Elements
+      if (document.getElementById('i18n-header-install') && t.headerInstall) document.getElementById('i18n-header-install').innerText = t.headerInstall;
+      if (document.getElementById('i18n-pwa-sub') && t.pwaSub) document.getElementById('i18n-pwa-sub').innerText = t.pwaSub;
+      if (document.getElementById('i18n-pwa-btn') && t.pwaBtn) document.getElementById('i18n-pwa-btn').innerText = t.pwaBtn;
 
       // Back Buttons
       document.getElementById('i18n-back-p').innerText = t.backP;
@@ -5294,6 +5584,140 @@
         showScreen('screen-home');
       }
     });
+
+    // =========================================================================
+    // PROGRESSIVE WEB APP (PWA) INSTALL & SERVICE WORKER ENGINE
+    // =========================================================================
+    let deferredInstallPrompt = null;
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('scripts/sw.js').then((registration) => {
+          console.log('Teme Astegni PWA service worker registered successfully:', registration.scope);
+        }).catch((err) => {
+          console.warn('PWA service worker registration failed:', err);
+        });
+      });
+    }
+
+    // Check if app is already running in standalone / installed mode
+    function isRunningStandalone() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+             (window.navigator.standalone === true) ||
+             document.referrer.includes('android-app://');
+    }
+
+    // Check if device is iOS (iPhone/iPad/iPod)
+    function isIosDevice() {
+      const ua = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(ua) && !window.MSStream;
+    }
+
+    // Capture native browser install prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      console.log('Teme Astegni: beforeinstallprompt captured');
+
+      setTimeout(() => {
+        showPwaBannerIfEligible();
+      }, 1500);
+    });
+
+    // Check eligibility and reveal install prompt banner
+    function showPwaBannerIfEligible() {
+      if (isRunningStandalone()) {
+        const headerBtn = document.getElementById('btn-header-install');
+        if (headerBtn) headerBtn.style.display = 'none';
+        return;
+      }
+
+      const lastDismissed = localStorage.getItem('teme_astegni_pwa_dismissed');
+      const now = Date.now();
+      if (lastDismissed && (now - parseInt(lastDismissed, 10)) < (24 * 60 * 60 * 1000)) {
+        return;
+      }
+
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) {
+        banner.classList.add('show');
+      }
+    }
+
+    // Trigger installation flow
+    function triggerPwaInstall() {
+      if (isIosDevice()) {
+        openIosModal();
+        return;
+      }
+
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted Teme Astegni PWA installation');
+            dismissPwaBanner(true);
+          } else {
+            console.log('User dismissed Teme Astegni PWA installation prompt');
+          }
+          deferredInstallPrompt = null;
+        }).catch((err) => {
+          console.warn('Install prompt error:', err);
+        });
+      } else {
+        if (isIosDevice()) {
+          openIosModal();
+        } else {
+          alert("To install Teme Astegni:\n\n1. Tap your browser menu (⋮ or ⋯)\n2. Select 'Install App' or 'Add to Home screen'\n\nThe official logo will be added to your home screen!");
+        }
+      }
+    }
+
+    // Dismiss banner
+    function dismissPwaBanner(permanent = false) {
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) {
+        banner.classList.remove('show');
+      }
+      if (permanent) {
+        localStorage.setItem('teme_astegni_pwa_dismissed', Date.now() + (30 * 24 * 60 * 60 * 1000));
+      } else {
+        localStorage.setItem('teme_astegni_pwa_dismissed', Date.now());
+      }
+    }
+
+    // iOS Modal handlers
+    function openIosModal() {
+      const modal = document.getElementById('pwa-ios-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeIosModal() {
+      const modal = document.getElementById('pwa-ios-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Detect when app was successfully installed
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('Teme Astegni app was installed successfully!');
+      dismissPwaBanner(true);
+      const headerBtn = document.getElementById('btn-header-install');
+      if (headerBtn) headerBtn.style.display = 'none';
+      deferredInstallPrompt = null;
+    });
+
+    // Check after load
+    setTimeout(() => {
+      if (!isRunningStandalone()) {
+        if (isIosDevice()) {
+          showPwaBannerIfEligible();
+        }
+      } else {
+        const headerBtn = document.getElementById('btn-header-install');
+        if (headerBtn) headerBtn.style.display = 'none';
+      }
+    }, 2000);
   </script>
 
 </body>
