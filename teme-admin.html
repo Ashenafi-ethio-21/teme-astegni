@@ -2315,14 +2315,20 @@
  */
 
 function onOpen(e) {
-  SpreadsheetApp.getUi()
-    .createMenu('🚀 Teme Astegni')
-    .addItem('🔧 1-Click Fix & Align Entire Google Sheet', 'fixAndAlignAllSheets')
-    .addItem('🧹 Remove All Duplicate Rows from All Sheets', 'deduplicateAllSheets')
-    .addItem('⚡ Format Sheets to Strict Matches Ledger', 'setupCleanArchitecture')
-    .addItem('🗑️ Delete All Legacy Sheets (Keep Only _ Tabs)', 'cleanLegacyTabs')
-    .addItem('✈️ Send Test Alert to Telegram Bot', 'testTelegramNotification')
-    .addToUi();
+  try {
+    var ui = SpreadsheetApp.getUi();
+    if (ui) {
+      ui.createMenu('🚀 Teme Astegni Admin')
+        .addItem('🔧 1-Click Fix & Align Entire Google Sheet', 'fixAndAlignAllSheets')
+        .addItem('🧹 Remove All Duplicate Rows from All Sheets', 'deduplicateAllSheets')
+        .addItem('⚡ Format Sheets to Strict Matches Ledger', 'setupCleanArchitecture')
+        .addItem('🗑️ Delete All Legacy Sheets (Keep Only _ Tabs)', 'cleanLegacyTabs')
+        .addItem('✈️ Send Test Alert to Telegram Bot', 'testTelegramNotification')
+        .addToUi();
+    }
+  } catch (err) {
+    Logger.log('Note: onOpen automatically renders when you refresh the Google Sheet tab. Ignored during manual editor test run: ' + err);
+  }
 }
 
 function doGet(e) {
@@ -4919,9 +4925,11 @@ function rowsToJson(sheet) {
         return;
       }
 
-      filtered.reverse().forEach((m) => {
+      filtered.reverse().forEach((m, mIndex) => {
         const card = document.createElement('div');
-        card.className = 'record-card';
+        card.className = 'record-card match-card';
+        card.style.transition = 'all 0.2s ease';
+        const detailsId = `match-details-${mIndex}`;
 
         const cycleStartDate = m.lastPayoutDate ? new Date(m.lastPayoutDate) : (m.date ? new Date(m.date) : new Date());
         const daysInCycle = Math.max(0, Math.floor((Date.now() - cycleStartDate.getTime()) / MS_PER_DAY));
@@ -4933,10 +4941,6 @@ function rowsToJson(sheet) {
         const rate = Number(m.rate) || 25;
         const comm = Number(m.commission) || Math.round(fee * (rate / 100));
         const tutorNet = fee - comm;
-
-        const financialText = canViewFin 
-          ? `Monthly Fee: ${fee.toLocaleString()} ETB | Commission (${rate}%): ${comm.toLocaleString()} ETB | Tutor Net (75%): ${tutorNet.toLocaleString()} ETB`
-          : `Tutoring Pair • Active In-Home Term`;
 
         let cycleMarkup = '';
         if (isMonthReached) {
@@ -4979,40 +4983,87 @@ function rowsToJson(sheet) {
         }
 
         card.innerHTML = `
-          <div class="record-top">
-            <div>
-              <div class="record-name">
-                👨‍👩‍👧 ${escapeHtml(m.parentName)} ⟷ 🎓 ${escapeHtml(m.tutorName)}
-              </div>
-              <div style="font-size: 0.75rem; color: var(--accent-blue); margin-top: 0.2rem; font-weight: 700;">
-                ${financialText}
+          <!-- Summary Header (Always Visible & Collapsible) -->
+          <div class="record-header-modern" onclick="toggleCardDetails('${detailsId}', this)" style="cursor: pointer; margin-bottom: 0; user-select: none;">
+            <div class="record-identity">
+              <div class="record-avatar avatar-match" style="width: 44px; height: 44px; font-size: 1.2rem; background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); display: flex; align-items: center; justify-content: center; border-radius: 12px;">🤝</div>
+              <div class="record-titles">
+                <div class="record-fullname" style="font-size: 1.05rem;">
+                  <span>👨‍👩‍👧 ${escapeHtml(m.parentName)} ⟷ 🎓 ${escapeHtml(m.tutorName)}</span>
+                  <span class="id-badge-pill" style="background: rgba(37, 99, 235, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35); font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 6px;">🏷️ ${escapeHtml(m.parentId || 'Parent')} ⟷ ${escapeHtml(m.tutorId || 'Tutor')}</span>
+                </div>
+                <div class="record-subtitle-line">
+                  <span>📍 ${escapeHtml(m.parentArea || 'Addis Ababa')}</span>
+                  <span>•</span>
+                  <span>🎒 ${escapeHtml(m.studentGrade || 'All Grades')}</span>
+                  <span>•</span>
+                  <span>💰 ${fee.toLocaleString()} ETB/mo</span>
+                  <span>•</span>
+                  <span>📅 ${new Date(m.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                </div>
               </div>
             </div>
-            <div style="display: flex; gap: 0.4rem; align-items: center;">
-              ${isMonthReached ? `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-weight: 850;">🚨 Month Reached</span>` : ''}
+
+            <div class="record-header-actions" onclick="event.stopPropagation()">
+              ${isMonthReached 
+                ? `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-weight: 850;">🚨 Month Reached</span>` 
+                : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">⏳ Day ${daysInCycle}/30</span>`}
               <span class="tag-badge ${getStatusBadgeClass(m.status)}">${m.status}</span>
+              <button type="button" class="btn-collapse-toggle" onclick="toggleCardDetails('${detailsId}', this)">
+                ▼ Details
+              </button>
             </div>
           </div>
 
-          <div class="record-details">
-            <div class="detail-item"><span class="detail-label">Parent Phone:</span> <a href="tel:${escapeHtml(m.parentPhone)}" style="color:#fff;">${escapeHtml(m.parentPhone)}</a></div>
-            <div class="detail-item"><span class="detail-label">Tutor Phone:</span> <a href="tel:${escapeHtml(m.tutorPhone)}" style="color:#fff;">${escapeHtml(m.tutorPhone)}</a></div>
-            <div class="detail-item"><span class="detail-label">Pairing Date:</span> ${new Date(m.date).toLocaleDateString()}</div>
-            <div class="detail-item"><span class="detail-label">💳 Payment Proof:</span> <span class="tag-badge ${m.paymentProof ? 'tag-active' : 'tag-trial'}">${m.paymentProof ? '✓ Telebirr Verified' : '⏳ Awaiting Ops Screenshot'}</span></div>
-          </div>
+          <!-- Expandable Full Dossier Body (Collapsed by Default) -->
+          <div id="${detailsId}" class="card-expandable-body" style="display: none; margin-top: 1rem; padding-top: 0.95rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <!-- Meta Ribbon -->
+            <div class="record-meta-ribbon">
+              <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 750;">💵 Tutor Net: ${tutorNet.toLocaleString()} ETB (75%)</span>
+              <span class="tag-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35);">💼 Margin (${rate}%): ${comm.toLocaleString()} ETB</span>
+              <span class="tag-badge ${m.paymentProof ? 'tag-active' : 'tag-trial'}">💳 ${m.paymentProof ? '✓ Telebirr Verified' : '⏳ Awaiting Ops Screenshot'}</span>
+              <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);">🔄 Months Paid: ${m.monthsPaid || 0}</span>
+            </div>
 
-          ${cycleMarkup}
+            <!-- Bento Grid Details -->
+            <div class="record-bento-grid">
+              <div class="bento-item">
+                <span class="bento-label">👨‍👩‍👧 Parent Contact</span>
+                <div class="bento-value"><a href="tel:${escapeHtml(m.parentPhone)}" style="color: #fff; text-decoration: none;">📞 ${escapeHtml(m.parentPhone)}</a></div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">🎓 Tutor Contact</span>
+                <div class="bento-value"><a href="tel:${escapeHtml(m.tutorPhone)}" style="color: #fff; text-decoration: none;">📞 ${escapeHtml(m.tutorPhone)}</a></div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">📍 Neighborhood / City</span>
+                <div class="bento-value">${escapeHtml(m.parentArea || 'Addis Ababa')} ${m.tutorUni ? '• ' + escapeHtml(m.tutorUni) : ''}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">📖 Subjects &amp; Grade Level</span>
+                <div class="bento-value">${escapeHtml(m.subjects || 'General')} (${escapeHtml(m.studentGrade || 'All')})</div>
+              </div>
+            </div>
 
-          <div class="record-actions" style="margin-top: 0.85rem;">
-            <select class="status-dropdown" onchange="updateMatchStatus('${m.id}', this.value)">
-              <option value="1-Day Trial Pending" ${m.status === '1-Day Trial Pending' ? 'selected' : ''}>⏳ Trial Pending (የ 1 ቀን ሙከራ)</option>
-              <option value="Trial Completed" ${m.status === 'Trial Completed' ? 'selected' : ''}>🎯 Trial Done (ሙከራ አልቋል)</option>
-              <option value="Active Contract" ${m.status === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
-              <option value="Commission Paid" ${m.status === 'Commission Paid' ? 'selected' : ''}>💰 Commission Paid (ኮሚሽን ተከፍሏል)</option>
-            </select>
-            <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Screenshot Verified ✓' : 'Verify Screenshot'}</button>
-            <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardMatchDossierToTelegram('${m.id}')" title="Send match contract to Private Matches Ops Group">✈️ Private Ops</button>
-            ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose);" onclick="deleteMatch('${m.id}')">🗑️ Remove</button>` : ''}
+            <!-- 30-Day Billing Cycle Tracker -->
+            ${cycleMarkup}
+
+            <!-- Segmented Actions Footer -->
+            <div class="record-actions-modern" style="margin-top: 1rem;">
+              <div class="actions-left-group">
+                <select class="status-dropdown" onchange="updateMatchStatus('${m.id}', this.value)">
+                  <option value="1-Day Trial Pending" ${m.status === '1-Day Trial Pending' ? 'selected' : ''}>⏳ Trial Pending (የ 1 ቀን ሙከራ)</option>
+                  <option value="Trial Completed" ${m.status === 'Trial Completed' ? 'selected' : ''}>🎯 Trial Done (ሙከራ አልቋል)</option>
+                  <option value="Active Contract" ${m.status === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
+                  <option value="Commission Paid" ${m.status === 'Commission Paid' ? 'selected' : ''}>💰 Commission Paid (ኮሚሽን ተከፍሏል)</option>
+                </select>
+                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Screenshot Verified ✓' : 'Verify Screenshot'}</button>
+              </div>
+              <div class="actions-right-group">
+                <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardMatchDossierToTelegram('${m.id}')" title="Send match contract to Private Matches Ops Group">✈️ Private Ops</button>
+                ${canDelete ? `<button class="btn-act" style="color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.25);" onclick="deleteMatch('${m.id}')">🗑️ Remove</button>` : ''}
+              </div>
+            </div>
           </div>
         `;
         container.appendChild(card);
