@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#090d16",
-  "theme_color": "#090d16",
+  "theme_color": "#4f46e5",
   "orientation": "portrait",
   "categories": ["education", "lifestyle"],
   "icons": [
