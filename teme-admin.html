@@ -1798,7 +1798,8 @@
         <div class="filter-pills" id="matches-filter-pills" style="gap: 0.45rem; flex-wrap: wrap;">
           <button class="pill-btn active" onclick="setMatchFilter('ALL', this)">All Pairings (<span id="m-pill-all-count">0</span>)</button>
           <button class="pill-btn" style="border-color: rgba(239, 68, 68, 0.6); color: #f87171; font-weight: 850;" onclick="setMatchFilter('MONTH_REACHED', this)">🚨 1 Month Reached • Payout Due (<span id="m-pill-due-count">0</span>)</button>
-          <button class="pill-btn" onclick="setMatchFilter('ACTIVE', this)">✅ Active Contracts</button>
+          <button class="pill-btn" style="border-color: rgba(56, 189, 248, 0.5); color: #38bdf8;" onclick="setMatchFilter('AWAITING_PAYMENT', this)">💳 Awaiting Parent Tuition</button>
+          <button class="pill-btn" onclick="setMatchFilter('ACTIVE', this)">✅ Active Escrow Contracts</button>
           <button class="pill-btn" onclick="setMatchFilter('TRIAL', this)">⏳ 1-Day Trials</button>
         </div>
       </div>
@@ -2027,22 +2028,51 @@
       </div>
 
       <div class="form-group" id="match-rate-group">
-        <label class="form-label">Commission Rate (%)</label>
+        <label class="form-label">Agency Commission Model</label>
         <select id="match-rate-select" class="form-ctrl" onchange="calculateCommissionPreview()">
-          <option value="20">20% Margin</option>
-          <option value="25" selected>25% Standard (Ethio 21)</option>
-          <option value="30">30% High-Touch</option>
+          <option value="AGENCY_STANDARD" selected>⭐ Official Agency Model: Month 1 (40% Cut) ➔ Month 2+ (200 ETB Flat Cut)</option>
+          <option value="25">25% Flat Monthly Margin</option>
+          <option value="20">20% Introductory Margin</option>
+          <option value="30">30% High-Touch Margin</option>
         </select>
       </div>
 
-      <div id="match-calc-preview" style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.82rem;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-          <span style="color: var(--text-muted);">Tutor Net Take-Home:</span>
-          <span style="color: var(--accent-green); font-weight: 800;" id="calc-tutor-net">2,625 ETB</span>
+      <div id="match-calc-preview" style="background: rgba(0,0,0,0.35); border: 1px solid var(--card-border); padding: 0.85rem; border-radius: 12px; margin-bottom: 1rem; font-size: 0.82rem;">
+        <div style="font-weight: 850; color: #38bdf8; font-size: 0.82rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
+          💼 Agency Payout &amp; Escrow Model Breakdown
         </div>
-        <div style="display: flex; justify-content: space-between;">
-          <span style="color: var(--text-muted);">Ethio 21 Revenue:</span>
-          <span style="color: var(--accent-blue); font-weight: 800;" id="calc-ethio21-share">875 ETB</span>
+        <div style="background: rgba(15, 23, 42, 0.65); padding: 0.6rem 0.75rem; border-radius: 8px; margin-bottom: 0.45rem; border-left: 3px solid #38bdf8;">
+          <div style="font-weight: 800; color: #e2e8f0; font-size: 0.77rem; margin-bottom: 0.2rem;">🥇 Month 1 (Matchmaking &amp; Escrow):</div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.15rem;">
+            <span style="color: var(--text-muted);">Parent Pays Upfront:</span>
+            <span style="color: #fff; font-weight: 750;" id="calc-m1-parent-pay">3,000 ETB</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.15rem;">
+            <span style="color: var(--text-muted);">Agency Retained Cut (40%):</span>
+            <span style="color: var(--accent-blue); font-weight: 800;" id="calc-m1-agency-share">1,200 ETB</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem;">
+            <span style="color: var(--text-muted);">Tutor Payout (60% at 30 Days):</span>
+            <span style="color: var(--accent-green); font-weight: 800;" id="calc-m1-tutor-net">1,800 ETB</span>
+          </div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.65); padding: 0.6rem 0.75rem; border-radius: 8px; border-left: 3px solid #10b981;">
+          <div style="font-weight: 800; color: #e2e8f0; font-size: 0.77rem; margin-bottom: 0.2rem;">🔄 Month 2 &amp; Onwards (Monthly Protection):</div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.15rem;">
+            <span style="color: var(--text-muted);">Parent Pays Upfront:</span>
+            <span style="color: #fff; font-weight: 750;" id="calc-m2-parent-pay">3,000 ETB</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 0.15rem;">
+            <span style="color: var(--text-muted);">Agency Retained Cut (Flat):</span>
+            <span style="color: var(--accent-blue); font-weight: 800;" id="calc-m2-agency-share">200 ETB</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem;">
+            <span style="color: var(--text-muted);">Tutor Payout (Fee - 200 ETB):</span>
+            <span style="color: var(--accent-green); font-weight: 800;" id="calc-m2-tutor-net">2,800 ETB</span>
+          </div>
+        </div>
+        <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.45rem; line-height: 1.4;">
+          🔒 <b>Escrow Rule:</b> Tutor payout is strictly released after parent pays and each 30-day period completes.
         </div>
       </div>
 
@@ -4880,37 +4910,159 @@ function rowsToJson(sheet) {
       }
     }
 
-    function markMatchMonthPaid(matchId) {
+    function confirmTrialOutcome(matchId, outcome) {
       const matches = getMatches();
       const m = matches.find(item => item.id === matchId);
       if (!m) return;
       const fee = Number(m.monthlyFee) || 3000;
-      const rate = Number(m.rate) || 25;
-      const comm = Number(m.commission) || Math.round(fee * (rate / 100));
-      const tutorNet = fee - comm;
-      const nextMonth = (m.monthsPaid || 0) + 1;
 
-      if (!confirm(`💸 Confirm Month ${nextMonth} Payout to Tutor "${m.tutorName}"?\n\n• Tutor Take-Home (75%): ${tutorNet.toLocaleString()} ETB via Telebirr\n• Ethio-21 Retained: ${comm.toLocaleString()} ETB\n\nThis marks Month ${nextMonth} as completed and restarts the 30-day billing cycle for the upcoming month.`)) {
+      if (outcome === 'SUCCESS') {
+        if (!confirm(`🎯 Mark 1-Day Trial as SUCCESSFUL?\n\n• Family: ${m.parentName}\n• Tutor: ${m.tutorName}\n• Agreed Tuition: ${fee.toLocaleString()} ETB/month\n\nNext Step (Escrow Rule):\nParent must now transfer Month 1 tuition (${fee.toLocaleString()} ETB) to Ethio 21 Agency via Telebirr or CBE before regular tutoring begins.`)) {
+          return;
+        }
+        m.status = 'Trial Succeeded - Awaiting Month 1 Payment';
+        m.trialOutcome = 'Passed';
+        saveMatches(matches);
+
+        // Notify Ops
+        const user = getSessionUser();
+        const adminName = user ? (user.name || user.role) : 'System Admin';
+        const msg = 
+          `🎯 <b>1-DAY TRIAL COMPLETED &amp; APPROVED</b>\n\n` +
+          `👨‍👩‍👧 <b>Parent / Family:</b> ${escapeHtml(m.parentName)} (📞 ${escapeHtml(m.parentPhone)})\n` +
+          `🎓 <b>Tutor:</b> ${escapeHtml(m.tutorName)} (📞 ${escapeHtml(m.tutorPhone)})\n` +
+          `💵 <b>Tuition Agreed:</b> <b>${fee.toLocaleString()} ETB/month</b>\n` +
+          `⏳ <b>Next Action:</b> Awaiting Month 1 Tuition Deposit into Ethio 21 Escrow Account\n` +
+          `👮 <b>Logged By:</b> ${escapeHtml(adminName)}\n` +
+          `⏰ <b>Timestamp:</b> ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Addis_Ababa' })}`;
+
+        if (typeof sendTelegramNotification === 'function') sendTelegramNotification(msg);
+        alert(`🎉 Trial marked Successful!\n\nPlease invoice Parent "${m.parentName}" for ${fee.toLocaleString()} ETB. Once transferred, click "Confirm Parent Paid Month 1".`);
+        renderAll();
+      } else if (outcome === 'FAILED') {
+        if (!confirm(`❌ Mark 1-Day Trial as FAILED / UNSATISFACTORY?\n\nParent "${m.parentName}" will be marked as requiring a replacement tutor or review.`)) {
+          return;
+        }
+        m.status = 'Trial Failed - Replacement Needed';
+        m.trialOutcome = 'Failed';
+        saveMatches(matches);
+        renderAll();
+        alert(`⚠️ Trial marked Failed. You can assign another vetted tutor from the Parents/Match tab without losing the family!`);
+      }
+    }
+
+    function confirmParentPaid(matchId) {
+      const matches = getMatches();
+      const m = matches.find(item => item.id === matchId);
+      if (!m) return;
+      const fee = Number(m.monthlyFee) || 3000;
+      const curCycle = Number(m.cycleMonth) || ((Number(m.monthsPaid) || 0) + 1);
+
+      if (!confirm(`💳 CONFIRM PARENT TUITION RECEIPT (MONTH ${curCycle})?\n\n• Parent / Family: ${m.parentName} (📞 ${m.parentPhone})\n• Monthly Tuition: ${fee.toLocaleString()} ETB\n• Destination: Ethio 21 Telebirr / CBE Account\n\nConfirm that you have received this payment in your agency account? This will secure escrow and activate lessons for Month ${curCycle}.`)) {
         return;
       }
 
-      m.monthsPaid = nextMonth;
-      m.lastPayoutDate = new Date().toISOString();
-      m.lastPayoutAmount = tutorNet;
-      m.status = 'Active Contract';
+      m.parentPaid = true;
+      m.cycleMonth = curCycle;
+      m.lastParentPaymentDate = new Date().toISOString();
+      m.status = curCycle === 1 ? 'Month 1 Active (Escrow Secured)' : `Month ${curCycle} Active (Tuition Secured)`;
       saveMatches(matches);
 
       // Dispatch to Telegram Ops
       const user = getSessionUser();
       const adminName = user ? (user.name || user.role) : 'System Admin';
       const msg = 
-        `💸 <b>TUTOR MONTHLY PAYOUT CONFIRMED (MONTH ${nextMonth})</b>\n\n` +
+        `💳 <b>PARENT TUITION PAYMENT RECEIVED (MONTH ${curCycle})</b>\n\n` +
+        `👨‍👩‍👧 <b>Parent:</b> ${escapeHtml(m.parentName)} (📞 ${escapeHtml(m.parentPhone)})\n` +
+        `🎓 <b>Tutor:</b> ${escapeHtml(m.tutorName)} (📞 ${escapeHtml(m.tutorPhone)})\n` +
+        `💰 <b>Amount Received:</b> <b>${fee.toLocaleString()} ETB</b>\n` +
+        `🔒 <b>Status:</b> Secured in Ethio 21 Escrow\n` +
+        `📅 <b>Cycle:</b> Month ${curCycle} In Progress (30-day countdown active)\n` +
+        `👮 <b>Verified By Admin:</b> ${escapeHtml(adminName)}\n` +
+        `⏰ <b>Timestamp:</b> ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Addis_Ababa' })}`;
+
+      if (typeof sendTelegramNotification === 'function') {
+        sendTelegramNotification(msg);
+      }
+
+      // Also forward match update to Google Sheet if webhook configured
+      const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+      if (webhookUrl) {
+        const agencyCut = curCycle === 1 ? Math.round(fee * 0.40) : Math.min(fee, 200);
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'addMatch',
+            data: {
+              matchId: m.id,
+              parentId: m.parentId,
+              tutorId: m.tutorId,
+              monthlyFee: fee,
+              commission: agencyCut,
+              status: `Active Contract (M${curCycle} Secured)`
+            }
+          })
+        }).catch(() => {});
+      }
+
+      alert(`✅ Success! Month ${curCycle} tuition (${fee.toLocaleString()} ETB) confirmed in escrow. Lessons are active, and tutor payout is unlocked upon 30-day cycle completion.`);
+      renderAll();
+    }
+
+    function markMatchMonthPaid(matchId) {
+      const matches = getMatches();
+      const m = matches.find(item => item.id === matchId);
+      if (!m) return;
+      const fee = Number(m.monthlyFee) || 3000;
+      const curCycle = Number(m.cycleMonth) || ((Number(m.monthsPaid) || 0) + 1);
+
+      // 1. STRICT ESCROW ENFORCEMENT: Never pay tutor if parent has not paid agency!
+      if (!m.parentPaid) {
+        alert(`⛔ CANNOT RELEASE TUTOR PAYOUT!\n\nParent "${m.parentName}" has NOT yet paid Month ${curCycle} tuition (${fee.toLocaleString()} ETB) to Ethio 21 Agency.\n\n📌 Agency Golden Rule:\nNever pay tutors out-of-pocket before collecting parent tuition. Please confirm parent payment first by clicking "Confirm Parent Paid Month ${curCycle}".`);
+        return;
+      }
+
+      // 2. CALCULATE COMMISSIONS
+      let agencyCut = 0;
+      let tutorNet = 0;
+      let policyDesc = '';
+
+      if (curCycle === 1) {
+        agencyCut = Math.round(fee * 0.40); // 40% Month 1 Agency Cut
+        tutorNet = fee - agencyCut;        // 60% Month 1 Tutor Net
+        policyDesc = 'Month 1 Onboarding: 40% Agency Cut / 60% Tutor Payout';
+      } else {
+        agencyCut = Math.min(fee, 200);     // 200 ETB Flat Month 2+ Agency Cut
+        tutorNet = Math.max(0, fee - agencyCut); // Remainder to Tutor
+        policyDesc = `Month ${curCycle} Maintenance: 200 ETB Flat Agency Cut / Remainder to Tutor`;
+      }
+
+      if (!confirm(`💸 CONFIRM TUTOR PAYOUT FOR MONTH ${curCycle}?\n\n• Policy: ${policyDesc}\n• Monthly Tuition Collected: ${fee.toLocaleString()} ETB\n• Ethio 21 Retained Cut: ${agencyCut.toLocaleString()} ETB\n• Tutor Take-Home (Telebirr): ${tutorNet.toLocaleString()} ETB\n\nConfirm that you have transferred ${tutorNet.toLocaleString()} ETB to tutor "${m.tutorName}"? This completes Month ${curCycle} and sets up Month ${curCycle + 1} (awaiting parent renewal).`)) {
+        return;
+      }
+
+      m.monthsPaid = curCycle;
+      m.cycleMonth = curCycle + 1;
+      m.parentPaid = false; // Next month must be paid by parent before tutor payout unlocks!
+      m.lastPayoutDate = new Date().toISOString();
+      m.lastPayoutAmount = tutorNet;
+      m.lastAgencyCut = agencyCut;
+      m.status = `Month ${curCycle + 1} Awaiting Parent Tuition`;
+      saveMatches(matches);
+
+      // Dispatch to Telegram Ops
+      const user = getSessionUser();
+      const adminName = user ? (user.name || user.role) : 'System Admin';
+      const msg = 
+        `💸 <b>TUTOR MONTHLY PAYOUT CONFIRMED (MONTH ${curCycle})</b>\n\n` +
         `🎓 <b>Tutor:</b> ${escapeHtml(m.tutorName)} (📞 ${escapeHtml(m.tutorPhone)})\n` +
         `👨‍👩‍👧 <b>Parent / Student:</b> ${escapeHtml(m.parentName)} (📞 ${escapeHtml(m.parentPhone)})\n` +
-        `📅 <b>Cycle:</b> 30 Days Completed (Month ${nextMonth})\n` +
-        `💵 <b>Tutor Net Paid (75%):</b> <b>${tutorNet.toLocaleString()} ETB</b> via Telebirr\n` +
-        `💼 <b>Ethio-21 Retained:</b> ${comm.toLocaleString()} ETB\n` +
-        `🔄 <b>Upcoming:</b> Month ${nextMonth + 1} Billing Cycle Active\n` +
+        `📅 <b>Completed Cycle:</b> Month ${curCycle} (30 Days)\n` +
+        `💵 <b>Tutor Net Paid:</b> <b>${tutorNet.toLocaleString()} ETB</b> via Telebirr\n` +
+        `💼 <b>Ethio-21 Retained:</b> <b>${agencyCut.toLocaleString()} ETB</b> (${curCycle === 1 ? '40% Matchmaking Cut' : '200 ETB Flat Cut'})\n` +
+        `🔄 <b>Upcoming:</b> Month ${curCycle + 1} Awaiting Parent Renewal\n` +
         `👮 <b>Authorized By:</b> ${escapeHtml(adminName)}\n` +
         `⏰ <b>Timestamp:</b> ${new Date().toLocaleString('en-US', { timeZone: 'Africa/Addis_Ababa' })}`;
 
@@ -4918,7 +5070,28 @@ function rowsToJson(sheet) {
         sendTelegramNotification(msg);
       }
 
-      alert(`✅ Success! Month ${nextMonth} marked paid. Payout of ${tutorNet.toLocaleString()} ETB recorded for ${m.tutorName} and the 30-day cycle has renewed!`);
+      // Also forward match update to Google Sheet if webhook configured
+      const webhookUrl = localStorage.getItem('teme_astegni_db_webhook');
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'addMatch',
+            data: {
+              matchId: m.id,
+              parentId: m.parentId,
+              tutorId: m.tutorId,
+              monthlyFee: fee,
+              commission: agencyCut,
+              status: `Active Contract (M${curCycle} Paid)`
+            }
+          })
+        }).catch(() => {});
+      }
+
+      alert(`✅ Success! Month ${curCycle} completed.\n\n• Payout of ${tutorNet.toLocaleString()} ETB recorded for ${m.tutorName}.\n• Agency retained ${agencyCut.toLocaleString()} ETB.\n• Cycle advanced to Month ${curCycle + 1} (Waiting for parent renewal).`);
       renderAll();
     }
 
@@ -4955,8 +5128,10 @@ function rowsToJson(sheet) {
           const cycleStart = m.lastPayoutDate ? new Date(m.lastPayoutDate).getTime() : (m.date ? new Date(m.date).getTime() : nowMs);
           return Math.floor((nowMs - cycleStart) / MS_PER_DAY) >= 30;
         });
+      } else if (currentMatchFilter === 'AWAITING_PAYMENT') {
+        filtered = filtered.filter(m => !m.parentPaid && !(m.status || '').includes('Trial Pending'));
       } else if (currentMatchFilter === 'ACTIVE') {
-        filtered = filtered.filter(m => m.status === 'Active Contract' || m.status === 'Commission Paid');
+        filtered = filtered.filter(m => m.parentPaid || m.status === 'Active Contract' || m.status === 'Commission Paid');
       } else if (currentMatchFilter === 'TRIAL') {
         filtered = filtered.filter(m => (m.status || '').includes('Trial'));
       }
@@ -4976,52 +5151,93 @@ function rowsToJson(sheet) {
         card.style.transition = 'all 0.2s ease';
         const detailsId = `match-details-${mIndex}`;
 
+        const curCycle = Number(m.cycleMonth) || ((Number(m.monthsPaid) || 0) + 1);
+        const fee = Number(m.monthlyFee) || 3000;
+
+        let agencyCut = 0;
+        let tutorNet = 0;
+        if (curCycle === 1) {
+          agencyCut = Math.round(fee * 0.40);
+          tutorNet = fee - agencyCut;
+        } else {
+          agencyCut = Math.min(fee, 200);
+          tutorNet = Math.max(0, fee - agencyCut);
+        }
+
+        const isTrial = (m.status || '').includes('Trial Pending');
+        const isParentPaid = !!m.parentPaid;
+
         const cycleStartDate = m.lastPayoutDate ? new Date(m.lastPayoutDate) : (m.date ? new Date(m.date) : new Date());
         const daysInCycle = Math.max(0, Math.floor((Date.now() - cycleStartDate.getTime()) / MS_PER_DAY));
         const isMonthReached = daysInCycle >= 30;
         const daysRemaining = Math.max(0, 30 - daysInCycle);
         const progressPercent = Math.min(100, Math.round((daysInCycle / 30) * 100));
 
-        const fee = Number(m.monthlyFee) || 3000;
-        const rate = Number(m.rate) || 25;
-        const comm = Number(m.commission) || Math.round(fee * (rate / 100));
-        const tutorNet = fee - comm;
-
         let cycleMarkup = '';
-        if (isMonthReached) {
+        if (isTrial) {
+          cycleMarkup = `
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 0.85rem 1rem; margin-top: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+                <div>
+                  <div style="font-weight: 850; color: #fbbf24; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
+                    🎯 1-DAY IN-HOME TRIAL IN PROGRESS
+                  </div>
+                  <div style="font-size: 0.8rem; color: #e2e8f0; margin-top: 0.25rem;">
+                    Agreed Fee: <strong>${fee.toLocaleString()} ETB/mo</strong> • Escrow: Parent pays Month 1 upon trial approval
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 850; border: none; padding: 0.5rem 0.9rem; border-radius: 8px; cursor: pointer;" onclick="confirmTrialOutcome('${m.id}', 'SUCCESS')">
+                    ✓ Trial Succeeded
+                  </button>
+                  <button class="btn-act" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer;" onclick="confirmTrialOutcome('${m.id}', 'FAILED')">
+                    ❌ Trial Failed / Replace
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (!isParentPaid) {
           cycleMarkup = `
             <div style="background: rgba(239, 68, 68, 0.12); border: 1.5px solid #ef4444; border-radius: 12px; padding: 0.85rem 1rem; margin-top: 0.85rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
                 <div>
                   <div style="font-weight: 850; color: #f87171; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem;">
-                    🚨 1-MONTH CYCLE COMPLETED (Day ${daysInCycle} of 30)
+                    🚨 AWAITING PARENT TUITION (MONTH ${curCycle})
                   </div>
                   <div style="font-size: 0.8rem; color: #e2e8f0; margin-top: 0.25rem;">
-                    Tutor Take-Home (75% Net): <strong style="color: #34d399; font-size: 0.95rem;">${tutorNet.toLocaleString()} ETB</strong> • Ethio-21 Retained: <strong>${comm.toLocaleString()} ETB</strong>
+                    Due from Parent: <strong style="color: #fff; font-size: 0.95rem;">${fee.toLocaleString()} ETB</strong> to Ethio 21 Agency Telebirr/CBE account.
                   </div>
-                  <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.15rem;">
-                    Cycle Start: ${cycleStartDate.toLocaleDateString()} • Months Paid to Date: <strong style="color: #fff;">${m.monthsPaid || 0}</strong>
+                  <div style="font-size: 0.73rem; color: #fca5a5; margin-top: 0.2rem;">
+                    🔒 Escrow Rule: Tutor payout is strictly locked until parent deposits funds with agency!
                   </div>
                 </div>
-                <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 850; border: none; padding: 0.55rem 1rem; border-radius: 9px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); cursor: pointer;" onclick="markMatchMonthPaid('${m.id}')">
-                  💸 Mark Month Paid &amp; Renew (የወሩን ክፈል)
+                <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff; font-weight: 850; border: none; padding: 0.55rem 1rem; border-radius: 9px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35); cursor: pointer;" onclick="confirmParentPaid('${m.id}')">
+                  💳 Confirm Parent Paid Month ${curCycle} (${fee.toLocaleString()} ETB)
                 </button>
               </div>
             </div>
           `;
         } else {
+          // Parent HAS paid: show cycle progress + payout release button
           cycleMarkup = `
-            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 0.7rem 0.9rem; margin-top: 0.75rem;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 750; color: #94a3b8; margin-bottom: 0.35rem;">
-                <span>⏳ 30-Day Monthly Cycle: Day ${daysInCycle} / 30</span>
-                <span style="color: #38bdf8;">${daysRemaining} Days Until Next Payout</span>
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 0.85rem 1rem; margin-top: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 750; color: #94a3b8; margin-bottom: 0.35rem;">
+                <span style="color: #34d399;">✓ Month ${curCycle} Tuition Secured in Escrow</span>
+                <span style="color: #38bdf8;">⏳ 30-Day Cycle: Day ${daysInCycle} / 30 (${daysRemaining} Days Left)</span>
               </div>
-              <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
-                <div style="height: 100%; width: ${progressPercent}%; background: ${progressPercent >= 80 ? '#f59e0b' : '#38bdf8'}; transition: width 0.3s;"></div>
+              <div style="height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin-bottom: 0.6rem;">
+                <div style="height: 100%; width: ${progressPercent}%; background: ${progressPercent >= 80 ? '#f59e0b' : '#34d399'}; transition: width 0.3s;"></div>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #64748b; margin-top: 0.35rem;">
-                <span>Tutor 75% Net: <strong style="color: #34d399;">${tutorNet.toLocaleString()} ETB</strong></span>
-                <span>Months Completed: <strong>${m.monthsPaid || 0}</strong></span>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+                <div style="font-size: 0.8rem; color: #e2e8f0;">
+                  <span>Ethio 21 Cut: <strong style="color: #60a5fa;">${agencyCut.toLocaleString()} ETB (${curCycle === 1 ? '40%' : '200 ETB Flat'})</strong></span>
+                  <span style="margin: 0 0.4rem;">•</span>
+                  <span>Tutor Take-Home: <strong style="color: #34d399; font-size: 0.95rem;">${tutorNet.toLocaleString()} ETB</strong></span>
+                </div>
+                <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 850; border: none; padding: 0.5rem 1rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); cursor: pointer;" onclick="markMatchMonthPaid('${m.id}')">
+                  💸 Release Month ${curCycle} Tutor Payout (${tutorNet.toLocaleString()} ETB)
+                </button>
               </div>
             </div>
           `;
@@ -5044,15 +5260,15 @@ function rowsToJson(sheet) {
                   <span>•</span>
                   <span>💰 ${fee.toLocaleString()} ETB/mo</span>
                   <span>•</span>
-                  <span>📅 ${new Date(m.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                  <span>📅 Month ${curCycle} (Completed: ${m.monthsPaid || 0})</span>
                 </div>
               </div>
             </div>
 
             <div class="record-header-actions" onclick="event.stopPropagation()">
-              ${isMonthReached 
-                ? `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-weight: 850;">🚨 Month Reached</span>` 
-                : `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">⏳ Day ${daysInCycle}/30</span>`}
+              ${isParentPaid 
+                ? `<span class="tag-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 800;">✓ Escrow Secured</span>` 
+                : `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 800;">⏳ Awaiting Parent Pay</span>`}
               <span class="tag-badge ${getStatusBadgeClass(m.status)}">${m.status}</span>
               <button type="button" class="btn-collapse-toggle" onclick="toggleCardDetails('${detailsId}', this)">
                 ▼ Details
@@ -5064,10 +5280,10 @@ function rowsToJson(sheet) {
           <div id="${detailsId}" class="card-expandable-body" style="display: none; margin-top: 1rem; padding-top: 0.95rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
             <!-- Meta Ribbon -->
             <div class="record-meta-ribbon">
-              <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 750;">💵 Tutor Net: ${tutorNet.toLocaleString()} ETB (75%)</span>
-              <span class="tag-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35);">💼 Margin (${rate}%): ${comm.toLocaleString()} ETB</span>
-              <span class="tag-badge ${m.paymentProof ? 'tag-active' : 'tag-trial'}">💳 ${m.paymentProof ? '✓ Telebirr Verified' : '⏳ Awaiting Ops Screenshot'}</span>
-              <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);">🔄 Months Paid: ${m.monthsPaid || 0}</span>
+              <span class="tag-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 750;">💵 Tutor Net: ${tutorNet.toLocaleString()} ETB (${curCycle === 1 ? '60%' : 'Fee - 200 ETB'})</span>
+              <span class="tag-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35); font-weight: 750;">💼 Agency Cut: ${agencyCut.toLocaleString()} ETB (${curCycle === 1 ? '40%' : '200 ETB Flat'})</span>
+              <span class="tag-badge ${isParentPaid ? 'tag-active' : 'tag-trial'}">${isParentPaid ? '✓ Parent Paid in Escrow' : '⏳ Parent Payment Pending'}</span>
+              <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3);">🔄 Cycle Month: ${curCycle}</span>
             </div>
 
             <!-- Bento Grid Details -->
@@ -5090,7 +5306,7 @@ function rowsToJson(sheet) {
               </div>
             </div>
 
-            <!-- 30-Day Billing Cycle Tracker -->
+            <!-- 30-Day Billing Cycle Tracker & Escrow Management -->
             ${cycleMarkup}
 
             <!-- Segmented Actions Footer -->
@@ -5098,11 +5314,13 @@ function rowsToJson(sheet) {
               <div class="actions-left-group">
                 <select class="status-dropdown" onchange="updateMatchStatus('${m.id}', this.value)">
                   <option value="1-Day Trial Pending" ${m.status === '1-Day Trial Pending' ? 'selected' : ''}>⏳ Trial Pending (የ 1 ቀን ሙከራ)</option>
-                  <option value="Trial Completed" ${m.status === 'Trial Completed' ? 'selected' : ''}>🎯 Trial Done (ሙከራ አልቋል)</option>
+                  <option value="Trial Succeeded - Awaiting Month 1 Payment" ${m.status === 'Trial Succeeded - Awaiting Month 1 Payment' ? 'selected' : ''}>🎯 Trial Succeeded (ሙከራ አልፏል)</option>
+                  <option value="Month 1 Active (Escrow Secured)" ${m.status === 'Month 1 Active (Escrow Secured)' ? 'selected' : ''}>✅ Month 1 Active Escrow</option>
                   <option value="Active Contract" ${m.status === 'Active Contract' ? 'selected' : ''}>✅ Active Contract (ንቁ)</option>
-                  <option value="Commission Paid" ${m.status === 'Commission Paid' ? 'selected' : ''}>💰 Commission Paid (ኮሚሽን ተከፍሏል)</option>
+                  <option value="Trial Failed - Replacement Needed" ${m.status === 'Trial Failed - Replacement Needed' ? 'selected' : ''}>❌ Trial Failed / Replace</option>
+                  <option value="Terminated" ${m.status === 'Terminated' ? 'selected' : ''}>🛑 Contract Terminated</option>
                 </select>
-                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Screenshot Verified ✓' : 'Verify Screenshot'}</button>
+                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Proof Verified ✓' : 'Verify Screenshot'}</button>
               </div>
               <div class="actions-right-group">
                 <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardMatchDossierToTelegram('${m.id}')" title="Send match contract to Private Matches Ops Group">✈️ Private Ops</button>
@@ -5615,14 +5833,45 @@ function rowsToJson(sheet) {
     }
 
     function calculateCommissionPreview() {
-      const price = parseFloat(document.getElementById('match-price-input').value) || 0;
-      const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
+      const price = parseFloat(document.getElementById('match-price-input')?.value) || 0;
+      const rateVal = document.getElementById('match-rate-select')?.value || 'AGENCY_STANDARD';
 
-      const commission = Math.round(price * (rate / 100));
-      const tutorNet = price - commission;
+      let m1Agency = 0;
+      let m1Tutor = 0;
+      let m2Agency = 200;
+      let m2Tutor = Math.max(0, price - 200);
 
-      document.getElementById('calc-tutor-net').innerText = `${tutorNet.toLocaleString()} ETB`;
-      document.getElementById('calc-ethio21-share').innerText = `${commission.toLocaleString()} ETB`;
+      if (rateVal === 'AGENCY_STANDARD') {
+        m1Agency = Math.round(price * 0.40);
+        m1Tutor = price - m1Agency;
+        m2Agency = Math.min(price, 200);
+        m2Tutor = Math.max(0, price - m2Agency);
+      } else {
+        const pct = parseFloat(rateVal) || 25;
+        m1Agency = Math.round(price * (pct / 100));
+        m1Tutor = price - m1Agency;
+        m2Agency = m1Agency;
+        m2Tutor = m1Tutor;
+      }
+
+      const pPay1 = document.getElementById('calc-m1-parent-pay');
+      const ag1 = document.getElementById('calc-m1-agency-share');
+      const tut1 = document.getElementById('calc-m1-tutor-net');
+      const pPay2 = document.getElementById('calc-m2-parent-pay');
+      const ag2 = document.getElementById('calc-m2-agency-share');
+      const tut2 = document.getElementById('calc-m2-tutor-net');
+
+      if (pPay1) pPay1.innerText = `${price.toLocaleString()} ETB`;
+      if (ag1) ag1.innerText = `${m1Agency.toLocaleString()} ETB`;
+      if (tut1) tut1.innerText = `${m1Tutor.toLocaleString()} ETB`;
+      if (pPay2) pPay2.innerText = `${price.toLocaleString()} ETB`;
+      if (ag2) ag2.innerText = `${m2Agency.toLocaleString()} ETB`;
+      if (tut2) tut2.innerText = `${m2Tutor.toLocaleString()} ETB`;
+
+      const legacyTut = document.getElementById('calc-tutor-net');
+      const legacyAg = document.getElementById('calc-ethio21-share');
+      if (legacyTut) legacyTut.innerText = `${m1Tutor.toLocaleString()} ETB`;
+      if (legacyAg) legacyAg.innerText = `${m1Agency.toLocaleString()} ETB`;
     }
 
     function confirmNewMatch() {
@@ -5664,8 +5913,17 @@ function rowsToJson(sheet) {
       }
 
       const fee = parseFloat(document.getElementById('match-price-input').value) || 0;
-      const rate = parseFloat(document.getElementById('match-rate-select').value) || 25;
-      const commission = Math.round(fee * (rate / 100));
+      const rateVal = document.getElementById('match-rate-select')?.value || 'AGENCY_STANDARD';
+
+      let rate = 40;
+      let commission = Math.round(fee * 0.40);
+      let month2FeeCut = 200;
+
+      if (rateVal !== 'AGENCY_STANDARD') {
+        rate = parseFloat(rateVal) || 25;
+        commission = Math.round(fee * (rate / 100));
+        month2FeeCut = commission;
+      }
 
       const pTrackingId = p.trackingId || p.id || ('AST-P-' + (p.phone || '').slice(-4));
       const pTgTag = p.tgTag || ('#AST_P_' + (p.phone || '').slice(-4));
@@ -5689,6 +5947,11 @@ function rowsToJson(sheet) {
         monthlyFee: fee,
         rate: rate,
         commission: commission,
+        month2FeeCut: month2FeeCut,
+        cycleMonth: 1,
+        parentPaid: false,
+        tutorPaid: false,
+        monthsPaid: 0,
         status: '1-Day Trial Pending',
         date: new Date().toISOString()
       };
