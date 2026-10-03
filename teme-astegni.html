@@ -1754,14 +1754,27 @@
             <input type="hidden" id="p_area">
           </div>
 
-          <!-- STUDENT GENDER SECTION (The student who will be tutored) -->
-          <div class="field">
-            <label id="i18n-f-pchild-gender" style="color: #38bdf8; font-weight: 850;">Student Gender (የሚማረው ተማሪ ፆታ) *</label>
-            <select id="p_child_gender" required>
-              <option value="" disabled selected id="i18n-popt-sel-child">የተማሪውን ፆታ ይምረጡ (Select Student Gender) *</option>
-              <option value="Female" id="i18n-popt-fem-child">ሴት ተማሪ (Female Student)</option>
-              <option value="Male" id="i18n-popt-male-child">ወንድ ተማሪ (Male Student)</option>
-            </select>
+          <!-- GENDER SELECTION GRID (Student Gender & Preferred Tutor Gender) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
+            <!-- 1. The Student who will be tutored -->
+            <div class="field" style="margin-bottom: 0;">
+              <label id="i18n-f-pchild-gender" style="color: #38bdf8; font-weight: 850;">Student Gender (የሚማረው ተማሪ ፆታ) *</label>
+              <select id="p_child_gender" required>
+                <option value="" disabled selected id="i18n-popt-sel-child">የተማሪውን ፆታ ይምረጡ (Select Student Gender) *</option>
+                <option value="Female" id="i18n-popt-fem-child">ሴት ተማሪ (Female Student)</option>
+                <option value="Male" id="i18n-popt-male-child">ወንድ ተማሪ (Male Student)</option>
+              </select>
+            </div>
+
+            <!-- 2. The Preferred Tutor Sex / Gender -->
+            <div class="field" style="margin-bottom: 0;">
+              <label id="i18n-f-ptutor-gender" style="color: #38bdf8; font-weight: 850;">Preferred Tutor Sex / Gender (የአስጠኚው ፆታ ምርጫ) *</label>
+              <select id="p_tutor_gender" required>
+                <option value="Any" selected id="i18n-popt-tutor-any">✨ ማንኛውም ፆታ / No Preference (Any)</option>
+                <option value="Female" id="i18n-popt-tutor-fem">👩‍🏫 ሴት አስጠኚ ብቻ (Female Tutor Only)</option>
+                <option value="Male" id="i18n-popt-tutor-male">👨‍🏫 ወንድ አስጠኚ ብቻ (Male Tutor Only)</option>
+              </select>
+            </div>
           </div>
 
           <div class="field">
@@ -3660,6 +3673,14 @@
             <div style="font-size: 0.84rem; font-weight: 800; color: #fff;">${escapeHtml(parentData.grade || 'School Student')}</div>
           </div>
           <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🧒 Student Gender</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #fff;">${escapeHtml(parentData.studentGender || parentData.childGender || 'Student')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🎯 Preferred Tutor Sex</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #38bdf8;">${escapeHtml((parentData.preferredTutorGender || parentData.tutorGenderPreference) === 'Female' ? '👩‍🏫 Female Tutor Only' : ((parentData.preferredTutorGender || parentData.tutorGenderPreference) === 'Male' ? '👨‍🏫 Male Tutor Only' : '✨ Any (No Preference)'))}</div>
+          </div>
+          <div>
             <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📖 Subjects</div>
             <div style="font-size: 0.84rem; font-weight: 800; color: #38bdf8;">${escapeHtml(parentData.subjects || 'General')}</div>
           </div>
@@ -3755,6 +3776,7 @@
         const pSched = parentData.packageSchedule || '3 Days/Week (1 hr/day)';
         const pFee = parentData.monthlyFee ? `${parentData.monthlyFee} ETB` : '3,000 ETB';
         const pGender = parentData.studentGender || parentData.childGender || 'Any Gender';
+        const pTutorGenderPref = parentData.preferredTutorGender || parentData.tutorGenderPreference || 'Any';
         const pIdType = parentData.idType || 'Government ID';
         const pType = parentData.applicantType === 'STUDENT_ADULT' ? 'Independent Student (18+)' : 'Parent / Guardian';
         const pDate = parentData.createdAt ? new Date(parentData.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Active';
@@ -3872,8 +3894,12 @@
                 <div style="font-size: 0.68rem; color: #cbd5e1;">${escapeHtml(pSched)}</div>
               </div>
               <div>
-                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🚻 Gender Preference</div>
-                <div style="font-weight: 800; color: #cbd5e1; margin-top: 0.15rem;">${escapeHtml(pGender)}</div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🧒 Student Gender</div>
+                <div style="font-weight: 800; color: #fff; margin-top: 0.15rem;">${escapeHtml(pGender)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🎯 Preferred Tutor Sex</div>
+                <div style="font-weight: 800; color: #38bdf8; margin-top: 0.15rem;">${escapeHtml(pTutorGenderPref === 'Female' ? '👩‍🏫 Female Tutor Only' : (pTutorGenderPref === 'Male' ? '👨‍🏫 Male Tutor Only' : '✨ Any (No Preference)'))}</div>
               </div>
               <div>
                 <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🛡️ Verification &amp; Date</div>
@@ -5028,6 +5054,10 @@
         poptSelChild: "የተማሪውን ፆታ ይምረጡ *",
         poptFemChild: "ሴት ተማሪ (Female Student)",
         poptMaleChild: "ወንድ ተማሪ (Male Student)",
+        fPtutorGender: "የአስጠኚው ፆታ ምርጫ (Preferred Tutor Gender) *",
+        poptTutorAny: "✨ ማንኛውም ፆታ / No Preference (Any)",
+        poptTutorFem: "👩‍🏫 ሴት አስጠኚ ብቻ (Female Tutor Only)",
+        poptTutorMale: "👨‍🏫 ወንድ አስጠኚ ብቻ (Male Tutor Only)",
         fPgrade: "የልጅዎ የክፍል ደረጃ *",
         fPsubj: "ማስጠናት የሚፈልጓቸው የትምህርት አይነቶች",
         btnPsubmit: "📲 አስጠኚ ለመጠየቅ ይላኩ ›",
@@ -5148,6 +5178,10 @@
         poptSelChild: "Select Student's Gender *",
         poptFemChild: "Female Student",
         poptMaleChild: "Male Student",
+        fPtutorGender: "Preferred Tutor Sex / Gender *",
+        poptTutorAny: "✨ Any Gender / No Preference (Any)",
+        poptTutorFem: "👩‍🏫 Female Tutor Only",
+        poptTutorMale: "👨‍🏫 Male Tutor Only",
         fPgrade: "Child's Academic Grade Level *",
         fPsubj: "Subjects Requiring Tutoring",
         btnPsubmit: "📲 Submit Request & Match Nearby Scholar ›",
@@ -5268,6 +5302,10 @@
         poptSelChild: "Saala barataa filadhaa *",
         poptFemChild: "Barattuu (Female Student)",
         poptMaleChild: "Barataa (Male Student)",
+        fPtutorGender: "Filannoo Saala Barsiisaa (Preferred Tutor Gender) *",
+        poptTutorAny: "✨ Saala Kamiyyuu / Garaagarummaa Hin Qabu (Kamiyyuu)",
+        poptTutorFem: "👩‍🏫 Barsiistuu Dubaraa Qofa (Female Tutor Only)",
+        poptTutorMale: "👨‍🏫 Barsiisaa Dhiiraa Qofa (Male Tutor Only)",
         fPgrade: "Kutaa Barnootaa Barataa *",
         fPsubj: "Gosoota Barnootaa Barsiifamuu Qaban",
         btnPsubmit: "📲 Barsiisaa Gaafachuuf Ergaa ›",
@@ -5421,11 +5459,11 @@
       safeSetText('i18n-popt-sel-child', t.poptSelChild);
       safeSetText('i18n-popt-fem-child', t.poptFemChild);
       safeSetText('i18n-popt-male-child', t.poptMaleChild);
+      safeSetText('i18n-f-ptutor-gender', t.fPtutorGender);
+      safeSetText('i18n-popt-tutor-any', t.poptTutorAny);
+      safeSetText('i18n-popt-tutor-fem', t.poptTutorFem);
+      safeSetText('i18n-popt-tutor-male', t.poptTutorMale);
       safeSetText('i18n-f-pgrade', t.fPgrade);
-      safeSetText('i18n-f-pgender', t.fPgender);
-      safeSetText('i18n-opt-any', t.optAny);
-      safeSetText('i18n-opt-female', t.optFemale);
-      safeSetText('i18n-opt-male', t.optMale);
       safeSetText('i18n-f-psubj', t.fPsubj);
       safeSetText('i18n-btn-psubmit', t.btnPsubmit);
 
@@ -6373,6 +6411,7 @@
       }
 
       const grade = document.getElementById('p_grade').value;
+      const preferredTutorGender = document.getElementById('p_tutor_gender') ? document.getElementById('p_tutor_gender').value : 'Any';
 
       const pIdType = document.getElementById('p_id_type')?.value || 'National Fayda ID';
 
@@ -6409,6 +6448,8 @@
         area: area,
         studentGender: studentGender,
         childGender: studentGender,
+        preferredTutorGender: preferredTutorGender,
+        tutorGenderPreference: preferredTutorGender,
         grade: grade,
         subjects: subjs,
         monthlyFee: monthlyFee,
@@ -6451,6 +6492,10 @@
         ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
 
+      const tutorPrefLabel = preferredTutorGender === 'Female' 
+        ? 'Female Only (ሴት አስጠኚ)' 
+        : (preferredTutorGender === 'Male' ? 'Male Only (ወንድ አስጠኚ)' : 'Any Gender / No Preference (ማንኛውም)');
+
       const plainText = `🏷️ ID: ${trackingId}\n` +
                         `📌 SEARCH TAG: ${tgTag}\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
@@ -6459,6 +6504,7 @@
                         `📞 Phone: ${phone}\n` +
                         `📍 Location: ${area}\n` +
                         `🧒 Student Gender: ${studentGender}\n` +
+                        `🎯 Preferred Tutor Sex: ${tutorPrefLabel}\n` +
                         `🎓 Academic Grade: ${grade}\n` +
                         `📖 Subjects: ${subjs}\n` +
                         `💰 Selected Plan: ${packageTitle} (${monthlyFee.toLocaleString()} ETB/month)\n` +
