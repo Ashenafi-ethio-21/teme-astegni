@@ -2116,7 +2116,7 @@
           <!-- Mandatory Attachment 1: Campus ID (Front & Back + ID Number) -->
           <div class="field" style="background: rgba(52, 211, 153, 0.05); border: 1.5px solid rgba(52, 211, 153, 0.35); border-radius: 14px; padding: 1rem; margin-top: 0.5rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-              <label style="color: #34d399; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-tcid">🏛️ University Student ID • Front &amp; Back (MANDATORY) *</label>
+              <label style="color: #34d399; font-weight: 850; font-size: 0.9rem; margin: 0;" id="i18n-f-tcid">🏛️ University Student ID • Front (MANDATORY) &amp; Back (If Two-Sided) *</label>
               <span style="font-size: 0.7rem; background: rgba(52, 211, 153, 0.2); color: #34d399; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 750;">Campus Vetted</span>
             </div>
 
@@ -2130,9 +2130,9 @@
               <div id="t-student-id-dup-warn" style="display: none; font-size: 0.74rem; color: #ef4444; margin-top: 0.35rem; font-weight: 700;"></div>
             </div>
 
-            <!-- Front and Back Campus ID Upload Boxes -->
+            <!-- Front and Back Campus ID Upload Boxes (Back is Optional) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-              <!-- Student ID Front Photo -->
+              <!-- Student ID Front Photo (MANDATORY) -->
               <div class="file-upload-box" id="box-campus-id" style="padding: 0.85rem 0.5rem; border-color: rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.05);">
                 <input type="file" id="t_campus_id_file" accept="image/*" onchange="handleCampusIdFrontPick(event)">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🏛️</div>
@@ -2143,19 +2143,19 @@
                 <div id="t-cid-front-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
               </div>
 
-              <!-- Student ID Back Photo (Where University Name & Registrar Stamp Appear) -->
-              <div class="file-upload-box" id="box-campus-id-back" style="padding: 0.85rem 0.5rem; border-color: rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.05);">
+              <!-- Student ID Back Photo (OPTIONAL - If printed on both sides) -->
+              <div class="file-upload-box" id="box-campus-id-back" style="padding: 0.85rem 0.5rem; border-color: rgba(52, 211, 153, 0.3); background: rgba(52, 211, 153, 0.03);">
                 <input type="file" id="t_campus_id_back_file" accept="image/*" onchange="handleCampusIdBackPick(event)">
                 <div style="font-size: 1.3rem; margin-bottom: 0.2rem;">🔄</div>
-                <div style="font-size: 0.78rem; font-weight: 800; color: #fff;">Student ID Back *</div>
-                <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (Campus / Stamp)</div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #cbd5e1;">Student ID Back (Optional)</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">የኋላ ገጽ (ሁለገብ ከሆነ ብቻ)</div>
                 <img id="preview-campus-id-back" class="file-preview-thumb" alt="Campus ID Back Preview" style="max-width: 100px; max-height: 70px;">
                 <div id="status-campus-id-back" class="file-status-tag" style="font-size: 0.7rem; color: #34d399;">✓ Back Attached</div>
                 <div id="t-cid-back-clarity" style="font-size: 0.68rem; margin-top: 0.2rem; display: none;"></div>
               </div>
             </div>
             <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 0.55rem;">
-              <span>👁️ Readability Check: Upload clear front and back photos of your active university ID card.</span>
+              <span>👁️ Readability Check: Upload a clear front photo of your student ID. If your university ID is printed on both sides, upload the back as well.</span>
             </div>
           </div>
 
@@ -4033,7 +4033,7 @@
         fTyear: "የትምህርት ዓመት *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "በደንብ ማስተማር የሚችሉት የትምህርት አይነት (ውጤት 'A') *",
-        fTcid: "🏛️ የዩኒቨርሲቲ ተማሪ መታወቂያ • የፊትና የኋላ (ግዴታ ነው) *",
+        fTcid: "🏛️ የዩኒቨርሲቲ ተማሪ መታወቂያ • የፊት ገጽ (ግዴታ) እና የኋላ (አስፈላጊ ከሆነ) *",
         fTstudentIdNum: "የዩኒቨርሲቲ ተማሪ መታወቂያ ቁጥር (Student ID No.) *",
         fTgovtIdNum: "የመንግስት / ፋይዳ መታወቂያ ቁጥር (Govt / Fayda ID No.) *",
         boxCidH: "የካምፓስ መታወቂያዎን ፎቶ እዚህ ይጫኑ",
@@ -4153,7 +4153,7 @@
         fTyear: "Academic Year *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "Subjects You Can Confidently Teach (Grade 'A') *",
-        fTcid: "🏛️ University Student ID • Front & Back (MANDATORY) *",
+        fTcid: "🏛️ University Student ID • Front (MANDATORY) & Back (If Two-Sided) *",
         fTstudentIdNum: "University Student ID Card Number *",
         fTgovtIdNum: "Government / Fayda ID Number *",
         boxCidH: "Attach Campus Student ID Photo",
@@ -4273,7 +4273,7 @@
         fTyear: "Waggaa Barnootaa *",
         fTcgpa: "CGPA (≥ 3.00) *",
         fTsubj: "Gosoota Barnootaa Barsiisuu Dandeessan (Qabxii 'A') *",
-        fTcid: "🏛️ Waraqaa Eenyummaa Kaampaasii • Fuula Duraa fi Duubaa (DIRQAMA) *",
+        fTcid: "🏛️ Waraqaa Eenyummaa Kaampaasii • Fuula Duraa (DIRQAMA) & Duubaa (Yoo qabaate) *",
         fTstudentIdNum: "Lakkoofsa Waraqaa Eenyummaa Barattummaa *",
         fTgovtIdNum: "Lakkoofsa Waraqaa Eenyummaa Fayidaa / Mootummaa *",
         boxCidH: "Suuraa Waraqaa Eenyummaa Kaampaasii Asitti Fe'aa",
@@ -4886,6 +4886,46 @@
         }
       }
       return { matched: false, confidence: 'low' };
+    }
+
+    // Cross-verify Student ID Number tokens against extracted OCR text
+    function verifyStudentIdNumberOverlap(inputStudentId, ocrText) {
+      if (!inputStudentId || !ocrText) return true;
+      const cleanInput = inputStudentId.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const cleanOcr = ocrText.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (cleanInput.length >= 4 && cleanOcr.includes(cleanInput)) return true;
+      const numMatches = inputStudentId.match(/\d{3,}/g);
+      if (numMatches) {
+        for (const nm of numMatches) {
+          if (cleanOcr.includes(nm)) return true;
+        }
+      }
+      return false;
+    }
+
+    // Verify CGPA consistency if explicitly detected in the grade report
+    function verifyCgpaConsistency(inputCgpaStr, gradeReportOcrText) {
+      if (!inputCgpaStr || !gradeReportOcrText) return { valid: true };
+      const enteredCgpa = parseFloat(inputCgpaStr);
+      if (isNaN(enteredCgpa)) return { valid: true };
+      
+      const lower = gradeReportOcrText.toLowerCase();
+      const gpaRegex = /(?:cgpa|cumulative\s*(?:grade\s*point\s*average|gpa)|c\.g\.p\.a)\s*[:=\-]?\s*([0-4]\.\d{1,2})/gi;
+      let match;
+      while ((match = gpaRegex.exec(lower)) !== null) {
+        if (match[1]) {
+          const docGpa = parseFloat(match[1]);
+          if (!isNaN(docGpa)) {
+            if (docGpa < 3.00) {
+              return { valid: false, reason: 'BELOW_MINIMUM', docGpa: docGpa };
+            }
+            if (Math.abs(enteredCgpa - docGpa) > 0.70) {
+              return { valid: false, reason: 'DISCREPANCY', docGpa: docGpa };
+            }
+          }
+        }
+      }
+      return { valid: true };
     }
 
     // Compute 64-bit difference hash (dHash) for an uploaded image file
@@ -5648,11 +5688,14 @@
       }
 
       const campusBackFile = document.getElementById('t_campus_id_back_file')?.files[0];
-      if (!campusBackFile) {
+      // Note: campusBackFile is optional for single-sided student ID cards
+
+      // File size and integrity sanity guard
+      if (campusFile.size < 3000) {
         const msg = (currentLang === 'am')
-          ? 'እባክዎ የተማሪ መታወቂያዎን የኋላ ገጽ (የዩኒቨርሲቲው ማህተም ያለበትን) ያያይዙ (ግዴታ ነው)።'
-          : 'Please attach your Campus Student ID back photo with university stamp (mandatory).';
-        abortTutorValidation(msg, null, document.getElementById('box-campus-id-back'));
+          ? 'እባክዎ ትክክለኛ እና ግልጽ የተማሪ መታወቂያ ፎቶ ያያይዙ።'
+          : 'Please attach a valid, clear photo of your Student ID.';
+        abortTutorValidation(msg, null, document.getElementById('box-campus-id'));
         return;
       }
 
@@ -5662,6 +5705,14 @@
         const msg = (currentLang === 'am')
           ? 'እባክዎ የውጤት ሪፖርትዎን ወይም የፖርታል ስክሪንሾት ያያይዙ (ግዴታ ነው)።'
           : 'Please attach your Grade Report or Portal screenshot (mandatory).';
+        abortTutorValidation(msg, null, document.getElementById('box-grade-report'));
+        return;
+      }
+
+      if (gradeFile.size < 3000) {
+        const msg = (currentLang === 'am')
+          ? 'እባክዎ ትክክለኛ የውጤት ሪፖርት ወይም የፖርታል ሰነድ ያያይዙ።'
+          : 'Please attach a valid, readable Grade Report or Portal document.';
         abortTutorValidation(msg, null, document.getElementById('box-grade-report'));
         return;
       }
@@ -5702,13 +5753,40 @@
 
       // Compute perceptual difference hashes (dHash) for uploaded documents
       let imgHashes = [];
+      let campusHash = null;
+      let govtFrontHash = null;
+      let gradeHash = null;
+      let campusBackHash = null;
       try {
-        imgHashes = await Promise.all([
+        const hashTasks = [
           computeImageDHash(campusFile),
-          computeImageDHash(campusBackFile),
-          computeImageDHash(govtFrontFile)
-        ]);
+          computeImageDHash(govtFrontFile),
+          computeImageDHash(gradeFile)
+        ];
+        if (campusBackFile) hashTasks.push(computeImageDHash(campusBackFile));
+        const res = await Promise.all(hashTasks);
+        campusHash = res[0];
+        govtFrontHash = res[1];
+        gradeHash = res[2];
+        if (campusBackFile) campusBackHash = res[3];
+        imgHashes = [campusHash, govtFrontHash, gradeHash, campusBackHash].filter(Boolean);
       } catch (hashErr) {}
+
+      // Cross-document duplicate image protection (preventing uploading the same photo twice)
+      if (campusHash && govtFrontHash && campusHash === govtFrontHash) {
+        const dupDocMsg = (currentLang === 'am')
+          ? '⚠️ የተማሪ መታወቂያ እና የመንግስት መታወቂያ የተለያዩ ሰነዶች መሆን አለባቸው።'
+          : '⚠️ Verification Notice: Your University Student ID and Government ID must be distinct documents.';
+        abortTutorValidation(dupDocMsg, null, document.getElementById('box-t-id-front'));
+        return;
+      }
+      if (campusHash && gradeHash && campusHash === gradeHash) {
+        const dupDocMsg = (currentLang === 'am')
+          ? '⚠️ የተማሪ መታወቂያ እና የውጤት ሪፖርት የተለያዩ ሰነዶች መሆን አለባቸው።'
+          : '⚠️ Verification Notice: Your Student ID and Grade Report must be distinct documents.';
+        abortTutorValidation(dupDocMsg, null, document.getElementById('box-grade-report'));
+        return;
+      }
 
       // 1. UNIQUE ID & DUPLICATION PREVENTION CHECK
       const dupCheck = await checkDuplicateIdRegistry(normStudentId, normGovtId, cleanPhone, imgHashes);
@@ -5778,13 +5856,15 @@
       try {
         const scanPromises = [
           extractTextFromImage(gradeFile),
-          extractTextFromImage(campusBackFile),
           extractTextFromImage(campusFile)
         ];
+        if (campusBackFile) {
+          scanPromises.push(extractTextFromImage(campusBackFile));
+        }
         const textResults = await Promise.all(scanPromises);
         gradeReportText = textResults[0] || '';
-        campusIdBackText = textResults[1] || '';
-        campusIdFrontText = textResults[2] || '';
+        campusIdFrontText = textResults[1] || '';
+        campusIdBackText = campusBackFile ? (textResults[2] || '') : '';
       } catch (ocrErr) {
         console.warn('OCR pass warning:', ocrErr);
       }
@@ -5809,9 +5889,9 @@
         }
       }
 
-      // 3. UNIVERSITY MATCHING (Selected University vs University on Student ID Card)
-      // Checks at least 3-4 characters of the selected university name or acronym
-      const idExtractedText = `${campusIdBackText} ${campusIdFrontText}`.trim();
+      // 3. UNIVERSITY MATCHING (Selected University vs University on Student ID Card / Grade Report)
+      // Checks front photo, back photo (if present), and grade report header
+      const idExtractedText = `${campusIdFrontText} ${campusIdBackText} ${gradeReportText}`.trim();
       let uniVerificationStatus = 'VERIFIED';
 
       if (idExtractedText && idExtractedText.length > 15) {
@@ -5846,9 +5926,32 @@
             abortTutorValidation(uniMismatchMsg, document.getElementById('t_uni_select'), document.getElementById('box-campus-id'));
             return;
           } else {
-            // Older or worn card; permitted with coordinator inspection flag
+            // Older, worn, or low-contrast card; passed with coordinator audit tag
             uniVerificationStatus = 'LEGACY_CARD_AUDIT';
           }
+        }
+      }
+
+      // 4. STUDENT ID NUMBER CROSS-CHECK
+      if (campusIdFrontText && campusIdFrontText.length > 25) {
+        const idNumMatches = verifyStudentIdNumberOverlap(studentIdNum, campusIdFrontText);
+        if (!idNumMatches && gradeReportText && gradeReportText.length > 25) {
+          const idNumMatchesGrade = verifyStudentIdNumberOverlap(studentIdNum, gradeReportText);
+          if (!idNumMatchesGrade) {
+            uniVerificationStatus = 'STUDENT_ID_AUDIT';
+          }
+        }
+      }
+
+      // 5. CGPA CONSISTENCY VERIFICATION
+      if (gradeReportText && gradeReportText.length > 25) {
+        const cgpaAudit = verifyCgpaConsistency(cgpa, gradeReportText);
+        if (!cgpaAudit.valid && cgpaAudit.reason === 'BELOW_MINIMUM') {
+          const gpaMsg = (currentLang === 'am')
+            ? `⚠️ የውጤት ማረጋገጫ ችግር፡ የተያያዘው የውጤት ሪፖርት ዝቅተኛውን መስፈርት (CGPA ≥ 3.00) አያሟላም።`
+            : `⚠️ Grade Verification Notice: The attached grade report does not meet the minimum requirement (CGPA ≥ 3.00).`;
+          abortTutorValidation(gpaMsg, document.getElementById('t_cgpa'), document.getElementById('box-grade-report'));
+          return;
         }
       }
 
@@ -5954,8 +6057,9 @@
           });
         }
         if (campusFile) {
+          const idSideLabel = campusBackFile ? 'Front' : 'Front & Only Side';
           compressImageFile(campusFile).then(blob => {
-            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID (Front) • ${name} • ${phone} • ${uniName} (${campusName}) • Student ID: ${normStudentId}`, '@AstegniTutors');
+            sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Tutor Campus Student ID (${idSideLabel}) • ${name} • ${phone} • ${uniName} (${campusName}) • Student ID: ${normStudentId}`, '@AstegniTutors');
           });
         }
         if (campusBackFile) {
