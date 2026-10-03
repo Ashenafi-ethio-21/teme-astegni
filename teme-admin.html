@@ -1873,6 +1873,19 @@
           <input type="text" id="tg-chat-id-input" class="form-ctrl" placeholder="e.g. @Ethio21AstegniOps or -100123456789">
         </div>
 
+        <div class="form-group">
+          <label class="form-label">Telegram "Parents Payments" Group Chat ID / Link</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="tg-payments-chat-input" class="form-ctrl" placeholder="e.g. @AstegniParentsPayments or Group ID" value="https://t.me/+1nwxhaCqN9M4Y2E0">
+            <a href="https://t.me/+1nwxhaCqN9M4Y2E0" target="_blank" rel="noopener" class="btn-act" style="background: #0284c7; color: #fff; text-decoration: none; display: flex; align-items: center; white-space: nowrap; font-size: 0.8rem; font-weight: 800; padding: 0.5rem 0.85rem; border-radius: 10px;">
+              ✈️ Open Group ↗
+            </a>
+          </div>
+          <p style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.4;">
+            Official Group Link: <b>https://t.me/+1nwxhaCqN9M4Y2E0</b>. Parent payment screenshots &amp; transfer receipts stream here with Parent Tracking ID (AST-P-XXXX) permanently attached.
+          </p>
+        </div>
+
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
           <button class="btn-act btn-act-primary" onclick="saveTelegramConfig()">💾 Save Telegram Settings</button>
           <button class="btn-act" onclick="testTelegramAlert()">✈️ Send Test Alert to Telegram</button>
@@ -2970,6 +2983,67 @@ function rowsToJson(sheet) {
       <div class="modal-actions">
         <button class="btn-modal-sec" onclick="closeModal('modal-script-code')">Close</button>
         <button class="btn-modal-primary" onclick="copyAppsScriptCode()">📋 Copy Code to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PARENT PAYMENT SCREENSHOT & RECEIPT VIEWER -->
+  <div id="modal-payment-screenshot-viewer" class="app-modal">
+    <div class="modal-sheet" style="max-width: 540px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.65rem;">
+        <div>
+          <h2 style="font-size: 1.15rem; margin-bottom: 0.15rem;">💳 Parent Payment Receipt &amp; Verification</h2>
+          <p style="margin: 0; font-size: 0.76rem; color: var(--text-muted);">Inspect Telebirr / CBE screenshot and verify tuition into agency escrow</p>
+        </div>
+        <button type="button" class="btn-act" onclick="closeModal('modal-payment-screenshot-viewer')" style="padding: 0.25rem 0.65rem; border-radius: 50%;">✕</button>
+      </div>
+
+      <div style="background: rgba(36, 161, 222, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.7rem 0.85rem; margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+        <div style="font-size: 0.75rem; color: #e2e8f0;">
+          ✈️ <b>Telegram Verified:</b> Receipt routed to the <b>"parents payments"</b> group with Parent ID permanently attached.
+        </div>
+        <a href="https://t.me/+1nwxhaCqN9M4Y2E0" target="_blank" rel="noopener" class="btn-act" style="background: #0284c7; color: #fff; text-decoration: none; font-size: 0.72rem; padding: 0.3rem 0.6rem; white-space: nowrap;">
+          Open Group ↗
+        </a>
+      </div>
+
+      <!-- Receipt Meta Card -->
+      <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; font-size: 0.8rem;">
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: var(--text-muted); font-weight: 750;">🏷️ Parent ID (Attached)</div>
+            <div style="font-size: 0.92rem; font-weight: 850; color: #38bdf8; font-family: monospace;" id="viewer-pay-parent-id">AST-P-XXXX</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: var(--text-muted); font-weight: 750;">🗓️ Billing Cycle</div>
+            <div style="font-size: 0.88rem; font-weight: 850; color: #34d399;" id="viewer-pay-cycle">Month 1</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: var(--text-muted); font-weight: 750;">💵 Tuition Amount</div>
+            <div style="font-size: 0.95rem; font-weight: 850; color: #fbbf24;" id="viewer-pay-amount">3,500 ETB</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: var(--text-muted); font-weight: 750;">🏦 Transfer Method</div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #fff;" id="viewer-pay-method">Telebirr</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screenshot Display -->
+      <div style="background: rgba(0,0,0,0.45); border: 1px solid var(--card-border); border-radius: 14px; padding: 0.75rem; text-align: center; margin-bottom: 1rem; max-height: 380px; overflow-y: auto;">
+        <img id="viewer-pay-screenshot-img" src="" alt="Payment Receipt Screenshot" style="max-width: 100%; border-radius: 10px; display: block; margin: 0 auto; box-shadow: 0 4px 18px rgba(0,0,0,0.6);">
+        <div id="viewer-pay-no-img" style="display: none; padding: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+          No screenshot image file attached to this record.
+        </div>
+      </div>
+
+      <input type="hidden" id="viewer-pay-match-id">
+
+      <div class="modal-actions" style="gap: 0.6rem;">
+        <button type="button" class="btn-modal-sec" onclick="closeModal('modal-payment-screenshot-viewer')">Close</button>
+        <button type="button" class="btn-modal-primary" id="btn-confirm-receipt-action" onclick="confirmPaymentFromViewer()">
+          ✅ Confirm Tuition &amp; Unlock Escrow
+        </button>
       </div>
     </div>
   </div>
@@ -5095,6 +5169,81 @@ function rowsToJson(sheet) {
       renderAll();
     }
 
+    // ==========================================
+    // PARENT PAYMENT SCREENSHOT & RECEIPT VIEWER
+    // ==========================================
+    function getParentPaymentForMatch(m) {
+      if (!m) return null;
+      if (m.paymentScreenshot) {
+        return {
+          parentId: m.parentId,
+          screenshotUrl: m.paymentScreenshot,
+          monthCycle: m.paymentMonthCycle || `Month ${m.cycleMonth || 1}`,
+          amount: m.paymentAmount || m.monthlyFee || 3000,
+          paymentMethod: m.paymentMethod || 'Telebirr',
+          submittedAt: m.paymentSubmittedAt || m.date
+        };
+      }
+      const payments = JSON.parse(localStorage.getItem('astegni_parent_payments') || '[]');
+      const mId = (m.parentId || '').toUpperCase();
+      const mPhone = (m.parentPhone || '').replace(/\D/g, '');
+      return payments.find(p => {
+        const pId = (p.parentId || '').toUpperCase();
+        const pPhone = (p.parentPhone || p.phone || '').replace(/\D/g, '');
+        return (mId && pId === mId) || (mPhone && pPhone.endsWith(mPhone.slice(-9)));
+      }) || null;
+    }
+
+    function openPaymentScreenshotViewer(matchId) {
+      const matches = getMatches();
+      const m = matches.find(item => item.id === matchId);
+      if (!m) {
+        alert('Match record not found.');
+        return;
+      }
+      const payRecord = getParentPaymentForMatch(m);
+
+      document.getElementById('viewer-pay-match-id').value = matchId;
+      document.getElementById('viewer-pay-parent-id').innerText = (m.parentId || (payRecord ? payRecord.parentId : 'AST-P'));
+      document.getElementById('viewer-pay-cycle').innerText = (payRecord && payRecord.monthCycle) ? payRecord.monthCycle : `Month ${m.cycleMonth || 1}`;
+      document.getElementById('viewer-pay-amount').innerText = `${((payRecord && payRecord.amount) ? payRecord.amount : (m.monthlyFee || 3000)).toLocaleString()} ETB`;
+      document.getElementById('viewer-pay-method').innerText = (payRecord && payRecord.paymentMethod) ? payRecord.paymentMethod : 'Telebirr / Bank Transfer';
+
+      const imgEl = document.getElementById('viewer-pay-screenshot-img');
+      const noImgEl = document.getElementById('viewer-pay-no-img');
+      const btnConfirm = document.getElementById('btn-confirm-receipt-action');
+
+      const screenshotSrc = (payRecord && payRecord.screenshotUrl) || m.paymentScreenshot || '';
+      if (screenshotSrc) {
+        imgEl.src = screenshotSrc;
+        imgEl.style.display = 'block';
+        noImgEl.style.display = 'none';
+      } else {
+        imgEl.src = '';
+        imgEl.style.display = 'none';
+        noImgEl.style.display = 'block';
+      }
+
+      if (m.parentPaid) {
+        btnConfirm.innerText = '✓ Tuition Already Confirmed & In Escrow';
+        btnConfirm.disabled = true;
+        btnConfirm.style.opacity = '0.6';
+      } else {
+        btnConfirm.innerText = '✅ Confirm Tuition & Unlock Escrow';
+        btnConfirm.disabled = false;
+        btnConfirm.style.opacity = '1';
+      }
+
+      openModal('modal-payment-screenshot-viewer');
+    }
+
+    function confirmPaymentFromViewer() {
+      const matchId = document.getElementById('viewer-pay-match-id').value;
+      if (!matchId) return;
+      closeModal('modal-payment-screenshot-viewer');
+      confirmParentPaid(matchId);
+    }
+
     function renderMatches() {
       const matches = getMatches();
       const container = document.getElementById('matches-cards-container');
@@ -5166,6 +5315,8 @@ function rowsToJson(sheet) {
 
         const isTrial = (m.status || '').includes('Trial Pending');
         const isParentPaid = !!m.parentPaid;
+        const payRecord = getParentPaymentForMatch(m);
+        const hasReceipt = !!(m.paymentScreenshot || (payRecord && payRecord.screenshotUrl));
 
         const cycleStartDate = m.lastPayoutDate ? new Date(m.lastPayoutDate) : (m.date ? new Date(m.date) : new Date());
         const daysInCycle = Math.max(0, Math.floor((Date.now() - cycleStartDate.getTime()) / MS_PER_DAY));
@@ -5212,9 +5363,16 @@ function rowsToJson(sheet) {
                     🔒 Escrow Rule: Tutor payout is strictly locked until parent deposits funds with agency!
                   </div>
                 </div>
-                <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff; font-weight: 850; border: none; padding: 0.55rem 1rem; border-radius: 9px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35); cursor: pointer;" onclick="confirmParentPaid('${m.id}')">
-                  💳 Confirm Parent Paid Month ${curCycle} (${fee.toLocaleString()} ETB)
-                </button>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  ${hasReceipt ? `
+                    <button class="btn-act" style="background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1.5px solid #38bdf8; font-weight: 850; padding: 0.55rem 0.95rem; border-radius: 9px; cursor: pointer;" onclick="openPaymentScreenshotViewer('${m.id}')">
+                      📸 View Submitted Receipt
+                    </button>
+                  ` : ''}
+                  <button class="btn-act" style="background: linear-gradient(135deg, #10b981, #0284c7); color: #fff; font-weight: 850; border: none; padding: 0.55rem 1rem; border-radius: 9px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35); cursor: pointer;" onclick="confirmParentPaid('${m.id}')">
+                    💳 Confirm Parent Paid Month ${curCycle} (${fee.toLocaleString()} ETB)
+                  </button>
+                </div>
               </div>
             </div>
           `;
@@ -5266,6 +5424,7 @@ function rowsToJson(sheet) {
             </div>
 
             <div class="record-header-actions" onclick="event.stopPropagation()">
+              ${hasReceipt ? `<span class="tag-badge" style="background: rgba(56, 189, 248, 0.22); color: #38bdf8; border: 1px solid #38bdf8; font-weight: 850;">📸 Receipt Attached</span>` : ''}
               ${isParentPaid 
                 ? `<span class="tag-badge" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 800;">✓ Escrow Secured</span>` 
                 : `<span class="tag-badge" style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); font-weight: 800;">⏳ Awaiting Parent Pay</span>`}
@@ -5320,7 +5479,9 @@ function rowsToJson(sheet) {
                   <option value="Trial Failed - Replacement Needed" ${m.status === 'Trial Failed - Replacement Needed' ? 'selected' : ''}>❌ Trial Failed / Replace</option>
                   <option value="Terminated" ${m.status === 'Terminated' ? 'selected' : ''}>🛑 Contract Terminated</option>
                 </select>
-                <button class="btn-act" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.35);" onclick="toggleMatchPaymentProof('${m.id}')">💳 ${m.paymentProof ? 'Proof Verified ✓' : 'Verify Screenshot'}</button>
+                <button class="btn-act" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(2, 132, 199, 0.2)); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="openPaymentScreenshotViewer('${m.id}')">
+                  📸 ${hasReceipt ? 'View Receipt Screenshot' : 'Receipt / Payment Proof'}
+                </button>
               </div>
               <div class="actions-right-group">
                 <button class="btn-act" style="background: rgba(36, 161, 222, 0.22); color: #38bdf8; border-color: rgba(56, 189, 248, 0.45); font-weight: 800;" onclick="forwardMatchDossierToTelegram('${m.id}')" title="Send match contract to Private Matches Ops Group">✈️ Private Ops</button>
@@ -6319,9 +6480,11 @@ function rowsToJson(sheet) {
     function saveTelegramConfig() {
       const token = document.getElementById('tg-bot-token-input').value.trim();
       const chatId = document.getElementById('tg-chat-id-input').value.trim();
+      const paymentsChat = (document.getElementById('tg-payments-chat-input') ? document.getElementById('tg-payments-chat-input').value.trim() : '');
       localStorage.setItem('teme_astegni_tg_bot_token', token);
       localStorage.setItem('teme_astegni_tg_chat_id', chatId);
-      alert('✅ Telegram Settings saved! All uploads and alerts will route to this channel.');
+      if (paymentsChat) localStorage.setItem('teme_astegni_tg_payments_chat_id', paymentsChat);
+      alert('✅ Telegram Settings saved! All uploads, payment receipts, and alerts will route to these channels.');
     }
 
     async function testTelegramAlert() {
@@ -6695,6 +6858,11 @@ function rowsToJson(sheet) {
       const savedTgChat = localStorage.getItem('teme_astegni_tg_chat_id') || defaultTgChat;
       if (document.getElementById('tg-chat-id-input')) {
         document.getElementById('tg-chat-id-input').value = savedTgChat;
+      }
+
+      const savedPaymentsChat = localStorage.getItem('teme_astegni_tg_payments_chat_id') || 'https://t.me/+1nwxhaCqN9M4Y2E0';
+      if (document.getElementById('tg-payments-chat-input')) {
+        document.getElementById('tg-payments-chat-input').value = savedPaymentsChat;
       }
 
       // Check for active authenticated session user
