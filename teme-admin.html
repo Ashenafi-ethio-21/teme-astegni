@@ -4241,6 +4241,9 @@ function rowsToJson(sheet) {
             <div class="record-meta-ribbon">
               ${(p.monthlyFee || p.packageName) ? `<span class="tag-badge" style="background: rgba(234, 179, 8, 0.18); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.45); font-weight: 800;">💰 ${Number(p.monthlyFee || 3000).toLocaleString()} ETB/mo (${escapeHtml(p.packageName || 'Standard 3d/wk')})</span>` : ''}
               <span class="tag-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28);">🧒 ${escapeHtml(p.studentGender || p.childGender || 'Student')}</span>
+              ${(p.preferredTutorGender && p.preferredTutorGender !== 'Any') 
+                ? `<span class="tag-badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.45); font-weight: 800;">🎯 Pref: ${escapeHtml(p.preferredTutorGender)} Tutor</span>` 
+                : `<span class="tag-badge" style="background: rgba(100, 116, 139, 0.2); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.35);">🎯 Any Tutor Gender</span>`}
               <span class="tag-badge" style="background: rgba(148, 163, 184, 0.15); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">🎒 ${escapeHtml(p.grade)}</span>
               <span class="tag-badge tag-active">🛡️ ${escapeHtml(p.idType || 'National Fayda / Kebele')} Verified</span>
               <a href="https://t.me/AstegniParents" target="_blank" class="tag-badge" style="text-decoration:none; background: rgba(36, 161, 222, 0.15); color: #24a1de; border: 1px solid rgba(36, 161, 222, 0.35);" title="Search ${escapeHtml(pTgTag)} in @AstegniParents">✈️ ${escapeHtml(pTgTag)}</a>
@@ -4259,6 +4262,14 @@ function rowsToJson(sheet) {
               <div class="bento-item" style="grid-column: 1 / -1;">
                 <span class="bento-label">📖 Requested Subjects</span>
                 <div class="subj-pill-list">${subjChipsHtml}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">🧒 Student Gender</span>
+                <div class="bento-value">${escapeHtml(p.studentGender || p.childGender || 'Student')}</div>
+              </div>
+              <div class="bento-item">
+                <span class="bento-label">🎯 Preferred Tutor Sex</span>
+                <div class="bento-value" style="color: #c084fc; font-weight: 800;">${escapeHtml(p.preferredTutorGender === 'Female' ? '👩‍🏫 Female Tutor Only' : (p.preferredTutorGender === 'Male' ? '👨‍🏫 Male Tutor Only' : '✨ Any (No Preference)'))}</div>
               </div>
               <div class="bento-item">
                 <span class="bento-label">📞 Direct Phone</span>
