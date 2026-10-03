@@ -320,6 +320,16 @@
       color: #94a3b8;
     }
 
+    :root {
+      --brand-cyan: #38bdf8;
+      --brand-blue: #3b82f6;
+      --brand-indigo: #6366f1;
+      --brand-purple: #8b5cf6;
+      --brand-violet: #7c3aed;
+      --brand-gradient: linear-gradient(135deg, #38bdf8 0%, #3b82f6 32%, #6366f1 68%, #8b5cf6 100%);
+      --brand-gradient-hover: linear-gradient(135deg, #0ea5e9 0%, #2563eb 32%, #4f46e5 68%, #7c3aed 100%);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -349,16 +359,16 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.65rem 0.85rem;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(99, 102, 241, 0.25);
       border-radius: 18px;
       margin-bottom: 1rem;
       position: sticky;
       top: 0.5rem;
       z-index: 50;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     }
 
     .brand-group {
@@ -369,11 +379,12 @@
     }
 
     .brand-logo-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       object-fit: cover;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
     }
 
     .brand-titles h1 {
@@ -415,9 +426,9 @@
     }
 
     .lang-btn.active {
-      background: #3b82f6;
+      background: var(--brand-gradient);
       color: #fff;
-      box-shadow: 0 1px 6px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
     }
 
     /* Screen Transitions */
@@ -1964,7 +1975,7 @@
         <!-- Returning Tutor Status Banner -->
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
           <div style="font-size: 0.8rem; color: #cbd5e1;">
-            🎓 <b>Already applied?</b> Check your live profile, exam level &amp; assigned family status:
+            🎓 <b>Already registered?</b> Check your verified scholar profile, tutor level &amp; assigned families:
           </div>
           <button type="button" onclick="openTutorPortalScreen()" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
             Open Tutor Portal ›
@@ -2281,13 +2292,13 @@
             </label>
           </div>
 
-          <!-- Communicative Skills Exam Opt-in (Optional for Level 1 & 1st Priority Dispatch) -->
+          <!-- Communicative Skills Evaluation Opt-in (Optional for Level 1 & 1st Priority Dispatch) -->
           <div class="field" style="background: rgba(56, 189, 248, 0.08); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 1rem; margin-top: 1rem; margin-bottom: 1.25rem;">
             <label class="check-label" style="background: transparent; border: none; padding: 0; color: #fff; cursor: pointer; display: flex; align-items: flex-start; gap: 0.75rem;">
               <input type="checkbox" id="t_exam_optin" checked style="accent-color: #38bdf8; width: 22px; height: 22px; margin-top: 2px;">
               <span style="line-height: 1.45;">
-                <span style="color: #38bdf8; font-weight: 850; font-size: 0.92rem;" id="i18n-t-exam-h">🎙️ Free Teaching & Communicative Skills Exam (የማስተማር እና የኮሙኒኬሽን ፈተና)</span><br>
-                <span style="font-size: 0.78rem; color: #cbd5e1; font-weight: normal;" id="i18n-t-exam-p">Not mandatory to register (Basic tier is open to all eligible students), but passing this free voice/video call interview unlocks <b>Level 1 &amp; 1st Priority Job Dispatch</b> in your metal tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.</span>
+                <span style="color: #38bdf8; font-weight: 850; font-size: 0.92rem;" id="i18n-t-exam-h">🎙️ Free Teaching & Communicative Evaluation (የማስተማር ብቃትና ተግባቦት ቃለ-መጠይቅ)</span><br>
+                <span style="font-size: 0.78rem; color: #cbd5e1; font-weight: normal;" id="i18n-t-exam-p">Not mandatory to register (Basic tier is open to all eligible students), but completing this brief 5-minute phone/video coordinator interview unlocks <b>Level 1 &amp; 1st Priority Job Dispatch</b> in your scholar tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.</span>
               </span>
             </label>
           </div>
@@ -2623,8 +2634,9 @@
               🔍 Check Status
             </button>
           </div>
-          <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.45rem;">
-            💡 Tip: Saved automatically on this device upon your application submission.
+          <div style="font-size: 0.73rem; color: #38bdf8; margin-top: 0.45rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🟢</span>
+            <span><b>Live Cloud Database Sync:</b> Real-time status, verification gates, scholar tier &amp; assigned families updated live from server.</span>
           </div>
         </div>
 
@@ -2979,20 +2991,18 @@
         return isMatch && m.status !== 'Terminated' && m.status !== 'Cancelled';
       });
 
-      // 3. Fallback to Firebase Firestore if not found locally
+      // 3. Always synchronize with live Firebase Firestore cloud database
       if (typeof db !== 'undefined' && db) {
         try {
-          if (!tutor) {
-            const tutorSnap = await db.collection('astegni_tutor_leads').get();
-            tutorSnap.forEach(doc => {
-              const d = doc.data();
-              const dId = (d.trackingId || d.id || doc.id).toUpperCase();
-              const dPhone = (d.phone || '').replace(/\D/g, '');
-              if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
-                tutor = d;
-              }
-            });
-          }
+          const tutorSnap = await db.collection('astegni_tutor_leads').get();
+          tutorSnap.forEach(doc => {
+            const d = doc.data();
+            const dId = (d.trackingId || d.id || doc.id).toUpperCase();
+            const dPhone = (d.phone || '').replace(/\D/g, '');
+            if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
+              tutor = Object.assign({}, tutor || {}, d, { id: doc.id });
+            }
+          });
           const matchSnap = await db.collection('astegni_matches').get();
           matchSnap.forEach(doc => {
             const d = doc.data();
@@ -3310,15 +3320,15 @@
               Passing the communicative teaching skills evaluation unlocks <b>1st Priority Dispatch</b>! When families in your university campus area submit requests, coordinators dispatch to <b>Level 1</b> scholars before basic applicants.
             </p>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.65rem;">
-              <a href="teme-exam-app.html?tutorId=${safeId}&name=${encodeURIComponent(safeName)}&phone=${safePhone}" target="_blank" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; text-decoration: none; padding: 0.65rem 0.75rem; border-radius: 10px; font-weight: 800; font-size: 0.78rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                <span>🎙️</span> <span>Take Online Exam</span>
+              <a href="https://t.me/AstegniSupportBot" target="_blank" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; text-decoration: none; padding: 0.65rem 0.75rem; border-radius: 10px; font-weight: 800; font-size: 0.78rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <span>💬</span> <span>Coordinator Interview</span>
               </a>
               <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 0, 1)" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; padding: 0.65rem 0.75rem; border-radius: 10px; font-weight: 850; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                <span>⚡</span> <span>Instant Upgrade to L1</span>
+                <span>⚡</span> <span>Confirm &amp; Elevate to L1</span>
               </button>
             </div>
             <div style="font-size: 0.7rem; color: #94a3b8; text-align: center;">
-              Prefer a 5-minute phone interview? Call Lead Coordinator: <a href="tel:0945399808" style="color: #38bdf8; font-weight: 800;">0945 39 98 08</a>
+              5-minute phone or Telegram interview with Lead Coordinator: <a href="tel:0945399808" style="color: #38bdf8; font-weight: 800;">0945 39 98 08</a>
             </div>
           </div>
         `;
@@ -3510,8 +3520,8 @@
         return pId === qUpper || (qClean.length >= 6 && pPhone.endsWith(qClean.slice(-9)));
       });
 
-      // Fallback search in cloud Firestore
-      if (!parent && typeof db !== 'undefined' && db) {
+      // Live synchronization with Firebase Firestore cloud database
+      if (typeof db !== 'undefined' && db) {
         try {
           const snap = await db.collection('astegni_parent_leads').get();
           snap.forEach(doc => {
@@ -3519,7 +3529,7 @@
             const dId = (d.trackingId || d.id || doc.id).toUpperCase();
             const dPhone = (d.phone || '').replace(/\D/g, '');
             if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
-              parent = d;
+              parent = Object.assign({}, parent || {}, d, { id: doc.id });
             }
           });
         } catch (e) {}
@@ -5046,8 +5056,8 @@
         fTgovt: "🆔 ብሔራዊ የፋይዳ ወይም የቀበሌ መታወቂያ • አንዱ ግዴታ ነው (REQUIRED) *",
         boxGovtH: "የብሔራዊ ፋይዳ ወይም የቀበሌ መታወቂያ ፎቶ ይጫኑ",
         boxGovtP: "ያለዎትን አንዱን ይምረጡ — ለልጆች ደህንነት አንዱን ማያያዝ ግዴታ ነው",
-        tExamH: "🎙️ ነጻ የማስተማር እና የኮሙኒኬሽን ፈተና (የ 1ኛ ደረጃ የስራ ቅድሚያ)",
-        tExamP: "ለመመዝገብ ግዴታ አይደለም፤ ነገር ግን ይህንን የድምጽ/ቪዲዮ ፈተና ማለፍ በደረጃችሁ (በጎልደን፣ በሲልቨር ወይም በብሮንዝ) ውስጥ ወደ ሌቭል 1 (Level 1) ያሳድጋችኋል፤ በአካባቢያችሁ ስራ ሲመጣ የመጀመሪያ ቅድሚያ ይሰጣችኋል።",
+        tExamH: "🎙️ ነጻ የማስተማር ብቃትና ተግባቦት ቃለ-መጠይቅ (የ 1ኛ ደረጃ የስራ ቅድሚያ)",
+        tExamP: "ለመመዝገብ ግዴታ አይደለም፤ ነገር ግን ይህንን የ 5 ደቂቃ የስልክ ወይም የቪዲዮ ተግባቦት ቃለ-መጠይቅ ማጠናቀቅ በደረጃችሁ (በጎልደን፣ በሲልቨር ወይም በብሮንዝ) ውስጥ ወደ ሌቭል 1 (Level 1) ያሳድጋችኋል፤ በአካባቢያችሁ ስራ ሲመጣ የመጀመሪያ ቅድሚያ ይሰጣችኋል።",
         ladderH: "የትምህርት ሜዳልያ ደረጃዎች (CGPA) እና የ 5 ደረጃ እድገት",
         ladderP: "አስጠኚዎች በዩኒቨርሲቲ ውጤታቸው (CGPA) ወደ ጎልደን፣ ሲልቨር እና ብሮንዝ ይመደባሉ፤ በእያንዳንዱ ሜዳልያ ውስጥ ደግሞ ከሌቭል 1 እስከ 5 የማስተማር እድገት አላቸው።",
         btnTsubmit: "🎓 ማመልከቻዎን ይላኩ ›",
@@ -5166,8 +5176,8 @@
         fTgovt: "🆔 National Fayda ID OR Kebele ID • Choose 1 (MANDATORY) *",
         boxGovtH: "Upload National Fayda ID or Kebele ID Photo",
         boxGovtP: "Choose whichever you have — 1 of them is mandatory for child safety",
-        tExamH: "🎙️ Free Teaching & Communicative Skills Exam (1st Priority Dispatch)",
-        tExamP: "Not mandatory to register, but passing this free voice/video interview unlocks Level 1 & 1st Priority Dispatch in your tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.",
+        tExamH: "🎙️ Free Teaching & Communicative Evaluation (1st Priority Dispatch)",
+        tExamP: "Not mandatory to register, but completing this 5-minute phone/video coordinator interview unlocks Level 1 & 1st Priority Dispatch in your tier (Golden, Silver, or Bronze) when parents in your area request an Astegni.",
         ladderH: "Academic Metal Tiers & 5-Level Communicative Ranking",
         ladderP: "Tutors are categorized by academic university CGPA into Golden, Silver, and Bronze tiers, with 5 communicative teaching levels in each tier.",
         btnTsubmit: "🎓 Submit Tutor Application for Verification ›",
@@ -5286,8 +5296,8 @@
         fTgovt: "🆔 Waraqaa Fayidaa Yookiin Gandaa • Tokko Filadhaa (DIRQAMA) *",
         boxGovtH: "Suuraa Waraqaa Eenyummaa Fayidaa Ykn Gandaa Fe'aa",
         boxGovtP: "Isa qabdan keessaa tokko filadhaa — nageenya ijoolleef tokko dirqama",
-        tExamH: "🎙️ Qormaata Dandeettii Barsiisuu fi Qunnamtii Bilisaa (Dursa Hojii 1ffaa)",
-        tExamP: "Galmaa'uuf dirqama miti; garuu qormaata bilbila/viidiyoo kana darbuun sadarkaa keessanitti (Golden, Silver ykn Bronze) gara Level 1tti ol guddisee dursa 1ffaa kenna.",
+        tExamH: "🎙️ Qophii Dandeettii Barsiisuu fi Qunnamtii Bilisaa (Dursa Hojii 1ffaa)",
+        tExamP: "Galmaa'uuf dirqama miti; garuu af-gaaffii bilbila/viidiyoo daqiiqaa 5 kana xumuruun sadarkaa keessanitti (Golden, Silver ykn Bronze) gara Level 1tti ol guddisee dursa 1ffaa kenna.",
         ladderH: "Sadarkaa Meedaaliyaa Barnootaa (CGPA) fi Sadarkaa Barsiisummaa 5",
         ladderP: "Barsiisonni qabxii CGPA isaaniitiin gara Golden, Silver fi Bronze tti qoodamu; tokkoon tokkoon isaanii keessatti sadarkaa barsiisummaa 1 hanga 5 qabu.",
         btnTsubmit: "🎓 Galmee Barsiisummaa Mirkaneessaaf Ergaa ›",
