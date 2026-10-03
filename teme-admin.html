@@ -2332,100 +2332,124 @@ function onOpen(e) {
 }
 
 function doGet(e) {
-  var action = (e && e.parameter) ? e.parameter.action : '';
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  if (action === 'fixSheet' || action === 'fixAndAlign') {
-    var summary = fixAndAlignAllSheetsSilently(ss);
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: 'success', 
-      summary: summary,
-      message: 'Google Sheet fixed, deduplicated, and 100% aligned!' 
-    })).setMimeType(ContentService.MimeType.JSON);
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (lockErr) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'busy', error: 'Server is busy, try again shortly.' }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-
-  if (action === 'cleanDuplicates' || action === 'dedup') {
-    var removed = deduplicateAllSheetsSilently(ss);
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: 'success', 
-      removedRows: removed,
-      message: 'All duplicate IDs and records successfully removed from Google Sheet!' 
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === 'clean' || action === 'deleteLegacy') {
-    cleanLegacyTabsSilently(ss);
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: 'success', 
-      message: 'All legacy tabs deleted! Only Parents_Index, Tutors_Index, and Matches_Ledger remain.' 
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === 'format' || action === 'setup') {
-    setupCleanArchitectureSilently(ss);
-    return ContentService.createTextOutput(JSON.stringify({ 
-      status: 'success', 
-      message: 'Google Sheet automatically reformatted to strict Matches_Ledger!' 
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === 'getData') {
-    var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
-    var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
-    var mSheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
+  try {
+    var action = (e && e.parameter) ? e.parameter.action : '';
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
     
-    var parents = rowsToJson(pSheet);
-    var tutors = rowsToJson(tSheet);
-    var matches = rowsToJson(mSheet);
+    if (action === 'fixSheet' || action === 'fixAndAlign') {
+      var summary = fixAndAlignAllSheetsSilently(ss);
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: 'success', 
+        summary: summary,
+        message: 'Google Sheet fixed, deduplicated, and 100% aligned!' 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'cleanDuplicates' || action === 'dedup') {
+      var removed = deduplicateAllSheetsSilently(ss);
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: 'success', 
+        removedRows: removed,
+        message: 'All duplicate IDs and records successfully removed from Google Sheet!' 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'clean' || action === 'deleteLegacy') {
+      cleanLegacyTabsSilently(ss);
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: 'success', 
+        message: 'All legacy tabs deleted! Only Parents_Index, Tutors_Index, and Matches_Ledger remain.' 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'format' || action === 'setup') {
+      setupCleanArchitectureSilently(ss);
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: 'success', 
+        message: 'Google Sheet automatically reformatted to strict Matches_Ledger!' 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'getData') {
+      var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
+      var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
+      var mSheet = ss.getSheetByName('Matches_Ledger') || createMatchesSheet(ss);
+      
+      var parents = rowsToJson(pSheet);
+      var tutors = rowsToJson(tSheet);
+      var matches = rowsToJson(mSheet);
+      
+      var output = { parents: parents, tutors: tutors, matches: matches };
+      return ContentService.createTextOutput(JSON.stringify(output))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'addTutor' || action === 'addTutorId') {
+      var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
+      var p = (e && e.parameter) ? e.parameter : {};
+      var trackingId = (p.id || p.trackingId || '').toString().trim();
+      if (trackingId) {
+        if (checkExistsInSheet(tSheet, trackingId)) {
+          return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+        var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+        tSheet.appendRow([ts, trackingId]);
+        formatLastRow(tSheet, '#065f46');
+        SpreadsheetApp.flush();
+        sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'addParent' || action === 'addParentId') {
+      var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
+      var p = (e && e.parameter) ? e.parameter : {};
+      var trackingId = (p.id || p.trackingId || '').toString().trim();
+      if (trackingId) {
+        if (checkExistsInSheet(pSheet, trackingId)) {
+          return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
+            .setMimeType(ContentService.MimeType.JSON);
+        }
+        var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
+        pSheet.appendRow([ts, trackingId]);
+        formatLastRow(pSheet, '#0f172a');
+        SpreadsheetApp.flush();
+        sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
-    var output = { parents: parents, tutors: tutors, matches: matches };
-    return ContentService.createTextOutput(JSON.stringify(output))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: 'OK', 
+      message: 'Teme Astegni Cloud API Active (Strict Deduplication & Alignment)' 
+    })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
   }
-
-  if (action === 'addTutor' || action === 'addTutorId') {
-    var tSheet = ss.getSheetByName('Tutors_Index') || createTutorsSheet(ss);
-    var p = (e && e.parameter) ? e.parameter : {};
-    var trackingId = (p.id || p.trackingId || '').toString().trim();
-    if (trackingId) {
-      if (checkExistsInSheet(tSheet, trackingId)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
-          .setMimeType(ContentService.MimeType.JSON);
-      }
-      var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
-      tSheet.appendRow([ts, trackingId]);
-      formatLastRow(tSheet, '#065f46');
-      sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
-    }
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-
-  if (action === 'addParent' || action === 'addParentId') {
-    var pSheet = ss.getSheetByName('Parents_Index') || createParentsSheet(ss);
-    var p = (e && e.parameter) ? e.parameter : {};
-    var trackingId = (p.id || p.trackingId || '').toString().trim();
-    if (trackingId) {
-      if (checkExistsInSheet(pSheet, trackingId)) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'duplicate_skipped', id: trackingId }))
-          .setMimeType(ContentService.MimeType.JSON);
-      }
-      var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
-      pSheet.appendRow([ts, trackingId]);
-      formatLastRow(pSheet, '#0f172a');
-      sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
-    }
-    return ContentService.createTextOutput(JSON.stringify({ status: 'success', id: trackingId }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({ 
-    status: 'OK', 
-    message: 'Teme Astegni Cloud API Active (Strict Deduplication & Alignment)' 
-  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (lockErr) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'busy', error: 'Server is busy, try again shortly.' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   try {
     var postData;
     if (e && e.postData && e.postData.contents) {
@@ -2444,11 +2468,13 @@ function doPost(e) {
     
     if (action === 'fixSheet' || action === 'fixAndAlign') {
       var summary = fixAndAlignAllSheetsSilently(ss);
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({ status: 'success', summary: summary }))
         .setMimeType(ContentService.MimeType.JSON);
     }
     else if (action === 'cleanDuplicates' || action === 'dedup') {
       var removed = deduplicateAllSheetsSilently(ss);
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({ status: 'success', removedRows: removed }))
         .setMimeType(ContentService.MimeType.JSON);
     }
@@ -2464,6 +2490,7 @@ function doPost(e) {
         var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
         sheet.appendRow([ts, trackingId]);
         formatLastRow(sheet, '#0f172a');
+        SpreadsheetApp.flush();
         sendTelegramNotification('👨‍👩‍👧 <b>NEW PARENT REGISTERED</b>\n\n🏷️ <b>Parent ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
       }
     } 
@@ -2479,6 +2506,7 @@ function doPost(e) {
         var ts = Utilities.formatDate(new Date(), 'GMT+3', 'yyyy-MM-dd HH:mm');
         sheet.appendRow([ts, trackingId]);
         formatLastRow(sheet, '#065f46');
+        SpreadsheetApp.flush();
         sendTelegramNotification('🎓 <b>NEW TUTOR REGISTERED</b>\n\n🏷️ <b>Tutor ID:</b> <code>' + trackingId + '</code>\n📅 <b>Date:</b> ' + ts);
       }
     }
@@ -2533,11 +2561,13 @@ function doPost(e) {
       if (existingRowIndex > 1) {
         // Update existing row in place with latest status & details to eliminate duplicates!
         sheet.getRange(existingRowIndex, 1, 1, 6).setValues([newRow]);
+        SpreadsheetApp.flush();
         return ContentService.createTextOutput(JSON.stringify({ status: 'updated_existing', parentId: pId, tutorId: tId }))
           .setMimeType(ContentService.MimeType.JSON);
       } else {
         sheet.appendRow(newRow);
         formatLastRow(sheet, '#1e40af');
+        SpreadsheetApp.flush();
         sendTelegramNotification('🤝 <b>NEW MATCH RECORDED IN GOOGLE SHEET</b>\n\n👨‍👩‍👧 <b>Parent ID:</b> ' + pId + '\n🎓 <b>Tutor ID:</b> ' + tId + '\n💵 <b>Monthly Fee:</b> ' + feeNum.toLocaleString() + ' ETB\n💼 <b>Commission (25%):</b> ' + commNum.toLocaleString() + ' ETB\n📌 <b>Status:</b> ' + status + '\n📅 <b>Date:</b> ' + ts);
       }
     }
@@ -2545,11 +2575,14 @@ function doPost(e) {
       sendTelegramNotification(postData.text || '');
     }
     
+    SpreadsheetApp.flush();
     return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', error: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
   }
 }
 
@@ -2761,8 +2794,9 @@ function deduplicateAllSheets() {
 
 function deduplicateAllSheetsSilently(ss) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  fixAndAlignAllSheetsSilently(ss);
-  return 'All sheets cleaned and deduplicated.';
+  var summary = fixAndAlignAllSheetsSilently(ss);
+  SpreadsheetApp.flush();
+  return summary;
 }
 
 function setupCleanArchitecture() {
@@ -4178,7 +4212,7 @@ function rowsToJson(sheet) {
             </p>
             <div style="max-width: 440px; margin: 0 auto; display: flex; gap: 0.6rem;">
               <input type="text" id="empty-parent-push-id" class="form-ctrl" placeholder="Enter Parent ID (e.g. AST-P-1024)">
-              <button class="btn-act btn-act-primary" onclick="pushCustomParentIdFromEmpty()">⚡ Push to Sheet</button>
+              <button class="btn-act btn-act-primary" onclick="pushCustomParentIdFromEmpty(this)">⚡ Push to Sheet</button>
             </div>
           </div>`;
         return;
@@ -4463,7 +4497,7 @@ function rowsToJson(sheet) {
             </div>
             <div style="max-width: 440px; margin: 0 auto; display: flex; gap: 0.6rem;">
               <input type="text" id="empty-tutor-push-id" class="form-ctrl" placeholder="Enter Tutor ID (e.g. AST-T-1024)">
-              <button class="btn-act btn-act-primary" onclick="pushCustomTutorIdFromEmpty()">⚡ Push to Sheet</button>
+              <button class="btn-act btn-act-primary" onclick="pushCustomTutorIdFromEmpty(this)">⚡ Push to Sheet</button>
             </div>
           </div>`;
         return;
@@ -5822,7 +5856,7 @@ function rowsToJson(sheet) {
       }
     }
 
-    async function pushSingleTutorToSheet(tutorId) {
+    async function pushSingleTutorToSheet(tutorId, btnEl) {
       let url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       if (!url) {
         const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):');
@@ -5835,25 +5869,30 @@ function rowsToJson(sheet) {
           return;
         }
       }
+      if (btnEl) {
+        if (btnEl.disabled) return;
+        btnEl.disabled = true;
+        btnEl.innerText = '⏳ Pushing...';
+      }
       try {
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'addTutor',
-            data: { id: tutorId, trackingId: tutorId }
-          })
-        });
         const sep = url.includes('?') ? '&' : '?';
-        fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(tutorId)}`, { mode: 'no-cors' }).catch(() => {});
-        alert(`✅ Tutor ID ${tutorId} successfully sent to Google Sheet (Tutors_Index)!`);
+        // Single clean atomic request (eliminates duplicate GET + POST race condition)
+        await fetch(`${url}${sep}action=addTutor&id=${encodeURIComponent(tutorId)}`, { mode: 'no-cors' });
+        if (btnEl) {
+          btnEl.innerText = '✓ Sent';
+          setTimeout(() => { btnEl.disabled = false; btnEl.innerText = '📤 Push'; }, 3500);
+        }
+        alert(`✅ Tutor ID ${tutorId} successfully sent to Google Sheet (Tutors_Index)!\n\nDuplicates are strictly prevented.`);
       } catch (err) {
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerText = '📤 Push';
+        }
         alert('Error sending to Google Sheet: ' + err.message);
       }
     }
 
-    async function pushSingleParentToSheet(parentId) {
+    async function pushSingleParentToSheet(parentId, btnEl) {
       let url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       if (!url) {
         const entered = prompt('Please enter your Google Apps Script Webhook URL (https://script.google.com/macros/s/.../exec):');
@@ -5866,20 +5905,25 @@ function rowsToJson(sheet) {
           return;
         }
       }
+      if (btnEl) {
+        if (btnEl.disabled) return;
+        btnEl.disabled = true;
+        btnEl.innerText = '⏳ Pushing...';
+      }
       try {
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: 'addParent',
-            data: { id: parentId, trackingId: parentId }
-          })
-        });
         const sep = url.includes('?') ? '&' : '?';
-        fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(parentId)}`, { mode: 'no-cors' }).catch(() => {});
-        alert(`✅ Parent ID ${parentId} successfully sent to Google Sheet (Parents_Index)!`);
+        // Single clean atomic request (eliminates duplicate GET + POST race condition)
+        await fetch(`${url}${sep}action=addParent&id=${encodeURIComponent(parentId)}`, { mode: 'no-cors' });
+        if (btnEl) {
+          btnEl.innerText = '✓ Sent';
+          setTimeout(() => { btnEl.disabled = false; btnEl.innerText = '📤 Push'; }, 3500);
+        }
+        alert(`✅ Parent ID ${parentId} successfully sent to Google Sheet (Parents_Index)!\n\nDuplicates are strictly prevented.`);
       } catch (err) {
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerText = '📤 Push';
+        }
         alert('Error sending to Google Sheet: ' + err.message);
       }
     }
@@ -5939,7 +5983,7 @@ function rowsToJson(sheet) {
       alert(`🎉 SYNC COMPLETE!\n\nSuccessfully pushed ${mSuccess} Confirmed Match Deal(s) to Google Sheet (Matches_Ledger)!\n\nEvery row represents an active client contract and earned commission.`);
     }
 
-    async function pushSingleIdToGoogleSheet() {
+    async function pushSingleIdToGoogleSheet(btnEl) {
       const url = localStorage.getItem('teme_astegni_db_webhook') || (document.getElementById('webhook-url-input') ? document.getElementById('webhook-url-input').value.trim() : '');
       const manualId = (document.getElementById('manual-push-id-input')?.value || '').trim();
       const type = document.getElementById('manual-push-type-select')?.value || 'addTutor';
@@ -5951,39 +5995,44 @@ function rowsToJson(sheet) {
         alert('Please enter a Tutor or Parent ID (e.g. AST-T-1024 or AST-P-2048).');
         return;
       }
+      if (btnEl) {
+        if (btnEl.disabled) return;
+        btnEl.disabled = true;
+        btnEl.innerText = '⏳ Pushing...';
+      }
       try {
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({
-            action: type,
-            data: { id: manualId, trackingId: manualId }
-          })
-        });
         const sep = url.includes('?') ? '&' : '?';
-        fetch(`${url}${sep}action=${type}&id=${encodeURIComponent(manualId)}`, { mode: 'no-cors' }).catch(() => {});
-        alert(`✅ ID ${manualId} has been sent to Google Sheet! Check your ${type === 'addTutor' ? 'Tutors_Index' : 'Parents_Index'} tab.`);
+        // Single clean atomic request (eliminates duplicate GET + POST race condition)
+        await fetch(`${url}${sep}action=${type}&id=${encodeURIComponent(manualId)}`, { mode: 'no-cors' });
+        if (btnEl) {
+          btnEl.innerText = '✓ Sent';
+          setTimeout(() => { btnEl.disabled = false; btnEl.innerText = '📤 Push to Sheet'; }, 3500);
+        }
+        alert(`✅ ID ${manualId} has been sent to Google Sheet! Check your ${type === 'addTutor' ? 'Tutors_Index' : 'Parents_Index'} tab.\n\nDuplicates are strictly prevented.`);
         if (document.getElementById('manual-push-id-input')) {
           document.getElementById('manual-push-id-input').value = '';
         }
       } catch (err) {
+        if (btnEl) {
+          btnEl.disabled = false;
+          btnEl.innerText = '📤 Push to Sheet';
+        }
         alert('Failed to send: ' + err.message);
       }
     }
 
-    function pushCustomTutorIdFromEmpty() {
+    function pushCustomTutorIdFromEmpty(btnEl) {
       const idInput = document.getElementById('empty-tutor-push-id');
       const id = (idInput?.value || '').trim();
       if (!id) { alert('Please enter a Tutor ID (e.g. AST-T-1024)'); return; }
-      pushSingleTutorToSheet(id);
+      pushSingleTutorToSheet(id, btnEl);
     }
 
-    function pushCustomParentIdFromEmpty() {
+    function pushCustomParentIdFromEmpty(btnEl) {
       const idInput = document.getElementById('empty-parent-push-id');
       const id = (idInput?.value || '').trim();
       if (!id) { alert('Please enter a Parent ID (e.g. AST-P-1024)'); return; }
-      pushSingleParentToSheet(id);
+      pushSingleParentToSheet(id, btnEl);
     }
 
     function copyTutorShareLinkWithWebhook() {
