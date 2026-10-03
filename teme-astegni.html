@@ -1591,19 +1591,14 @@
         <!-- DYNAMIC ACTIVE PARENT STATUS NOTICE -->
         <div id="parent-active-status-notice" style="display: none; margin-bottom: 1.15rem;"></div>
 
-        <!-- Returning Parent Status Banner -->
-        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+        <!-- Returning Parent Monthly Payment Banner -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
           <div style="font-size: 0.8rem; color: #cbd5e1;">
-            👨‍👩‍👧 <b>Already applied?</b> Check your live matching progress &amp; submit monthly payment receipts:
+            💳 <b>የወርሃዊ ክፍያ ደረሰኝ ለመላክ፡</b> የተመደበልዎትን አስጠኚ ወርሃዊ ክፍያ ደረሰኝ በቀጥታ ይላኩ፡
           </div>
-          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
-            <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
-              Check Request Status ›
-            </button>
-            <button type="button" onclick="openParentPaymentModal()" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
-              <span>💳</span> <span>Submit Monthly Payment ›</span>
-            </button>
-          </div>
+          <button type="button" onclick="openParentPaymentModal()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: #fff; font-weight: 850; font-size: 0.78rem; padding: 0.45rem 0.95rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+            <span>📸</span> <span>የክፍያ ደረሰኝ ላክ (Submit Payment) ›</span>
+          </button>
         </div>
 
         <form id="parent-form" novalidate onsubmit="handleParentSubmit(event)">
@@ -2686,35 +2681,21 @@
           </p>
         </div>
 
-        <!-- Phone / ID Lookup Card -->
-        <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1rem 1.1rem; margin-bottom: 1.5rem;">
-          <label style="font-size: 0.78rem; font-weight: 750; color: #cbd5e1; display: block; margin-bottom: 0.45rem;">
-            📱 Enter Your Phone Number or Tutor ID (AST-T-XXXX):
-          </label>
-          <div style="display: flex; gap: 0.5rem;">
-            <input type="text" id="portal-tutor-query" class="form-ctrl" placeholder="e.g. 0911223344 or AST-T-1234" style="flex: 1; font-weight: 700;">
-            <button type="button" onclick="checkTutorPortalStatus()" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; font-weight: 850; font-size: 0.85rem; padding: 0.65rem 1.1rem; border-radius: 12px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
-              🔍 Check Status
-            </button>
-          </div>
-          <div style="font-size: 0.73rem; color: #38bdf8; margin-top: 0.45rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>🟢</span>
-            <span><b>Live Cloud Database Sync:</b> Real-time status, verification gates, scholar tier &amp; assigned families updated live from server.</span>
-          </div>
-        </div>
-
-        <!-- Dynamic Results Container -->
+        <!-- Dynamic Results Container: Loaded Automatically For This Device -->
         <div id="portal-tutor-results" style="display: none;">
-          <!-- Filled dynamically by checkTutorPortalStatus() -->
+          <!-- Filled dynamically by loadDeviceTutorPortal() -->
         </div>
 
-        <!-- Default Empty State -->
-        <div id="portal-tutor-empty" style="text-align: center; padding: 2rem 1rem; background: rgba(30, 41, 59, 0.3); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: 16px;">
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
-          <div style="font-size: 0.95rem; font-weight: 800; color: #e2e8f0; margin-bottom: 0.35rem;">Enter Your Details Above</div>
-          <div style="font-size: 0.78rem; color: #94a3b8; max-width: 380px; margin: 0 auto; line-height: 1.55;">
-            Type your phone number or Tutor ID and tap <b>Check Status</b> to view your live profile and see if a family has been linked to you.
-          </div>
+        <!-- Default Empty State: When No Tutor Application Exists on This Device -->
+        <div id="portal-tutor-empty" style="display: none; text-align: center; padding: 2.5rem 1.25rem; background: rgba(15, 23, 42, 0.6); border: 1.5px dashed rgba(56, 189, 248, 0.35); border-radius: 20px;">
+          <div style="width: 58px; height: 58px; margin: 0 auto 0.85rem; border-radius: 50%; background: rgba(56, 189, 248, 0.15); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">🎓</div>
+          <div style="font-size: 1.05rem; font-weight: 850; color: #fff; margin-bottom: 0.45rem;">የአስጠኚ አካውንት አልተገኘም (No Tutor Record on This Device)</div>
+          <p style="font-size: 0.82rem; color: #94a3b8; max-width: 420px; margin: 0 auto 1.4rem; line-height: 1.6;">
+            በዚህ ስልክ ወይም ኮምፒውተር የተመዘገበ የአስጠኚ ማመልከቻ የለም። የዩኒቨርሲቲ ተማሪ ከሆኑ ከታች ያለውን ቁልፍ በመጫን ማመልከቻዎን ያስገቡ።
+          </p>
+          <button type="button" onclick="showScreen('screen-tutor')" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; font-weight: 850; font-size: 0.88rem; padding: 0.75rem 1.4rem; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);">
+            ✍️ አስጠኚ ለመሆን ይመዝገቡ (Apply as Astegni) ›
+          </button>
         </div>
 
       </div>
@@ -2922,30 +2903,6 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- PARENT LOOKUP PROMPT MODAL                 -->
-  <!-- ========================================== -->
-  <div class="modal-overlay" id="parent-lookup-modal">
-    <div class="modal-card" style="max-width: 440px; width: 92%; text-align: left; border-radius: 22px; border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 30, 0.98) 100%); backdrop-filter: blur(28px); padding: 1.6rem 1.3rem;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span style="font-size: 1.3rem;">🔍</span>
-          <div>
-            <div style="font-weight: 850; font-size: 1rem; color: #fff;">የወላጅ ጥያቄ ሁኔታ ማረጋገጫ</div>
-            <div style="font-size: 0.7rem; color: #38bdf8; font-weight: 700;">Check Request Status</div>
-          </div>
-        </div>
-        <button type="button" onclick="closeParentLookupModal()" style="background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">✕</button>
-      </div>
-      <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 1rem;">
-        የአስጠኚ ስምሪት ሁኔታዎንና የተመደበውን አስጠኚ ለማየት ስልክ ቁጥርዎን ወይም የወላጅ መለያ ቁጥርዎን (AST-P-XXXX) ያስገቡ፡
-      </p>
-      <input type="text" id="parent-lookup-query" placeholder="ለምሳሌ፡ 0911223344 ወይም AST-P-1234" style="width: 100%; padding: 0.75rem; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1.5px solid rgba(56, 189, 248, 0.4); color: #fff; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.85rem; box-sizing: border-box;">
-      <button type="button" onclick="handleParentLookupSubmit()" style="width: 100%; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);">
-        🔍 ሁኔታውን ተመልከቱ (Check Live Status) ›
-      </button>
-    </div>
-  </div>
 
   <!-- ========================================== -->
   <!-- PARENT MONTHLY PAYMENT SCREENSHOT MODAL   -->
@@ -3050,20 +3007,10 @@
     // Default Language State (Global)
     let currentLang = 'am';
 
-    // Safe Firestore Collection Fetcher with Timeout (prevents hanging)
+    // Safe Firestore Collection Fetcher (Deprecated to protect free tier quota & privacy)
     async function getCollectionWithTimeout(collName, timeoutMs = 2500) {
-      if (typeof db === 'undefined' || !db) return null;
-      try {
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs));
-        const snap = await Promise.race([
-          db.collection(collName).get(),
-          timeoutPromise
-        ]);
-        return snap;
-      } catch (e) {
-        console.warn('Firestore fetch timeout/fallback for:', collName);
-        return null;
-      }
+      console.warn('Direct broad collection fetch disallowed for quota and privacy:', collName);
+      return null;
     }
 
     // SCREEN NAVIGATION MANAGER
@@ -3096,103 +3043,84 @@
       }
     }
 
-    // TUTOR RETURN PORTAL & MATCH STATUS MANAGER
-    function openTutorPortalScreen() {
+    // TUTOR RETURN PORTAL & MATCH STATUS MANAGER (SECURE DEVICE-BASED ACCESS)
+    async function openTutorPortalScreen() {
       showScreen('screen-tutor-portal');
-      const savedPhone = localStorage.getItem('my_astegni_tutor_phone') || '';
-      const savedId = localStorage.getItem('my_astegni_tutor_id') || '';
-      const inputEl = document.getElementById('portal-tutor-query');
-      if (inputEl) {
-        if (!inputEl.value.trim()) {
-          inputEl.value = savedPhone || savedId;
-        }
-        if (inputEl.value.trim()) {
-          checkTutorPortalStatus();
-        }
-      }
+      await loadDeviceTutorPortal();
     }
 
     async function checkTutorPortalStatus() {
-      const inputEl = document.getElementById('portal-tutor-query');
-      const query = (inputEl ? inputEl.value : '').trim();
+      await loadDeviceTutorPortal();
+    }
+
+    async function loadDeviceTutorPortal() {
       const resultsEl = document.getElementById('portal-tutor-results');
       const emptyEl = document.getElementById('portal-tutor-empty');
 
-      if (!query) {
-        alert('Please enter your phone number or Tutor ID (AST-T-XXXX)');
-        if (inputEl) inputEl.focus();
+      // 1. Retrieve THIS DEVICE'S saved tutor application
+      let tutor = null;
+      const tSavedRecord = localStorage.getItem('my_astegni_tutor_record');
+      if (tSavedRecord) {
+        try { tutor = JSON.parse(tSavedRecord); } catch (e) {}
+      }
+      const savedPhone = (localStorage.getItem('my_astegni_tutor_phone') || '').replace(/\D/g, '').slice(-9);
+      const savedId = (localStorage.getItem('my_astegni_tutor_id') || '').toUpperCase();
+
+      if (!tutor && (savedId || savedPhone)) {
+        const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+        tutor = localTutors.find(t => {
+          const tId = (t.trackingId || t.id || '').toUpperCase();
+          const tPhone = (t.phone || '').replace(/\D/g, '');
+          return (savedId && tId === savedId) || (savedPhone && tPhone.endsWith(savedPhone));
+        });
+      }
+
+      // If no tutor application exists on this device, show clean empty state (no search box)
+      if (!tutor) {
+        if (resultsEl) resultsEl.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = 'block';
         return;
       }
 
       if (emptyEl) emptyEl.style.display = 'none';
       if (resultsEl) {
         resultsEl.style.display = 'block';
-        resultsEl.innerHTML = '<div style="text-align: center; padding: 2rem; color: #34d399; font-weight: 750;">⏳ Checking live database records...</div>';
+        resultsEl.innerHTML = '<div style="text-align: center; padding: 2rem; color: #34d399; font-weight: 750;">⏳ የመረጃ ቋት በማመሳከር ላይ (Loading your verified profile)...</div>';
       }
 
-      const qClean = query.replace(/\D/g, '');
-      const qUpper = query.toUpperCase();
+      const tutorId = (tutor.trackingId || tutor.id || savedId || 'AST-T').toUpperCase();
+      const tutorPhone = tutor.phone || savedPhone || '';
+      const qClean = tutorPhone.replace(/\D/g, '');
 
-      // 1. Search tutor in local leads
-      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
-      let tutor = localTutors.find(t => {
-        const tId = (t.trackingId || t.id || '').toUpperCase();
-        const tPhone = (t.phone || '').replace(/\D/g, '');
-        return tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
-      });
-
-      // 2. Search matches in local matches
+      // 2. Load assigned matches from local cache first (ZERO Firestore reads)
       const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
       let matchesList = localMatches.filter(m => {
         const tId = (m.tutorId || '').toUpperCase();
         const tPhone = (m.tutorPhone || '').replace(/\D/g, '');
-        const isMatch = tId === qUpper || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
+        const isMatch = (tutorId && tId === tutorId) || (qClean.length >= 6 && tPhone.endsWith(qClean.slice(-9)));
         return isMatch && m.status !== 'Terminated' && m.status !== 'Cancelled';
       });
 
-      // 3. Always synchronize with live Firebase Firestore cloud database
-      if (typeof db !== 'undefined' && db) {
+      // 3. TARGETED Firestore query ONLY for this specific tutor (at most 1 read, never downloading all matches)
+      if (typeof db !== 'undefined' && db && tutorId) {
         try {
-          const tutorSnap = await db.collection('astegni_tutor_leads').get();
-          tutorSnap.forEach(doc => {
-            const d = doc.data();
-            const dId = (d.trackingId || d.id || doc.id).toUpperCase();
-            const dPhone = (d.phone || '').replace(/\D/g, '');
-            if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
-              tutor = Object.assign({}, tutor || {}, d, { id: doc.id });
-            }
-          });
-          const matchSnap = await db.collection('astegni_matches').get();
-          matchSnap.forEach(doc => {
-            const d = doc.data();
-            const dId = (d.tutorId || '').toUpperCase();
-            const dPhone = (d.tutorPhone || '').replace(/\D/g, '');
-            const isMatch = dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)));
-            if (isMatch && d.status !== 'Terminated' && d.status !== 'Cancelled') {
-              if (!matchesList.some(m => m.id === d.id)) {
-                matchesList.push(d);
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000));
+          const queryPromise = db.collection('astegni_matches').where('tutorId', '==', tutorId).limit(5).get();
+          const matchSnap = await Promise.race([queryPromise, timeoutPromise]);
+          if (matchSnap && !matchSnap.empty) {
+            matchSnap.forEach(doc => {
+              const d = doc.data();
+              if (d.status !== 'Terminated' && d.status !== 'Cancelled') {
+                const idx = matchesList.findIndex(m => m.id === doc.id || m.id === d.id);
+                if (idx >= 0) matchesList[idx] = d;
+                else matchesList.push(d);
               }
-            }
-          });
+            });
+            localStorage.setItem('astegni_matches', JSON.stringify(matchesList));
+          }
         } catch (e) {
-          console.warn("Portal Firestore query notice:", e);
+          // Gracefully continue with local cache
         }
-      }
-
-      if (!tutor && matchesList.length === 0) {
-        resultsEl.innerHTML = `
-          <div style="text-align: center; padding: 2rem 1.25rem; background: rgba(239, 68, 68, 0.08); border: 1.5px dashed rgba(239, 68, 68, 0.35); border-radius: 16px;">
-            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
-            <div style="font-size: 1rem; font-weight: 850; color: #f87171; margin-bottom: 0.4rem;">No Tutor Record Found</div>
-            <p style="font-size: 0.8rem; color: #cbd5e1; max-width: 400px; margin: 0 auto 1.2rem; line-height: 1.55;">
-              We couldn't find an application matching "<b>${escapeHtml(query)}</b>". Please double-check your phone number or Tutor ID.
-            </p>
-            <button type="button" onclick="showScreen('screen-tutor')" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800; font-size: 0.82rem; padding: 0.6rem 1.1rem; border-radius: 10px; cursor: pointer;">
-              ✍️ Apply as Tutor Now ›
-            </button>
-          </div>
-        `;
-        return;
       }
 
       // Build profile info
@@ -3586,18 +3514,22 @@
       }
 
       // 2. Update Firestore
-      if (typeof db !== 'undefined' && db) {
+      if (typeof db !== 'undefined' && db && tutorId) {
         try {
-          const snap = await db.collection('astegni_tutor_leads').get();
-          snap.forEach(doc => {
-            const d = doc.data();
-            if ((d.trackingId || d.id || doc.id) === tutorId) {
-              db.collection('astegni_tutor_leads').doc(doc.id).update({
+          const snap = await db.collection('astegni_tutor_leads').where('trackingId', '==', tutorId).limit(1).get();
+          if (!snap.empty) {
+            await snap.docs[0].ref.update({
+              level: targetLvl,
+              lastUpgradedAt: new Date().toISOString()
+            });
+          } else {
+            try {
+              await db.collection('astegni_tutor_leads').doc(tutorId).update({
                 level: targetLvl,
                 lastUpgradedAt: new Date().toISOString()
               });
-            }
-          });
+            } catch(docErr) {}
+          }
           db.collection('astegni_upgrade_requests').add({
             tutorId: tutorId,
             tutorName: tName,
@@ -3644,14 +3576,22 @@
     }
 
     function openParentStatusLookupModal() {
-      const queryInp = document.getElementById('parent-lookup-query');
-      if (queryInp) {
-        const savedPhone = localStorage.getItem('my_astegni_parent_phone') || '';
-        const savedId = localStorage.getItem('my_astegni_parent_id') || '';
-        queryInp.value = savedPhone || savedId;
+      // Direct user straight to their own device live status
+      const savedRecord = localStorage.getItem('my_astegni_parent_record');
+      if (savedRecord) {
+        try {
+          showParentStatusModal(JSON.parse(savedRecord));
+          return;
+        } catch (e) {}
       }
-      const modal = document.getElementById('parent-lookup-modal');
-      if (modal) modal.classList.add('active');
+      const savedId = localStorage.getItem('my_astegni_parent_id');
+      if (savedId) {
+        showParentStatusModal({ trackingId: savedId, name: 'Parent', phone: localStorage.getItem('my_astegni_parent_phone') || '' });
+        return;
+      }
+      alert(currentLang === 'am' 
+        ? 'በዚህ ስልክ ላይ የተመዘገበ የወላጅ ጥያቄ አልተገኘም። እባክዎ አዲስ አስጠኚ ይጠይቁ።'
+        : 'No parent request registered on this device yet. Please request a tutor first.');
     }
 
     function closeParentLookupModal() {
@@ -3898,47 +3838,7 @@
     }
 
     async function handleParentLookupSubmit() {
-      const queryInp = document.getElementById('parent-lookup-query');
-      const query = (queryInp ? queryInp.value : '').trim();
-      if (!query) {
-        alert('Please enter your phone number or Parent Tracking ID (AST-P-XXXX)');
-        return;
-      }
-      closeParentLookupModal();
-
-      const qClean = query.replace(/\D/g, '');
-      const qUpper = query.toUpperCase();
-
-      // Search local parents
-      const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
-      let parent = localParents.find(p => {
-        const pId = (p.trackingId || p.id || '').toUpperCase();
-        const pPhone = (p.phone || '').replace(/\D/g, '');
-        return pId === qUpper || (qClean.length >= 6 && pPhone.endsWith(qClean.slice(-9)));
-      });
-
-      // Live synchronization with Firebase Firestore cloud database
-      if (typeof db !== 'undefined' && db) {
-        try {
-          const snap = await db.collection('astegni_parent_leads').get();
-          snap.forEach(doc => {
-            const d = doc.data();
-            const dId = (d.trackingId || d.id || doc.id).toUpperCase();
-            const dPhone = (d.phone || '').replace(/\D/g, '');
-            if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
-              parent = Object.assign({}, parent || {}, d, { id: doc.id });
-            }
-          });
-        } catch (e) {}
-      }
-
-      if (parent) {
-        showParentStatusModal(parent);
-      } else {
-        alert((currentLang === 'am')
-          ? `ለተጠቀሰው ስልክ ወይም መለያ ቁጥር ("${query}") የተመዘገበ የወላጅ ጥያቄ አልተገኘም። እባክዎ ስልክ ቁጥርዎን ያረጋግጡ ወይም አዲስ የአስጠኚ ጥያቄ ይመዝግቡ።`
-          : `No parent request found for "${query}". Please verify your phone number or submit a new tutoring request.`);
-      }
+      openParentStatusLookupModal();
     }
 
     function allowAdditionalChildRequest() {
@@ -3956,6 +3856,11 @@
     }
 
     async function showParentStatusModal(parentData) {
+      if (!parentData) {
+        try {
+          parentData = window.currentDeviceParentData || JSON.parse(localStorage.getItem('my_astegni_parent_record') || 'null');
+        } catch(e) {}
+      }
       if (!parentData) return;
       const modal = document.getElementById('parent-status-modal');
       const idEl = document.getElementById('p-status-id');
@@ -3964,10 +3869,10 @@
 
       const pId = parentData.trackingId || parentData.id || 'AST-P';
       if (idEl) idEl.innerText = pId;
-      localStorage.setItem('my_astegni_parent_phone', parentData.phone || '');
-      localStorage.setItem('my_astegni_parent_id', pId);
+      if (parentData.phone) localStorage.setItem('my_astegni_parent_phone', parentData.phone);
+      if (pId) localStorage.setItem('my_astegni_parent_id', pId);
 
-      // Search if this parent is matched with a tutor
+      // Search if this parent is matched with a tutor in local cache
       const pClean = (parentData.phone || '').replace(/\D/g, '');
       const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
       let match = localMatches.find(m => {
@@ -3976,17 +3881,19 @@
         return (pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9))) || (mId === pId.toUpperCase());
       });
 
-      if (!match && typeof db !== 'undefined' && db) {
+      // Target Firestore query strictly for this parent's own ID only (protects quota and user privacy)
+      if (!match && typeof db !== 'undefined' && db && pId) {
         try {
-          const matchSnap = await db.collection('astegni_matches').get();
-          matchSnap.forEach(doc => {
-            const d = doc.data();
-            const mPhone = (d.parentPhone || '').replace(/\D/g, '');
-            const mId = (d.parentId || '').toUpperCase();
-            if ((pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9))) || (mId === pId.toUpperCase())) {
-              match = d;
-            }
-          });
+          let matchSnap = await db.collection('astegni_matches').where('parentId', '==', pId.toUpperCase()).limit(1).get();
+          if (matchSnap.empty && parentData.phone) {
+            matchSnap = await db.collection('astegni_matches').where('parentPhone', '==', parentData.phone).limit(1).get();
+          }
+          if (!matchSnap.empty) {
+            match = matchSnap.docs[0].data();
+            // Cache locally so subsequent opens use 0 Firestore reads
+            localMatches.unshift(match);
+            localStorage.setItem('astegni_matches', JSON.stringify(localMatches));
+          }
         } catch (e) {}
       }
 
@@ -4163,12 +4070,13 @@
 
       if (!parentData && !tutorData) {
         container.innerHTML = `
-          <div style="background: rgba(15, 23, 42, 0.65); border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
-            <div style="font-size: 0.8rem; color: #cbd5e1;">
-              🔍 <b>Already submitted a tutoring request or tutor application?</b>
+          <div style="background: rgba(15, 23, 42, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 14px; padding: 0.85rem 1.1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.88rem; font-weight: 850; color: #fff;">👨‍👩‍👧 ለልጅዎ ብቁ የዩኒቨርሲቲ አስጠኚ ይፈልጋሉ?</div>
+              <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.15rem;">ከአቅራቢያዎ ካምፓስ ከፍተኛ ውጤት ካላቸው ተማሪዎች ጋር በ 24 ሰዓት ውስጥ እናገናኝዎታለን።</div>
             </div>
-            <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 850; font-size: 0.76rem; padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer;">
-              Check Live Status by Phone ›
+            <button type="button" onclick="showScreen('screen-parent')" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; font-weight: 850; font-size: 0.78rem; padding: 0.5rem 0.95rem; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+              📲 አስጠኚ ይጠይቁ (Request Astegni) ›
             </button>
           </div>
         `;
@@ -4439,38 +4347,79 @@
     }
 
     // CLOUD SYNC & REFRESH ENGINES FOR RETURNING USERS
+    // Strict quota protection: Only fetches this specific device's own record. Never scans collections.
     async function syncReturningUserDataFromCloud() {
       if (typeof db === 'undefined' || !db) return;
-      const pSavedPhone = (localStorage.getItem('my_astegni_parent_phone') || '').replace(/\D/g, '').slice(-9);
       const pSavedId = (localStorage.getItem('my_astegni_parent_id') || '').toUpperCase();
+      const pSavedPhone = localStorage.getItem('my_astegni_parent_phone') || '';
+      const tSavedId = (localStorage.getItem('my_astegni_tutor_id') || '').toUpperCase();
+      const tSavedPhone = localStorage.getItem('my_astegni_tutor_phone') || '';
 
-      // 1. Sync Matches from Firestore
-      try {
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Match timeout')), 2500));
-        const snap = await Promise.race([db.collection('astegni_matches').get(), timeoutPromise]);
-        if (snap && snap.docs) {
-          const cloudMatches = [];
-          snap.forEach(doc => cloudMatches.push(doc.data()));
-          if (cloudMatches.length > 0) {
-            localStorage.setItem('astegni_matches', JSON.stringify(cloudMatches));
-          }
-        }
-      } catch (e) {}
+      // If no ID is registered on this device, do zero Firestore reads!
+      if (!pSavedId && !tSavedId && !pSavedPhone && !tSavedPhone) return;
 
-      // 2. Sync Parent lead if needed
+      // 1. Sync Parent record & match if this device has a parent application
       if (pSavedId || pSavedPhone) {
         try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Match timeout')), 2500));
+          let matchQuery = pSavedId 
+            ? db.collection('astegni_matches').where('parentId', '==', pSavedId).limit(1).get()
+            : db.collection('astegni_matches').where('parentPhone', '==', pSavedPhone).limit(1).get();
+          const matchSnap = await Promise.race([matchQuery, timeoutPromise]);
+          if (matchSnap && !matchSnap.empty) {
+            const mData = matchSnap.docs[0].data();
+            const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+            const idx = localMatches.findIndex(m => (m.parentId || '').toUpperCase() === (pSavedId || mData.parentId?.toUpperCase()));
+            if (idx >= 0) localMatches[idx] = mData;
+            else localMatches.unshift(mData);
+            localStorage.setItem('astegni_matches', JSON.stringify(localMatches));
+          }
+        } catch (e) {}
+
+        try {
           const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Parent timeout')), 2500));
-          const snap = await Promise.race([db.collection('astegni_parent_leads').get(), timeoutPromise]);
-          if (snap && snap.docs) {
-            snap.forEach(doc => {
-              const d = doc.data();
-              const id = (d.trackingId || d.id || '').toUpperCase();
-              const ph = (d.phone || '').replace(/\D/g, '');
-              if ((pSavedId && id === pSavedId) || (pSavedPhone && ph.endsWith(pSavedPhone))) {
-                localStorage.setItem('my_astegni_parent_record', JSON.stringify(d));
-              }
+          let parentQuery = pSavedId
+            ? db.collection('astegni_parent_leads').where('trackingId', '==', pSavedId).limit(1).get()
+            : db.collection('astegni_parent_leads').where('phone', '==', pSavedPhone).limit(1).get();
+          const parentSnap = await Promise.race([parentQuery, timeoutPromise]);
+          if (parentSnap && !parentSnap.empty) {
+            const pData = parentSnap.docs[0].data();
+            localStorage.setItem('my_astegni_parent_record', JSON.stringify(pData));
+            window.currentDeviceParentData = pData;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Sync Tutor record & match if this device has a tutor application
+      if (tSavedId || tSavedPhone) {
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Tutor match timeout')), 2500));
+          let tMatchQuery = tSavedId
+            ? db.collection('astegni_matches').where('tutorId', '==', tSavedId).limit(5).get()
+            : db.collection('astegni_matches').where('tutorPhone', '==', tSavedPhone).limit(5).get();
+          const tMatchSnap = await Promise.race([tMatchQuery, timeoutPromise]);
+          if (tMatchSnap && !tMatchSnap.empty) {
+            const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+            tMatchSnap.forEach(doc => {
+              const tm = doc.data();
+              const idx = localMatches.findIndex(m => m.id === tm.id || (m.parentId === tm.parentId && m.tutorId === tm.tutorId));
+              if (idx >= 0) localMatches[idx] = tm;
+              else localMatches.unshift(tm);
             });
+            localStorage.setItem('astegni_matches', JSON.stringify(localMatches));
+          }
+        } catch (e) {}
+
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Tutor lead timeout')), 2500));
+          let tutorQuery = tSavedId
+            ? db.collection('astegni_tutor_leads').where('trackingId', '==', tSavedId).limit(1).get()
+            : db.collection('astegni_tutor_leads').where('phone', '==', tSavedPhone).limit(1).get();
+          const tutorSnap = await Promise.race([tutorQuery, timeoutPromise]);
+          if (tutorSnap && !tutorSnap.empty) {
+            const tData = tutorSnap.docs[0].data();
+            localStorage.setItem('my_astegni_tutor_record', JSON.stringify(tData));
+            window.currentDeviceTutorData = tData;
           }
         } catch (e) {}
       }
@@ -6499,24 +6448,23 @@
 
       if (typeof db !== 'undefined' && db) {
         try {
-          const snap = await db.collection('astegni_tutor_leads').get();
-          for (const doc of snap.docs) {
-            const d = doc.data();
-            const dStudentId = normalizeIdString(d.studentIdNumber || d.studentIdNum);
-            const dGovtId = normalizeIdString(d.govtIdNumber || d.govtIdNum);
-            const dPhone = (d.phone || '').replace(/\D/g, '').slice(-9);
-
-            if (normStudentId && dStudentId && normStudentId === dStudentId && dPhone !== cleanPhone) {
-              return { isDuplicate: true, reason: 'STUDENT_ID_REGISTERED', id: d.trackingId || doc.id };
+          if (normStudentId) {
+            const snap = await db.collection('astegni_tutor_leads').where('studentIdNumber', '==', normStudentId).limit(1).get();
+            if (!snap.empty) {
+              const d = snap.docs[0].data();
+              const dPhone = (d.phone || '').replace(/\D/g, '').slice(-9);
+              if (dPhone !== cleanPhone) {
+                return { isDuplicate: true, reason: 'STUDENT_ID_REGISTERED', id: d.trackingId || snap.docs[0].id };
+              }
             }
-            if (normGovtId && dGovtId && normGovtId === dGovtId && dPhone !== cleanPhone) {
-              return { isDuplicate: true, reason: 'GOVT_ID_REGISTERED', id: d.trackingId || doc.id };
-            }
-            if (newHashes && d.imageHashes) {
-              for (const h of newHashes) {
-                if (h && d.imageHashes.includes(h) && dPhone !== cleanPhone) {
-                  return { isDuplicate: true, reason: 'DOCUMENT_IMAGE_REGISTERED', id: d.trackingId || doc.id };
-                }
+          }
+          if (normGovtId) {
+            const snap = await db.collection('astegni_tutor_leads').where('govtIdNumber', '==', normGovtId).limit(1).get();
+            if (!snap.empty) {
+              const d = snap.docs[0].data();
+              const dPhone = (d.phone || '').replace(/\D/g, '').slice(-9);
+              if (dPhone !== cleanPhone) {
+                return { isDuplicate: true, reason: 'GOVT_ID_REGISTERED', id: d.trackingId || snap.docs[0].id };
               }
             }
           }
@@ -6813,17 +6761,13 @@
       let duplicateParent = existingParents.find(p => (p.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
 
       // Also verify against central cloud database
-      if (!duplicateParent && typeof db !== 'undefined' && db) {
+      if (!duplicateParent && typeof db !== 'undefined' && db && phone) {
         try {
-          const snap = await getCollectionWithTimeout('astegni_parent_leads', 2000);
-          if (snap) {
-            snap.forEach(doc => {
-              const d = doc.data();
-              const dPhone = (d.phone || '').replace(/\D/g, '');
-              if (dPhone.endsWith(cleanPhone)) {
-                duplicateParent = d;
-              }
-            });
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000));
+          const queryPromise = db.collection('astegni_parent_leads').where('phone', '==', phone).limit(1).get();
+          const snap = await Promise.race([queryPromise, timeoutPromise]);
+          if (snap && !snap.empty) {
+            duplicateParent = snap.docs[0].data();
           }
         } catch (err) {}
       }
@@ -7289,16 +7233,14 @@
       // Check duplicate phone number
       const existingTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
       let duplicatePhoneTutor = existingTutors.find(t => (t.phone || '').replace(/\D/g, '').endsWith(cleanPhone));
-      if (!duplicatePhoneTutor && typeof db !== 'undefined' && db) {
+      if (!duplicatePhoneTutor && typeof db !== 'undefined' && db && phone) {
         try {
-          const snap = await db.collection('astegni_tutor_leads').get();
-          snap.forEach(doc => {
-            const d = doc.data();
-            const dPhone = (d.phone || '').replace(/\D/g, '');
-            if (dPhone.endsWith(cleanPhone)) {
-              duplicatePhoneTutor = d;
-            }
-          });
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000));
+          const queryPromise = db.collection('astegni_tutor_leads').where('phone', '==', phone).limit(1).get();
+          const snap = await Promise.race([queryPromise, timeoutPromise]);
+          if (snap && !snap.empty) {
+            duplicatePhoneTutor = snap.docs[0].data();
+          }
         } catch (err) {}
       }
 
