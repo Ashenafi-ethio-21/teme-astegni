@@ -1574,6 +1574,16 @@
           <p id="i18n-p-subtitle">Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.</p>
         </div>
 
+        <!-- Returning Parent Status Banner -->
+        <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+          <div style="font-size: 0.8rem; color: #cbd5e1;">
+            👨‍👩‍👧 <b>Already applied?</b> Check your live matching progress &amp; assigned scholar status:
+          </div>
+          <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
+            Check Request Status ›
+          </button>
+        </div>
+
         <form id="parent-form" novalidate onsubmit="handleParentSubmit(event)">
           
           <!-- ASSIGNED OFFICIAL PARENT TRACKING ID BANNER -->
@@ -2772,6 +2782,79 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- PARENT REQUEST LIVE STATUS MODAL           -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="parent-status-modal">
+    <div class="modal-card" style="max-width: 520px; width: 94%; text-align: left; border-radius: 24px; border: 1.5px solid rgba(56, 189, 248, 0.4); box-shadow: 0 25px 70px rgba(0,0,0,0.85); background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 30, 0.98) 100%); backdrop-filter: blur(28px); padding: 1.75rem 1.4rem; max-height: 90vh; overflow-y: auto;">
+      
+      <!-- Top Header Row -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">👨‍👩‍👧</div>
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 850; color: #fff;">Parent Request Status</div>
+            <div style="font-size: 0.72rem; color: #38bdf8; font-weight: 700;">የወላጅ ጥያቄ የቀጥታ ሁኔታ</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeParentStatusModal()" style="background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">✕</button>
+      </div>
+
+      <!-- Live Tracking ID Banner -->
+      <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 14px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 0.68rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">Official Parent Tracking ID</div>
+          <div style="font-size: 1.15rem; font-weight: 900; color: #38bdf8; font-family: monospace;" id="p-status-id">AST-P-XXXX</div>
+        </div>
+        <button type="button" onclick="copyParentStatusId()" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; border-radius: 8px; padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 750; cursor: pointer;">
+          📋 <span id="p-status-copy-btn">Copy ID</span>
+        </button>
+      </div>
+
+      <!-- Dynamic Content Body -->
+      <div id="parent-status-body"></div>
+
+      <!-- Action Buttons & Direct Support -->
+      <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08);">
+        <div style="font-size: 0.75rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.5rem;">📞 Need Immediate Assistance or Changes?</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
+          <a href="tel:0945399808" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; text-decoration: none; padding: 0.55rem; border-radius: 10px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <span>📞</span> <span>0945399808</span>
+          </a>
+          <a href="tel:0960064466" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; text-decoration: none; padding: 0.55rem; border-radius: 10px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <span>📞</span> <span>0960064466</span>
+          </a>
+        </div>
+        <button type="button" onclick="closeParentStatusModal()" style="width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; padding: 0.65rem; border-radius: 12px; font-size: 0.82rem; font-weight: 750; cursor: pointer;">
+          Done / Close (ዝጋ)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PARENT LOOKUP PROMPT MODAL                 -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="parent-lookup-modal">
+    <div class="modal-card" style="max-width: 440px; width: 92%; text-align: left; border-radius: 22px; border: 1.5px solid rgba(56, 189, 248, 0.4); background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 30, 0.98) 100%); backdrop-filter: blur(28px); padding: 1.6rem 1.3rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">🔍</span>
+          <span style="font-weight: 850; font-size: 1rem; color: #fff;">Check Parent Status</span>
+        </div>
+        <button type="button" onclick="closeParentLookupModal()" style="background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">✕</button>
+      </div>
+      <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.5; margin-bottom: 1rem;">
+        Enter your phone number or Parent Tracking ID (AST-P-XXXX) to view your live matching status and assigned scholar:
+      </p>
+      <input type="text" id="parent-lookup-query" placeholder="e.g. 0911223344 or AST-P-1234" style="width: 100%; padding: 0.75rem; border-radius: 12px; background: rgba(0,0,0,0.4); border: 1.5px solid rgba(56, 189, 248, 0.4); color: #fff; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.85rem; box-sizing: border-box;">
+      <button type="button" onclick="handleParentLookupSubmit()" style="width: 100%; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.88rem; cursor: pointer; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);">
+        🔍 Check My Request Status ›
+      </button>
+    </div>
+  </div>
+
   <script>
     // SCREEN NAVIGATION MANAGER
     function showScreen(screenId) {
@@ -3124,8 +3207,416 @@
               <div style="font-size: 0.85rem; font-weight: 800; color: #34d399;">Active (Verified)</div>
             </div>
           </div>
+
+          <!-- ⚡ LEVEL PROGRESSION & INSTANT RANK UPGRADE STATION -->
+          <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 1.15rem; margin-top: 1.15rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.4rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.3rem;">⚡</span>
+                <span style="font-weight: 850; font-size: 0.95rem; color: #fff;">Rank Level Progression (የደረጃ እድገት)</span>
+              </div>
+              <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 800; font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 6px;">
+                Current: ${levelTitle}
+              </span>
+            </div>
+
+            <!-- Visual 6-Step Level Ladder -->
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.3rem; margin-bottom: 1rem; text-align: center;">
+              ${[0, 1, 2, 3, 4, 5].map(lvl => {
+                const isActive = lvl === level;
+                const isPassed = lvl < level;
+                const bg = isActive ? 'linear-gradient(135deg, #0284c7, #10b981)' : (isPassed ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.05)');
+                const border = isActive ? '#38bdf8' : (isPassed ? '#10b981' : 'rgba(255, 255, 255, 0.1)');
+                const textCol = isActive ? '#fff' : (isPassed ? '#34d399' : '#64748b');
+                return `
+                  <div style="background: ${bg}; border: 1.5px solid ${border}; border-radius: 8px; padding: 0.45rem 0.2rem;">
+                    <div style="font-size: 0.68rem; font-weight: 850; color: ${textCol};">L${lvl}</div>
+                    <div style="font-size: 0.56rem; color: ${textCol}; margin-top: 0.1rem;">${lvl === 0 ? 'Basic' : (lvl === 1 ? 'Voice' : (lvl === 2 ? 'Trial' : (lvl === 3 ? '5-Star' : (lvl === 4 ? 'Coach' : 'Master'))))}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Dynamic Upgrade Box Based on Current Level -->
+            ${renderUpgradeStationCard(tutor, level, tutorId, tutorName, tutorPhone)}
+          </div>
+
         </div>
       `;
+    }
+
+    // Dynamic Level Upgrade Box Renderer
+    function renderUpgradeStationCard(tutor, level, tutorId, tutorName, tutorPhone) {
+      const safeId = escapeHtml(tutorId);
+      const safeName = escapeHtml(tutorName);
+      const safePhone = escapeHtml(tutorPhone);
+
+      if (level === 0) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.04) 100%); border: 1.5px solid rgba(56, 189, 248, 0.45); border-radius: 14px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">🎙️ Upgrade to Level 1 (Certified Communicator)</div>
+              <span style="background: rgba(56, 189, 248, 0.25); color: #38bdf8; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">1st Priority Dispatch</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.85rem;">
+              Passing the communicative teaching skills evaluation unlocks <b>1st Priority Dispatch</b>! When families in your university campus area submit requests, coordinators dispatch to <b>Level 1</b> scholars before basic applicants.
+            </p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.65rem;">
+              <a href="teme-exam-app.html?tutorId=${safeId}&name=${encodeURIComponent(safeName)}&phone=${safePhone}" target="_blank" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #fff; text-decoration: none; padding: 0.65rem 0.75rem; border-radius: 10px; font-weight: 800; font-size: 0.78rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <span>🎙️</span> <span>Take Online Exam</span>
+              </a>
+              <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 0, 1)" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; padding: 0.65rem 0.75rem; border-radius: 10px; font-weight: 850; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                <span>⚡</span> <span>Instant Upgrade to L1</span>
+              </button>
+            </div>
+            <div style="font-size: 0.7rem; color: #94a3b8; text-align: center;">
+              Prefer a 5-minute phone interview? Call Lead Coordinator: <a href="tel:0945399808" style="color: #38bdf8; font-weight: 800;">0945 39 98 08</a>
+            </div>
+          </div>
+        `;
+      } else if (level === 1) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(129, 140, 248, 0.15) 0%, rgba(99, 102, 241, 0.04) 100%); border: 1.5px solid rgba(129, 140, 248, 0.45); border-radius: 14px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">⭐ Upgrade to Level 2 (In-Home Trial Master)</div>
+              <span style="background: rgba(129, 140, 248, 0.25); color: #a5b4fc; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">Unlocks 2 Families</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.85rem;">
+              Conducted your 1-Day In-Home Trial Lesson with parent satisfaction? Elevate to <b>Level 2</b> to unlock a second student family slot and double your monthly tutoring income!
+            </p>
+            <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 1, 2)" style="width: 100%; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);">
+              <span>⭐</span> <span>Confirm Trial Lesson &amp; Upgrade to Level 2 ›</span>
+            </button>
+          </div>
+        `;
+      } else if (level === 2) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.04) 100%); border: 1.5px solid rgba(251, 191, 36, 0.45); border-radius: 14px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">👑 Upgrade to Level 3 (Senior 5-Star Scholar)</div>
+              <span style="background: rgba(251, 191, 36, 0.25); color: #fbbf24; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">5-Star Rating</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.85rem;">
+              Demonstrated consistent positive academic results and 5-star parent evaluations? Upgrade to <b>Level 3 Senior Tutor</b> for top-tier family matchmaking!
+            </p>
+            <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 2, 3)" style="width: 100%; background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);">
+              <span>👑</span> <span>Promote Profile to Level 3 Senior Tutor ›</span>
+            </button>
+          </div>
+        `;
+      } else if (level === 3) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(219, 39, 119, 0.04) 100%); border: 1.5px solid rgba(236, 72, 153, 0.45); border-radius: 14px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">🚀 Upgrade to Level 4 (Distinguished Coach)</div>
+              <span style="background: rgba(236, 72, 153, 0.25); color: #f472b6; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">Unlocks 3 Families</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.85rem;">
+              Unlock maximum capacity of <b>3 Student Families</b> (+ up to 15,000 ETB/mo net tuition) by attaining Specialized National Exam Coach ranking!
+            </p>
+            <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 3, 4)" style="width: 100%; background: linear-gradient(135deg, #db2777 0%, #ec4899 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);">
+              <span>🚀</span> <span>Attain Level 4 Coach (Unlock 3 Slots) ›</span>
+            </button>
+          </div>
+        `;
+      } else if (level === 4) {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(147, 51, 234, 0.04) 100%); border: 1.5px solid rgba(168, 85, 247, 0.45); border-radius: 14px; padding: 1.1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">👑 Upgrade to Level 5 (Master Astegni Lead)</div>
+              <span style="background: rgba(168, 85, 247, 0.25); color: #c084fc; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px;">Elite Director</span>
+            </div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.85rem;">
+              Reach the pinnacle of academic tutoring in Ethiopia as an official student mentor and community director!
+            </p>
+            <button type="button" onclick="triggerTutorLevelUpgrade('${safeId}', 4, 5)" style="width: 100%; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.84rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35);">
+              <span>👑</span> <span>Attain Level 5 Master Astegni Status ›</span>
+            </button>
+          </div>
+        `;
+      } else {
+        return `
+          <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.08) 100%); border: 1.5px solid #10b981; border-radius: 14px; padding: 1rem; text-align: center;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🏆</div>
+            <div style="font-size: 1rem; font-weight: 850; color: #34d399;">Highest Level Achieved: Master Astegni (L5)</div>
+            <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.35rem 0 0;">
+              You have unlocked maximum platform capacity, highest priority dispatch across all university campuses, and direct operational coordination leadership!
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // Tutor Level Upgrade Handler
+    async function triggerTutorLevelUpgrade(tutorId, currentLvl, targetLvl) {
+      const confirmMsg = (currentLang === 'am')
+        ? `እርግጠኛ ነዎት መገለጫዎን ከደረጃ ${currentLvl} ወደ ደረጃ ${targetLvl} ማሳደግ ይፈልጋሉ?`
+        : `Are you sure you want to upgrade your profile rank from Level ${currentLvl} to Level ${targetLvl}?`;
+      
+      if (!confirm(confirmMsg)) return;
+
+      // 1. Update local storage
+      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      const tIdx = localTutors.findIndex(t => (t.trackingId || t.id) === tutorId);
+      let tName = 'Verified Tutor';
+      let tPhone = '';
+      if (tIdx !== -1) {
+        localTutors[tIdx].level = targetLvl;
+        localTutors[tIdx].lastUpgradedAt = new Date().toISOString();
+        tName = localTutors[tIdx].name || tName;
+        tPhone = localTutors[tIdx].phone || '';
+        localStorage.setItem('astegni_tutor_leads', JSON.stringify(localTutors));
+      }
+
+      // 2. Update Firestore
+      if (typeof db !== 'undefined' && db) {
+        try {
+          const snap = await db.collection('astegni_tutor_leads').get();
+          snap.forEach(doc => {
+            const d = doc.data();
+            if ((d.trackingId || d.id || doc.id) === tutorId) {
+              db.collection('astegni_tutor_leads').doc(doc.id).update({
+                level: targetLvl,
+                lastUpgradedAt: new Date().toISOString()
+              });
+            }
+          });
+          db.collection('astegni_upgrade_requests').add({
+            tutorId: tutorId,
+            tutorName: tName,
+            tutorPhone: tPhone,
+            previousLevel: currentLvl,
+            newLevel: targetLvl,
+            date: new Date().toISOString()
+          });
+        } catch (e) {
+          console.warn('Firestore upgrade sync notice:', e);
+        }
+      }
+
+      // 3. Dispatch to Telegram
+      sendTextMessageToTelegramBot(`🚀 TUTOR LEVEL UPGRADE: ${tName} (${tutorId}) has successfully upgraded from Level ${currentLvl} to Level ${targetLvl}! Capacity and priority updated.`, '@AstegniTutors');
+
+      // 4. Celebration Alert & re-check
+      const succMsg = (currentLang === 'am')
+        ? `🎉 እንኳን ደስ አለዎት ${tName}!\n\nየአስጠኚነት መገለጫዎ በተሳካ ሁኔታ ወደ Level ${targetLvl} አድጓል! የስራ ቅድሚያዎ እና የተማሪዎች የመቀበል አቅምዎ ጨምሯል።`
+        : `🎉 Congratulations ${tName}!\n\nYour profile has successfully been upgraded to Level ${targetLvl}! Your dispatch priority queue and mentoring capacity have been updated.`;
+      
+      alert(succMsg);
+      checkTutorPortalStatus();
+    }
+
+    // ==========================================
+    // PARENT REQUEST LIVE STATUS MANAGER
+    // ==========================================
+    function closeParentStatusModal() {
+      const modal = document.getElementById('parent-status-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function copyParentStatusId() {
+      const idEl = document.getElementById('p-status-id');
+      if (idEl && idEl.innerText) {
+        copyToClipboardUniversal(idEl.innerText.trim());
+        const btn = document.getElementById('p-status-copy-btn');
+        if (btn) {
+          btn.innerText = 'Copied! ✓';
+          setTimeout(() => { btn.innerText = 'Copy ID'; }, 2000);
+        }
+      }
+    }
+
+    function openParentStatusLookupModal() {
+      const queryInp = document.getElementById('parent-lookup-query');
+      if (queryInp) {
+        const savedPhone = localStorage.getItem('my_astegni_parent_phone') || '';
+        const savedId = localStorage.getItem('my_astegni_parent_id') || '';
+        queryInp.value = savedPhone || savedId;
+      }
+      const modal = document.getElementById('parent-lookup-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeParentLookupModal() {
+      const modal = document.getElementById('parent-lookup-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    async function handleParentLookupSubmit() {
+      const queryInp = document.getElementById('parent-lookup-query');
+      const query = (queryInp ? queryInp.value : '').trim();
+      if (!query) {
+        alert('Please enter your phone number or Parent Tracking ID (AST-P-XXXX)');
+        return;
+      }
+      closeParentLookupModal();
+
+      const qClean = query.replace(/\D/g, '');
+      const qUpper = query.toUpperCase();
+
+      // Search local parents
+      const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      let parent = localParents.find(p => {
+        const pId = (p.trackingId || p.id || '').toUpperCase();
+        const pPhone = (p.phone || '').replace(/\D/g, '');
+        return pId === qUpper || (qClean.length >= 6 && pPhone.endsWith(qClean.slice(-9)));
+      });
+
+      // Fallback search in cloud Firestore
+      if (!parent && typeof db !== 'undefined' && db) {
+        try {
+          const snap = await db.collection('astegni_parent_leads').get();
+          snap.forEach(doc => {
+            const d = doc.data();
+            const dId = (d.trackingId || d.id || doc.id).toUpperCase();
+            const dPhone = (d.phone || '').replace(/\D/g, '');
+            if (dId === qUpper || (qClean.length >= 6 && dPhone.endsWith(qClean.slice(-9)))) {
+              parent = d;
+            }
+          });
+        } catch (e) {}
+      }
+
+      if (parent) {
+        showParentStatusModal(parent);
+      } else {
+        alert(`No parent request found for "${query}". Please verify your phone number or submit a new tutoring request.`);
+      }
+    }
+
+    function allowAdditionalChildRequest() {
+      closeParentStatusModal();
+      const childGrade = document.getElementById('p_grade');
+      if (childGrade) {
+        childGrade.value = '';
+        childGrade.focus();
+        childGrade.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      const subj = document.getElementById('p_subj');
+      if (subj) subj.value = '';
+      currentParentTrackingId = generateTrackingId('P');
+      updateLiveTrackingBanners();
+    }
+
+    async function showParentStatusModal(parentData) {
+      if (!parentData) return;
+      const modal = document.getElementById('parent-status-modal');
+      const idEl = document.getElementById('p-status-id');
+      const bodyEl = document.getElementById('parent-status-body');
+      if (!modal || !bodyEl) return;
+
+      const pId = parentData.trackingId || parentData.id || 'AST-P';
+      if (idEl) idEl.innerText = pId;
+      localStorage.setItem('my_astegni_parent_phone', parentData.phone || '');
+      localStorage.setItem('my_astegni_parent_id', pId);
+
+      // Search if this parent is matched with a tutor
+      const pClean = (parentData.phone || '').replace(/\D/g, '');
+      const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+      let match = localMatches.find(m => {
+        const mPhone = (m.parentPhone || '').replace(/\D/g, '');
+        const mId = (m.parentId || '').toUpperCase();
+        return (pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9))) || (mId === pId.toUpperCase());
+      });
+
+      if (!match && typeof db !== 'undefined' && db) {
+        try {
+          const matchSnap = await db.collection('astegni_matches').get();
+          matchSnap.forEach(doc => {
+            const d = doc.data();
+            const mPhone = (d.parentPhone || '').replace(/\D/g, '');
+            const mId = (d.parentId || '').toUpperCase();
+            if ((pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9))) || (mId === pId.toUpperCase())) {
+              match = d;
+            }
+          });
+        } catch (e) {}
+      }
+
+      let matchHtml = '';
+      if (match) {
+        matchHtml = `
+          <div style="background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <span style="background: #059669; color: #fff; font-weight: 850; font-size: 0.72rem; padding: 0.25rem 0.6rem; border-radius: 6px;">
+                🎉 TUTOR ASSIGNED &amp; TRIAL READY
+              </span>
+              <span style="font-size: 0.72rem; color: #34d399; font-weight: 750;">Match Confirmed ✓</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 0.65rem;">
+              A verified university scholar has been assigned to your household:
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 0.75rem; margin-bottom: 0.75rem;">
+              <div style="font-size: 0.98rem; font-weight: 850; color: #fff;">🎓 ${escapeHtml(match.tutorName || 'University Scholar')}</div>
+              <div style="font-size: 0.78rem; color: #38bdf8; margin-top: 0.2rem;">
+                🏛️ ${escapeHtml(match.tutorUni || 'University')} • CGPA: ${escapeHtml(match.tutorCgpa || '≥ 3.00')}
+              </div>
+            </div>
+            <a href="tel:${escapeHtml(match.tutorPhone)}" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #fff; text-decoration: none; padding: 0.75rem; border-radius: 10px; font-weight: 850; font-size: 0.88rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+              <span>📞</span> <span>Call Assigned Tutor Directly: ${escapeHtml(match.tutorPhone)}</span>
+            </a>
+          </div>
+        `;
+      } else {
+        matchHtml = `
+          <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+              <span style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; font-weight: 850; font-size: 0.72rem; padding: 0.25rem 0.6rem; border-radius: 6px;">
+                ⏳ MATCHING IN PROGRESS (በሂደት ላይ)
+              </span>
+              <span style="font-size: 0.72rem; color: #94a3b8;">Active Household Lead</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 0.65rem;">
+              Your tutoring request is actively being matched with top university scholars residing near <b>${escapeHtml(parentData.area || 'your campus area')}</b> who achieved Grade 'A' in <b>${escapeHtml(parentData.subjects || 'the required subjects')}</b>.
+            </div>
+            <!-- 4-Step Progress Roadmap -->
+            <div style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 0.65rem 0.85rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.74rem;">
+              <div style="color: #34d399; font-weight: 800;">✓ 1. Request Received &amp; Residential Area Vetted</div>
+              <div style="color: #fbbf24; font-weight: 800;">🔄 2. Matching Nearby Campus Scholar (In Progress)</div>
+              <div style="color: #94a3b8;">⏳ 3. Coordinator Schedules 1-Day Free In-Home Trial Lesson</div>
+              <div style="color: #94a3b8;">⏳ 4. Confirm Monthly Agreement (Only If 100% Satisfied)</div>
+            </div>
+          </div>
+        `;
+      }
+
+      bodyEl.innerHTML = `
+        ${matchHtml}
+
+        <!-- Bento Lead Dossier -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.6rem; background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.85rem;">
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">👤 Parent Name</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #fff;">${escapeHtml(parentData.name || 'Parent')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📱 Phone Number</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #38bdf8;">${escapeHtml(parentData.phone || '')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📍 Neighborhood / Campus</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #fff;">${escapeHtml(parentData.area || 'Addis Ababa')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">🎒 Student Grade</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #fff;">${escapeHtml(parentData.grade || 'School Student')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">📖 Subjects</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #38bdf8;">${escapeHtml(parentData.subjects || 'General')}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Selected Package</div>
+            <div style="font-size: 0.84rem; font-weight: 800; color: #fbbf24;">${escapeHtml(parentData.packageTitle || 'Standard (3,000 ETB)')}</div>
+          </div>
+        </div>
+
+        <button type="button" onclick="allowAdditionalChildRequest()" style="width: 100%; background: rgba(56, 189, 248, 0.12); border: 1.5px solid rgba(56, 189, 248, 0.35); color: #38bdf8; font-weight: 800; font-size: 0.82rem; padding: 0.65rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+          <span>➕</span> <span>Request for Another Child or Update Subjects ›</span>
+        </button>
+      `;
+
+      modal.classList.add('active');
     }
 
     // ==========================================
@@ -5333,11 +5824,11 @@
       }
 
       if (duplicateParent) {
-        const dupTrackingId = duplicateParent.trackingId || duplicateParent.id || 'AST-P';
-        const msg = (currentLang === 'am')
-          ? `⚠️ ይህ ስልክ ቁጥር (${phone}) ቀደም ሲል በኦፊሴላዊ መለያ ${dupTrackingId} ተመዝግቧል!\n\nአንድ ሰው ከአንድ በላይ የወላጅ ጥያቄ መክፈት አይችልም። ጥያቄዎ በአስተባባሪ ቡድናችን ክትትል እየተደረገበት ነው። ለውጥ ወይም ተጨማሪ መረጃ ከፈለጉ በ 0945399808 / 0960064466 ይደውሉልን።`
-          : `⚠️ This phone number (${phone}) is already registered with Parent ID: ${dupTrackingId}!\n\nDuplicate registrations are blocked. Our coordinators are currently handling your existing request. To make updates, call 0945399808 / 0960064466.`;
-        abortParentValidation(msg, document.getElementById('p_phone'));
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+        showParentStatusModal(duplicateParent);
         return;
       }
 
@@ -5791,26 +6282,17 @@
       // 1. UNIQUE ID & DUPLICATION PREVENTION CHECK
       const dupCheck = await checkDuplicateIdRegistry(normStudentId, normGovtId, cleanPhone, imgHashes);
       if (dupCheck.isDuplicate) {
-        const dupMsg = (dupCheck.reason === 'STUDENT_ID_REGISTERED')
-          ? ((currentLang === 'am')
-              ? `⚠️ ይህ የተማሪ መታወቂያ ቁጥር (${studentIdNum}) ቀደም ሲል በኦፊሴላዊ መለያ ${dupCheck.id} ተመዝግቧል!\n\nአንድ መታወቂያ ከአንድ ጊዜ በላይ መጠቀም በጥብቅ የተከለከለ ነው።`
-              : `⚠️ This Student ID Number (${studentIdNum}) is already registered with Tutor ID: ${dupCheck.id}!\n\nMultiple registrations with the same Student ID are strictly prohibited.`)
-          : ((dupCheck.reason === 'GOVT_ID_REGISTERED')
-              ? ((currentLang === 'am')
-                  ? `⚠️ ይህ የመንግስት / ፋይዳ መታወቂያ ቁጥር (${govtIdNum}) ቀደም ሲል በስርዓቱ ውስጥ ተመዝግቧል!\n\nአንድ መታወቂያ ከአንድ ጊዜ በላይ መጠቀም በጥብቅ የተከለከለ ነው።`
-                  : `⚠️ This Government / Fayda ID Number (${govtIdNum}) is already registered under Tutor ID: ${dupCheck.id}!\n\nMultiple registrations with the same ID are strictly prohibited.`)
-              : ((currentLang === 'am')
-                  ? `⚠️ ይህ የመታወቂያ ሰነድ ፎቶ ቀደም ሲል በስርዓቱ ውስጥ ተመዝግቧል!\n\nአንድ ሰነድ ከአንድ ጊዜ በላይ መጠቀም በጥብቅ የተከለከለ ነው።`
-                  : `⚠️ This document image is already registered in our active database under Tutor ID: ${dupCheck.id}!\n\nDuplicate document registrations are strictly prohibited.`));
-
-        if (credCard && credBadge && credDetails) {
-          credBadge.innerText = 'REJECTED';
-          credBadge.style.background = 'rgba(239, 68, 68, 0.2)';
-          credBadge.style.color = '#ef4444';
-          if (credSpinner) credSpinner.innerText = '❌';
-          credDetails.innerText = dupMsg;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
         }
-        abortTutorValidation(dupMsg, document.getElementById('t_student_id_num'));
+        if (dupCheck.id) {
+          localStorage.setItem('my_astegni_tutor_id', dupCheck.id);
+        }
+        if (phone) {
+          localStorage.setItem('my_astegni_tutor_phone', phone);
+        }
+        openTutorPortalScreen();
         return;
       }
 
@@ -5832,15 +6314,17 @@
 
       if (duplicatePhoneTutor) {
         const dupTrackingId = duplicatePhoneTutor.trackingId || duplicatePhoneTutor.id || 'AST-T';
-        const msg = (currentLang === 'am')
-          ? `⚠️ ይህ ስልክ ቁጥር (${phone}) ቀደም ሲል በኦፊሴላዊ የአስጠኚ መለያ ${dupTrackingId} ተመዝግቧል!\n\nአንድ አስጠኚ ከአንድ አካውንት በላይ መክፈት አይችልም። አሁን በቀጥታ ወደ ግል መገለጫዎና የስራ ሁኔታ ገጽ ይወስድዎታል።`
-          : `⚠️ This phone number (${phone}) is already registered with Tutor ID: ${dupTrackingId}!\n\nMultiple tutor accounts are strictly prohibited. Redirecting to your live profile portal now...`;
-        
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalBtnHtml;
         }
-        alert(msg);
+        try {
+          const lTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+          if (!lTutors.some(t => (t.trackingId || t.id) === dupTrackingId)) {
+            lTutors.push(duplicatePhoneTutor);
+            localStorage.setItem('astegni_tutor_leads', JSON.stringify(lTutors));
+          }
+        } catch (e) {}
         localStorage.setItem('my_astegni_tutor_phone', phone);
         localStorage.setItem('my_astegni_tutor_id', dupTrackingId);
         openTutorPortalScreen();
