@@ -1448,15 +1448,15 @@
     <!-- ========================================== -->
     <div id="screen-home" class="app-screen active">
       
+      <!-- DYNAMIC RETURNING USER ACTIVE STATUS CARDS CONTAINER (TOP PRIORITY) -->
+      <div id="home-active-status-container" style="display: none; margin-bottom: 1.15rem;"></div>
+
       <!-- Hero Banner -->
       <div class="hero-banner">
         <div class="hero-badge" id="i18n-hero-badge">⭐ CGPA ≥ 3.00 • 100% VERIFIED</div>
         <h2 id="i18n-hero-h2">Find High-Achieving University Tutors For Your Child</h2>
         <p id="i18n-hero-p">Matched exclusively from nearby university campuses. Identity and academic records verified with zero compromise.</p>
       </div>
-
-      <!-- DYNAMIC RETURNING USER ACTIVE STATUS CARDS CONTAINER -->
-      <div id="home-active-status-container" style="display: none; margin-bottom: 1.15rem;"></div>
 
       <!-- Returning Tutor Check Status Banner -->
       <div class="returning-tutor-banner" onclick="openTutorPortalScreen()" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 95, 70, 0.28) 100%); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 16px; padding: 0.9rem 1.15rem; margin-bottom: 1.15rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 18px rgba(0,0,0,0.25); transition: transform 0.2s, border-color 0.2s;">
@@ -1576,6 +1576,9 @@
           <h2 id="i18n-p-title">Request a Qualified University Tutor</h2>
           <p id="i18n-p-subtitle">Tell us about your child's needs. We immediately match you with an accredited scholar from a nearby campus.</p>
         </div>
+
+        <!-- DYNAMIC ACTIVE PARENT STATUS NOTICE -->
+        <div id="parent-active-status-notice" style="display: none; margin-bottom: 1.15rem;"></div>
 
         <!-- Returning Parent Status Banner -->
         <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
@@ -1954,6 +1957,9 @@
           <h2 id="i18n-t-title">Apply as a Certified Teme Astegni</h2>
           <p id="i18n-t-subtitle">Requirements: Active 2nd Year+ university student with CGPA ≥ 3.00 and verified ID credentials.</p>
         </div>
+
+        <!-- DYNAMIC ACTIVE TUTOR STATUS NOTICE -->
+        <div id="tutor-active-status-notice" style="display: none; margin-bottom: 1.15rem;"></div>
 
         <!-- Returning Tutor Status Banner -->
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
@@ -2906,6 +2912,12 @@
       if (screenId === 'screen-home' && typeof updateHomeActiveStatusCards === 'function') {
         updateHomeActiveStatusCards();
       }
+      if (screenId === 'screen-parent' && typeof updateParentScreenActiveNotice === 'function') {
+        updateParentScreenActiveNotice();
+      }
+      if (screenId === 'screen-tutor' && typeof updateTutorScreenActiveNotice === 'function') {
+        updateTutorScreenActiveNotice();
+      }
       if (screenId === 'screen-tutor' || screenId === 'screen-parent') {
         if (typeof initUniversityDropdown === 'function') {
           initUniversityDropdown();
@@ -3665,9 +3677,14 @@
       const tSavedPhone = (localStorage.getItem('my_astegni_tutor_phone') || '').replace(/\D/g, '').slice(-9);
       const tSavedId = (localStorage.getItem('my_astegni_tutor_id') || '').toUpperCase();
 
-      const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      // Retrieve parent data
       let parentData = null;
-      if (pSavedId || pSavedPhone) {
+      const pSavedRecord = localStorage.getItem('my_astegni_parent_record');
+      if (pSavedRecord) {
+        try { parentData = JSON.parse(pSavedRecord); } catch (e) {}
+      }
+      const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      if (!parentData && (pSavedId || pSavedPhone)) {
         parentData = localParents.find(p => {
           const id = (p.trackingId || p.id || '').toUpperCase();
           const ph = (p.phone || '').replace(/\D/g, '');
@@ -3678,9 +3695,14 @@
         parentData = localParents[localParents.length - 1];
       }
 
-      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      // Retrieve tutor data
       let tutorData = null;
-      if (tSavedId || tSavedPhone) {
+      const tSavedRecord = localStorage.getItem('my_astegni_tutor_record');
+      if (tSavedRecord) {
+        try { tutorData = JSON.parse(tSavedRecord); } catch (e) {}
+      }
+      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      if (!tutorData && (tSavedId || tSavedPhone)) {
         tutorData = localTutors.find(t => {
           const id = (t.trackingId || t.id || '').toUpperCase();
           const ph = (t.phone || '').replace(/\D/g, '');
@@ -3692,8 +3714,17 @@
       }
 
       if (!parentData && !tutorData) {
-        container.style.display = 'none';
-        container.innerHTML = '';
+        container.innerHTML = `
+          <div style="background: rgba(15, 23, 42, 0.65); border: 1px dashed rgba(56, 189, 248, 0.35); border-radius: 14px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="font-size: 0.8rem; color: #cbd5e1;">
+              🔍 <b>Already submitted a tutoring request or tutor application?</b>
+            </div>
+            <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 850; font-size: 0.76rem; padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer;">
+              Check Live Status by Phone ›
+            </button>
+          </div>
+        `;
+        container.style.display = 'block';
         return;
       }
 
@@ -3702,7 +3733,7 @@
 
       let html = '';
 
-      // 1. RENDER ACTIVE PARENT STATUS CARD
+      // 1. RENDER ACTIVE PARENT STATUS CARD (ALL CURRENT INFOS)
       if (parentData) {
         const pId = parentData.trackingId || parentData.id || 'AST-P';
         const pName = parentData.name || 'Parent';
@@ -3711,6 +3742,12 @@
         const pGrade = parentData.grade || 'School Student';
         const pSubjs = parentData.subjects || parentData.subjs || 'General';
         const pPkg = parentData.packageTitle || 'Standard Package';
+        const pSched = parentData.packageSchedule || '3 Days/Week (1 hr/day)';
+        const pFee = parentData.monthlyFee ? `${parentData.monthlyFee} ETB` : '3,000 ETB';
+        const pGender = parentData.studentGender || parentData.childGender || 'Any Gender';
+        const pIdType = parentData.idType || 'Government ID';
+        const pType = parentData.applicantType === 'STUDENT_ADULT' ? 'Independent Student (18+)' : 'Parent / Guardian';
+        const pDate = parentData.createdAt ? new Date(parentData.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Active';
 
         const pClean = pPhone.replace(/\D/g, '');
         const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
@@ -3721,103 +3758,215 @@
         });
 
         html += `
-          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95)); border: 1.5px solid rgba(56, 189, 248, 0.45); border-radius: 18px; padding: 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.35); margin-bottom: 1.15rem; text-align: left;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <span style="font-size: 1.4rem;">👨‍👩‍👧</span>
+          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96)); border: 2px solid #0284c7; border-radius: 20px; padding: 1.25rem; box-shadow: 0 10px 35px rgba(2, 132, 199, 0.25); margin-bottom: 1.25rem; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(56, 189, 248, 0.18); border: 1.5px solid rgba(56, 189, 248, 0.45); display: flex; align-items: center; justify-content: center; font-size: 1.45rem;">
+                  👨‍👩‍👧
+                </div>
                 <div>
-                  <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">Active Tutoring Request (የልጅዎ አስጠኚ ጥያቄ)</div>
-                  <div style="font-size: 0.75rem; color: #94a3b8;">${escapeHtml(pName)} • 📱 ${escapeHtml(pPhone)}</div>
+                  <div style="font-size: 1.02rem; font-weight: 900; color: #fff; letter-spacing: -0.01em;">
+                    👋 Welcome Back, ${escapeHtml(pName)}!
+                  </div>
+                  <div style="font-size: 0.76rem; color: #38bdf8; font-weight: 750;">
+                    Active Tutoring Request Status (የአስጠኚ ጥያቄዎ ወቅታዊ ሁኔታ)
+                  </div>
                 </div>
               </div>
-              <span style="font-family: monospace; font-size: 0.8rem; font-weight: 850; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); padding: 0.25rem 0.6rem; border-radius: 8px;">
-                🏷️ ${escapeHtml(pId)}
-              </span>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span style="font-family: monospace; font-size: 0.82rem; font-weight: 900; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.25rem 0.6rem; border-radius: 8px;">
+                  🏷️ ${escapeHtml(pId)}
+                </span>
+                <button type="button" onclick="refreshActiveStatusLive()" title="Sync Latest Status from Cloud" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; border-radius: 8px; padding: 0.25rem 0.55rem; font-size: 0.74rem; cursor: pointer;">
+                  🔄 Refresh
+                </button>
+              </div>
             </div>
 
+            <!-- Current Match Status Banner -->
             ${match ? `
-              <div style="background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
-                <div style="font-size: 0.78rem; font-weight: 850; color: #34d399; margin-bottom: 0.3rem;">🎉 TUTOR ASSIGNED &amp; TRIAL READY ✓</div>
-                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">🎓 ${escapeHtml(match.tutorName || 'Assigned Scholar')} (${escapeHtml(match.tutorUni || 'University')})</div>
-                <a href="tel:${escapeHtml(match.tutorPhone)}" style="display: inline-flex; align-items: center; gap: 0.4rem; background: #059669; color: #fff; text-decoration: none; padding: 0.5rem 0.9rem; border-radius: 8px; font-weight: 800; font-size: 0.8rem; margin-top: 0.55rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
-                  📞 Call Assigned Tutor: ${escapeHtml(match.tutorPhone)}
-                </a>
+              <div style="background: linear-gradient(135deg, rgba(6, 78, 59, 0.45), rgba(16, 185, 129, 0.22)); border: 1.8px solid #10b981; border-radius: 14px; padding: 0.95rem; margin-bottom: 0.95rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.35rem;">
+                  <span style="background: #059669; color: #fff; font-weight: 900; font-size: 0.78rem; padding: 0.25rem 0.65rem; border-radius: 6px; letter-spacing: 0.02em;">
+                    🎉 TUTOR ASSIGNED &amp; TRIAL READY (አስጠኚ ተመድቧል)
+                  </span>
+                  <span style="font-size: 0.74rem; color: #34d399; font-weight: 800;">✓ Match Confirmed</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #e2e8f0; margin-bottom: 0.65rem;">
+                  Verified university scholar assigned for <b>${escapeHtml(pGrade)}</b> (<b>${escapeHtml(pSubjs)}</b>):
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 0.75rem; margin-bottom: 0.75rem;">
+                  <div style="font-size: 1.02rem; font-weight: 900; color: #fff;">🎓 ${escapeHtml(match.tutorName || 'Assigned Scholar')}</div>
+                  <div style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.2rem;">
+                    🏛️ ${escapeHtml(match.tutorUni || 'University Campus')} • 📊 CGPA: ${escapeHtml(match.tutorCgpa || '≥ 3.00')}
+                  </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="tel:${escapeHtml(match.tutorPhone)}" style="flex: 1; min-width: 170px; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #fff; text-decoration: none; padding: 0.65rem 1rem; border-radius: 10px; font-weight: 850; font-size: 0.85rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+                    📞 Call Assigned Tutor: ${escapeHtml(match.tutorPhone)}
+                  </a>
+                  <a href="https://t.me/AstegniSupportBot" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; text-decoration: none; padding: 0.65rem 0.9rem; border-radius: 10px; font-weight: 800; font-size: 0.8rem;">
+                    💬 Support
+                  </a>
+                </div>
               </div>
             ` : `
-              <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.3rem;">
-                  <span style="font-size: 0.78rem; font-weight: 850; color: #fbbf24;">⏳ MATCHING IN PROGRESS (በሂደት ላይ)</span>
-                  <span style="font-size: 0.68rem; color: #a7f3d0; background: rgba(16, 185, 129, 0.2); padding: 0.15rem 0.45rem; border-radius: 6px; font-weight: 750;">Verified Lead</span>
+              <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 0.95rem; margin-bottom: 0.95rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.3rem;">
+                  <span style="font-size: 0.8rem; font-weight: 900; color: #fbbf24; background: rgba(245, 158, 11, 0.2); padding: 0.2rem 0.55rem; border-radius: 6px;">
+                    ⏳ MATCHING IN PROGRESS (በሂደት ላይ)
+                  </span>
+                  <span style="font-size: 0.72rem; color: #a7f3d0; background: rgba(16, 185, 129, 0.2); padding: 0.15rem 0.45rem; border-radius: 6px; font-weight: 800;">
+                    🛡️ Verified Household Lead
+                  </span>
                 </div>
-                <div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45;">
-                  Matching nearby scholars in <b>${escapeHtml(pArea)}</b> for <b>${escapeHtml(pGrade)}</b> (${escapeHtml(pSubjs)}).
+                <div style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.65rem;">
+                  Matching nearby scholars in <b>${escapeHtml(pArea)}</b> with Grade 'A' in <b>${escapeHtml(pSubjs)}</b>.
+                </div>
+                <!-- 4-Step Visual Progress Roadmap -->
+                <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 0.65rem 0.85rem; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.74rem;">
+                  <div style="color: #34d399; font-weight: 800;">✓ 1. Request Received &amp; Residence Vetted</div>
+                  <div style="color: #fbbf24; font-weight: 800;">🔄 2. Matching Nearby Campus Scholar (In Progress)</div>
+                  <div style="color: #94a3b8;">⏳ 3. Scheduling 1-Day Free In-Home Trial Lesson</div>
+                  <div style="color: #94a3b8;">⏳ 4. Confirm Monthly Agreement (Only If 100% Satisfied)</div>
                 </div>
               </div>
             `}
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.45rem; background: rgba(0,0,0,0.25); padding: 0.65rem; border-radius: 10px; margin-bottom: 0.85rem; font-size: 0.75rem;">
-              <div><span style="color: #94a3b8;">Grade:</span> <b style="color: #fff;">${escapeHtml(pGrade)}</b></div>
-              <div><span style="color: #94a3b8;">Subjects:</span> <b style="color: #38bdf8;">${escapeHtml(pSubjs)}</b></div>
-              <div><span style="color: #94a3b8;">Package:</span> <b style="color: #fbbf24;">${escapeHtml(pPkg)}</b></div>
+            <!-- Complete Bento Dossier: ALL CURRENT INFOS DISPLAYED -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.55rem; background: rgba(0,0,0,0.32); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.95rem; font-size: 0.77rem;">
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">👤 Requester</div>
+                <div style="font-weight: 850; color: #fff; margin-top: 0.15rem;">${escapeHtml(pName)}</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">${escapeHtml(pType)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📱 Phone Number</div>
+                <div style="font-weight: 850; color: #38bdf8; margin-top: 0.15rem;">${escapeHtml(pPhone)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📍 Neighborhood / Campus</div>
+                <div style="font-weight: 850; color: #fff; margin-top: 0.15rem;">${escapeHtml(pArea)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🎒 Student Grade</div>
+                <div style="font-weight: 850; color: #fff; margin-top: 0.15rem;">${escapeHtml(pGrade)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📖 Subjects</div>
+                <div style="font-weight: 850; color: #38bdf8; margin-top: 0.15rem;">${escapeHtml(pSubjs)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">💵 Package &amp; Rate</div>
+                <div style="font-weight: 850; color: #fbbf24; margin-top: 0.15rem;">${escapeHtml(pFee)} / month</div>
+                <div style="font-size: 0.68rem; color: #cbd5e1;">${escapeHtml(pSched)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🚻 Gender Preference</div>
+                <div style="font-weight: 800; color: #cbd5e1; margin-top: 0.15rem;">${escapeHtml(pGender)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🛡️ Verification &amp; Date</div>
+                <div style="font-weight: 800; color: #34d399; margin-top: 0.15rem;">${escapeHtml(pIdType)} (Front ID ✓)</div>
+                <div style="font-size: 0.68rem; color: #94a3b8;">${escapeHtml(pDate)}</div>
+              </div>
             </div>
 
+            <!-- Action buttons -->
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData)" style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.65rem 0.9rem; border-radius: 10px; font-weight: 850; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
-                <span>📋</span> <span>View Full Live Status Card ›</span>
+              <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData)" style="flex: 1; min-width: 160px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.7rem 0.95rem; border-radius: 12px; font-weight: 850; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);">
+                <span>📋</span> <span>View Full Details Dossier ›</span>
               </button>
-              <button type="button" onclick="allowAdditionalChildRequest()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; padding: 0.65rem 0.9rem; border-radius: 10px; font-weight: 750; font-size: 0.8rem; cursor: pointer;">
-                ➕ Add Child
+              <button type="button" onclick="allowAdditionalChildRequest()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; padding: 0.7rem 0.95rem; border-radius: 12px; font-weight: 800; font-size: 0.8rem; cursor: pointer;">
+                ➕ Add Another Child
               </button>
             </div>
           </div>
         `;
       }
 
-      // 2. RENDER ACTIVE TUTOR STATUS CARD
+      // 2. RENDER ACTIVE TUTOR STATUS CARD (ALL CURRENT INFOS)
       if (tutorData) {
         const tId = tutorData.trackingId || tutorData.id || 'AST-T';
         const tName = tutorData.name || 'Verified Tutor';
         const tUni = tutorData.uni || tutorData.university || 'University Campus';
+        const tCampus = tutorData.campus || '';
+        const tCgpa = tutorData.cgpa || '≥ 3.00';
+        const tPhone = tutorData.phone || '';
+        const tSubjs = tutorData.subjects || 'Selected Subjects';
         const tLevel = Number(tutorData.level) || 0;
         const tMaxSlots = tLevel >= 4 ? 3 : (tLevel >= 2 ? 2 : 1);
         const tLevelTitle = tLevel === 5 ? 'Level 5 Master' : (tLevel === 4 ? 'Level 4 Distinguished' : (tLevel === 3 ? 'Level 3 Senior' : (tLevel === 2 ? 'Level 2 Advanced' : (tLevel === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
 
-        const tClean = (tutorData.phone || '').replace(/\D/g, '');
+        const tClean = tPhone.replace(/\D/g, '');
         const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
         const tMatches = localMatches.filter(m => {
-          const tPhone = (m.tutorPhone || '').replace(/\D/g, '');
+          const mPhone = (m.tutorPhone || '').replace(/\D/g, '');
           const mId = (m.tutorId || '').toUpperCase();
-          return (tClean.length >= 6 && tPhone.endsWith(tClean.slice(-9))) || (mId === tId.toUpperCase());
+          return (tClean.length >= 6 && mPhone.endsWith(tClean.slice(-9))) || (mId === tId.toUpperCase());
         });
 
         html += `
-          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(6, 78, 59, 0.35)); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 18px; padding: 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.35); margin-bottom: 1.15rem; text-align: left;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <span style="font-size: 1.4rem;">🎓</span>
+          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(6, 78, 59, 0.4)); border: 2px solid #10b981; border-radius: 20px; padding: 1.25rem; box-shadow: 0 10px 35px rgba(16, 185, 129, 0.25); margin-bottom: 1.25rem; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.22); border: 1.5px solid rgba(16, 185, 129, 0.45); display: flex; align-items: center; justify-content: center; font-size: 1.45rem;">
+                  🎓
+                </div>
                 <div>
-                  <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">Astegni Scholar Profile (የአስጠኚ መገለጫዎ)</div>
-                  <div style="font-size: 0.75rem; color: #94a3b8;">${escapeHtml(tName)} • 🏛️ ${escapeHtml(tUni)}</div>
+                  <div style="font-size: 1.02rem; font-weight: 900; color: #fff;">
+                    👋 Welcome Back, Scholar ${escapeHtml(tName)}!
+                  </div>
+                  <div style="font-size: 0.76rem; color: #a7f3d0; font-weight: 750;">
+                    Certified Astegni Scholar Profile (የአስጠኚ መገለጫዎ)
+                  </div>
                 </div>
               </div>
-              <span style="font-family: monospace; font-size: 0.8rem; font-weight: 850; color: #34d399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.25rem 0.6rem; border-radius: 8px;">
-                🏷️ ${escapeHtml(tId)}
-              </span>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <span style="font-family: monospace; font-size: 0.82rem; font-weight: 900; color: #34d399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.25rem 0.6rem; border-radius: 8px;">
+                  🏷️ ${escapeHtml(tId)}
+                </span>
+                <button type="button" onclick="refreshActiveStatusLive()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; border-radius: 8px; padding: 0.25rem 0.55rem; font-size: 0.74rem; cursor: pointer;">
+                  🔄 Refresh
+                </button>
+              </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
-              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
+            <!-- Badges -->
+            <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.85rem;">
+              <span style="font-size: 0.78rem; font-weight: 850; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.25rem 0.6rem; border-radius: 6px;">
                 ⭐ ${escapeHtml(tLevelTitle)}
               </span>
-              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
+              <span style="font-size: 0.78rem; font-weight: 850; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.25rem 0.6rem; border-radius: 6px;">
                 🛡️ Verified Scholar ✓
               </span>
-              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
-                👥 ${tMatches.length}/${tMaxSlots} Family Slot(s)
+              <span style="font-size: 0.78rem; font-weight: 850; background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 0.25rem 0.6rem; border-radius: 6px;">
+                👥 ${tMatches.length}/${tMaxSlots} Family Slot(s) Claimed
               </span>
             </div>
 
-            <button type="button" onclick="openTutorPortalScreen()" style="width: 100%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; padding: 0.7rem; border-radius: 12px; font-weight: 850; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+            <!-- Bento Profile Details -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.55rem; background: rgba(0,0,0,0.32); padding: 0.85rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.95rem; font-size: 0.77rem;">
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">🏛️ University</div>
+                <div style="font-weight: 850; color: #fff; margin-top: 0.15rem;">${escapeHtml(tUni)}</div>
+                ${tCampus ? `<div style="font-size: 0.68rem; color: #94a3b8;">${escapeHtml(tCampus)}</div>` : ''}
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📊 Academic CGPA</div>
+                <div style="font-weight: 850; color: #34d399; margin-top: 0.15rem;">${escapeHtml(tCgpa)} / 4.00</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📱 Phone Number</div>
+                <div style="font-weight: 850; color: #38bdf8; margin-top: 0.15rem;">${escapeHtml(tPhone)}</div>
+              </div>
+              <div>
+                <div style="font-size: 0.66rem; color: #94a3b8; font-weight: 750; text-transform: uppercase;">📖 Subjects</div>
+                <div style="font-weight: 850; color: #fff; margin-top: 0.15rem;">${escapeHtml(tSubjs)}</div>
+              </div>
+            </div>
+
+            <button type="button" onclick="openTutorPortalScreen()" style="width: 100%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.86rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
               <span>⚡</span> <span>Open Tutor Portal &amp; Level Upgrades ›</span>
             </button>
           </div>
@@ -3826,6 +3975,159 @@
 
       container.innerHTML = html;
       container.style.display = 'block';
+
+      // Asynchronously trigger background cloud sync to detect any matches without blocking UI
+      if (typeof syncReturningUserDataFromCloud === 'function') {
+        syncReturningUserDataFromCloud().catch(() => {});
+      }
+    }
+
+    // CLOUD SYNC & REFRESH ENGINES FOR RETURNING USERS
+    async function syncReturningUserDataFromCloud() {
+      if (typeof db === 'undefined' || !db) return;
+      const pSavedPhone = (localStorage.getItem('my_astegni_parent_phone') || '').replace(/\D/g, '').slice(-9);
+      const pSavedId = (localStorage.getItem('my_astegni_parent_id') || '').toUpperCase();
+
+      // 1. Sync Matches from Firestore
+      try {
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Match timeout')), 2500));
+        const snap = await Promise.race([db.collection('astegni_matches').get(), timeoutPromise]);
+        if (snap && snap.docs) {
+          const cloudMatches = [];
+          snap.forEach(doc => cloudMatches.push(doc.data()));
+          if (cloudMatches.length > 0) {
+            localStorage.setItem('astegni_matches', JSON.stringify(cloudMatches));
+          }
+        }
+      } catch (e) {}
+
+      // 2. Sync Parent lead if needed
+      if (pSavedId || pSavedPhone) {
+        try {
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Parent timeout')), 2500));
+          const snap = await Promise.race([db.collection('astegni_parent_leads').get(), timeoutPromise]);
+          if (snap && snap.docs) {
+            snap.forEach(doc => {
+              const d = doc.data();
+              const id = (d.trackingId || d.id || '').toUpperCase();
+              const ph = (d.phone || '').replace(/\D/g, '');
+              if ((pSavedId && id === pSavedId) || (pSavedPhone && ph.endsWith(pSavedPhone))) {
+                localStorage.setItem('my_astegni_parent_record', JSON.stringify(d));
+              }
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    async function refreshActiveStatusLive() {
+      const btn = event?.currentTarget;
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '🔄 Syncing...';
+      }
+      try {
+        await syncReturningUserDataFromCloud();
+      } catch (e) {}
+      await updateHomeActiveStatusCards();
+      if (btn) {
+        btn.innerHTML = '✓ Synced';
+        setTimeout(() => {
+          if (btn) {
+            btn.innerHTML = '🔄 Refresh';
+            btn.disabled = false;
+          }
+        }, 1200);
+      }
+    }
+
+    function updateParentScreenActiveNotice() {
+      const noticeEl = document.getElementById('parent-active-status-notice');
+      if (!noticeEl) return;
+      let parentData = null;
+      const pRecord = localStorage.getItem('my_astegni_parent_record');
+      if (pRecord) {
+        try { parentData = JSON.parse(pRecord); } catch(e){}
+      }
+      if (!parentData) {
+        const pSavedPhone = (localStorage.getItem('my_astegni_parent_phone') || '').replace(/\D/g, '').slice(-9);
+        const pSavedId = (localStorage.getItem('my_astegni_parent_id') || '').toUpperCase();
+        const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+        if (pSavedId || pSavedPhone) {
+          parentData = localParents.find(p => {
+            const id = (p.trackingId || p.id || '').toUpperCase();
+            const ph = (p.phone || '').replace(/\D/g, '');
+            return (pSavedId && id === pSavedId) || (pSavedPhone && ph.endsWith(pSavedPhone));
+          });
+        }
+        if (!parentData && localParents.length > 0) parentData = localParents[localParents.length - 1];
+      }
+
+      if (parentData) {
+        const pId = parentData.trackingId || parentData.id || 'AST-P';
+        const pName = parentData.name || 'Parent';
+        const pGrade = parentData.grade || 'Student';
+        const pSubjs = parentData.subjects || 'General';
+        noticeEl.innerHTML = `
+          <div style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(3, 105, 161, 0.28)); border: 1.5px solid rgba(56, 189, 248, 0.6); border-radius: 14px; padding: 0.9rem 1.15rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.9rem; font-weight: 850; color: #fff;">👋 Active Request Found: <span style="font-family: monospace; color: #38bdf8;">${escapeHtml(pId)}</span></div>
+              <div style="font-size: 0.76rem; color: #cbd5e1; margin-top: 0.2rem;">${escapeHtml(pName)} • Grade: <b>${escapeHtml(pGrade)}</b> • (${escapeHtml(pSubjs)})</div>
+            </div>
+            <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+              <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData || JSON.parse(localStorage.getItem('my_astegni_parent_record')))" style="background: #0284c7; color: #fff; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 850; font-size: 0.78rem; cursor: pointer; box-shadow: 0 4px 12px rgba(2,132,199,0.35);">
+                📋 View Live Status Card ›
+              </button>
+            </div>
+          </div>
+        `;
+        noticeEl.style.display = 'block';
+      } else {
+        noticeEl.style.display = 'none';
+      }
+    }
+
+    function updateTutorScreenActiveNotice() {
+      const noticeEl = document.getElementById('tutor-active-status-notice');
+      if (!noticeEl) return;
+      let tutorData = null;
+      const tRecord = localStorage.getItem('my_astegni_tutor_record');
+      if (tRecord) {
+        try { tutorData = JSON.parse(tRecord); } catch(e){}
+      }
+      if (!tutorData) {
+        const tSavedPhone = (localStorage.getItem('my_astegni_tutor_phone') || '').replace(/\D/g, '').slice(-9);
+        const tSavedId = (localStorage.getItem('my_astegni_tutor_id') || '').toUpperCase();
+        const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+        if (tSavedId || tSavedPhone) {
+          tutorData = localTutors.find(t => {
+            const id = (t.trackingId || t.id || '').toUpperCase();
+            const ph = (t.phone || '').replace(/\D/g, '');
+            return (tSavedId && id === tSavedId) || (tSavedPhone && ph.endsWith(tSavedPhone));
+          });
+        }
+        if (!tutorData && localTutors.length > 0) tutorData = localTutors[localTutors.length - 1];
+      }
+
+      if (tutorData) {
+        const tId = tutorData.trackingId || tutorData.id || 'AST-T';
+        const tName = tutorData.name || 'Scholar';
+        const tUni = tutorData.uni || tutorData.university || 'University Campus';
+        noticeEl.innerHTML = `
+          <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(6, 95, 70, 0.28)); border: 1.5px solid rgba(16, 185, 129, 0.6); border-radius: 14px; padding: 0.9rem 1.15rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.9rem; font-weight: 850; color: #fff;">🎓 Registered Astegni Scholar: <span style="font-family: monospace; color: #34d399;">${escapeHtml(tId)}</span></div>
+              <div style="font-size: 0.76rem; color: #a7f3d0; margin-top: 0.2rem;">${escapeHtml(tName)} • 🏛️ ${escapeHtml(tUni)}</div>
+            </div>
+            <button type="button" onclick="openTutorPortalScreen()" style="background: #059669; color: #fff; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 850; font-size: 0.78rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+              ⚡ Open Tutor Portal ›
+            </button>
+          </div>
+        `;
+        noticeEl.style.display = 'block';
+      } else {
+        noticeEl.style.display = 'none';
+      }
     }
 
     // ==========================================
@@ -6113,6 +6415,7 @@
       // Save session keys for returning user status
       localStorage.setItem('my_astegni_parent_phone', phone);
       localStorage.setItem('my_astegni_parent_id', trackingId);
+      localStorage.setItem('my_astegni_parent_record', JSON.stringify(parentPayload));
 
       // Save offline backup
       try {
@@ -6699,8 +7002,7 @@
         localStorage.setItem('my_astegni_tutor_phone', phone);
         localStorage.setItem('my_astegni_tutor_id', trackingId);
         localStorage.setItem('my_astegni_tutor_name', name);
-        localStorage.setItem('my_astegni_tutor_id', trackingId);
-        localStorage.setItem('my_astegni_tutor_name', name);
+        localStorage.setItem('my_astegni_tutor_record', JSON.stringify(item));
 
         const tutorPayload = {
           id: trackingId,
