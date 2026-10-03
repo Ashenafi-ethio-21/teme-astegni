@@ -1455,6 +1455,9 @@
         <p id="i18n-hero-p">Matched exclusively from nearby university campuses. Identity and academic records verified with zero compromise.</p>
       </div>
 
+      <!-- DYNAMIC RETURNING USER ACTIVE STATUS CARDS CONTAINER -->
+      <div id="home-active-status-container" style="display: none; margin-bottom: 1.15rem;"></div>
+
       <!-- Returning Tutor Check Status Banner -->
       <div class="returning-tutor-banner" onclick="openTutorPortalScreen()" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(6, 95, 70, 0.28) 100%); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 16px; padding: 0.9rem 1.15rem; margin-bottom: 1.15rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 18px rgba(0,0,0,0.25); transition: transform 0.2s, border-color 0.2s;">
         <div style="display: flex; align-items: center; gap: 0.85rem;">
@@ -1734,7 +1737,7 @@
             </div>
 
             <!-- Hidden input maintaining 100% backward compatibility for p_area -->
-            <input type="hidden" id="p_area" required>
+            <input type="hidden" id="p_area">
           </div>
 
           <!-- STUDENT GENDER SECTION (The student who will be tutored) -->
@@ -2856,6 +2859,36 @@
   </div>
 
   <script>
+    // GLOBAL SECURITY & TEXT SANITIZER
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Default Language State (Global)
+    let currentLang = 'am';
+
+    // Safe Firestore Collection Fetcher with Timeout (prevents hanging)
+    async function getCollectionWithTimeout(collName, timeoutMs = 2500) {
+      if (typeof db === 'undefined' || !db) return null;
+      try {
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeoutMs));
+        const snap = await Promise.race([
+          db.collection(collName).get(),
+          timeoutPromise
+        ]);
+        return snap;
+      } catch (e) {
+        console.warn('Firestore fetch timeout/fallback for:', collName);
+        return null;
+      }
+    }
+
     // SCREEN NAVIGATION MANAGER
     function showScreen(screenId) {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -2869,6 +2902,9 @@
       });
       if (typeof updateLiveTrackingBanners === 'function') {
         updateLiveTrackingBanners();
+      }
+      if (screenId === 'screen-home' && typeof updateHomeActiveStatusCards === 'function') {
+        updateHomeActiveStatusCards();
       }
       if (screenId === 'screen-tutor' || screenId === 'screen-parent') {
         if (typeof initUniversityDropdown === 'function') {
@@ -3617,6 +3653,179 @@
       `;
 
       modal.classList.add('active');
+    }
+
+    // RETURNING USER EXPERIENCE: DYNAMIC HOME SCREEN LIVE STATUS CARDS
+    async function updateHomeActiveStatusCards() {
+      const container = document.getElementById('home-active-status-container');
+      if (!container) return;
+
+      const pSavedPhone = (localStorage.getItem('my_astegni_parent_phone') || '').replace(/\D/g, '').slice(-9);
+      const pSavedId = (localStorage.getItem('my_astegni_parent_id') || '').toUpperCase();
+      const tSavedPhone = (localStorage.getItem('my_astegni_tutor_phone') || '').replace(/\D/g, '').slice(-9);
+      const tSavedId = (localStorage.getItem('my_astegni_tutor_id') || '').toUpperCase();
+
+      const localParents = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
+      let parentData = null;
+      if (pSavedId || pSavedPhone) {
+        parentData = localParents.find(p => {
+          const id = (p.trackingId || p.id || '').toUpperCase();
+          const ph = (p.phone || '').replace(/\D/g, '');
+          return (pSavedId && id === pSavedId) || (pSavedPhone && ph.endsWith(pSavedPhone));
+        });
+      }
+      if (!parentData && localParents.length > 0) {
+        parentData = localParents[localParents.length - 1];
+      }
+
+      const localTutors = JSON.parse(localStorage.getItem('astegni_tutor_leads') || '[]');
+      let tutorData = null;
+      if (tSavedId || tSavedPhone) {
+        tutorData = localTutors.find(t => {
+          const id = (t.trackingId || t.id || '').toUpperCase();
+          const ph = (t.phone || '').replace(/\D/g, '');
+          return (tSavedId && id === tSavedId) || (tSavedPhone && ph.endsWith(tSavedPhone));
+        });
+      }
+      if (!tutorData && localTutors.length > 0) {
+        tutorData = localTutors[localTutors.length - 1];
+      }
+
+      if (!parentData && !tutorData) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+
+      window.currentDeviceParentData = parentData;
+      window.currentDeviceTutorData = tutorData;
+
+      let html = '';
+
+      // 1. RENDER ACTIVE PARENT STATUS CARD
+      if (parentData) {
+        const pId = parentData.trackingId || parentData.id || 'AST-P';
+        const pName = parentData.name || 'Parent';
+        const pPhone = parentData.phone || '';
+        const pArea = parentData.area || 'Addis Ababa';
+        const pGrade = parentData.grade || 'School Student';
+        const pSubjs = parentData.subjects || parentData.subjs || 'General';
+        const pPkg = parentData.packageTitle || 'Standard Package';
+
+        const pClean = pPhone.replace(/\D/g, '');
+        const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+        let match = localMatches.find(m => {
+          const mPhone = (m.parentPhone || '').replace(/\D/g, '');
+          const mId = (m.parentId || '').toUpperCase();
+          return (pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9))) || (mId === pId.toUpperCase());
+        });
+
+        html += `
+          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95)); border: 1.5px solid rgba(56, 189, 248, 0.45); border-radius: 18px; padding: 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.35); margin-bottom: 1.15rem; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.4rem;">👨‍👩‍👧</span>
+                <div>
+                  <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">Active Tutoring Request (የልጅዎ አስጠኚ ጥያቄ)</div>
+                  <div style="font-size: 0.75rem; color: #94a3b8;">${escapeHtml(pName)} • 📱 ${escapeHtml(pPhone)}</div>
+                </div>
+              </div>
+              <span style="font-family: monospace; font-size: 0.8rem; font-weight: 850; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.35); padding: 0.25rem 0.6rem; border-radius: 8px;">
+                🏷️ ${escapeHtml(pId)}
+              </span>
+            </div>
+
+            ${match ? `
+              <div style="background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10b981; border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+                <div style="font-size: 0.78rem; font-weight: 850; color: #34d399; margin-bottom: 0.3rem;">🎉 TUTOR ASSIGNED &amp; TRIAL READY ✓</div>
+                <div style="font-size: 0.88rem; font-weight: 800; color: #fff;">🎓 ${escapeHtml(match.tutorName || 'Assigned Scholar')} (${escapeHtml(match.tutorUni || 'University')})</div>
+                <a href="tel:${escapeHtml(match.tutorPhone)}" style="display: inline-flex; align-items: center; gap: 0.4rem; background: #059669; color: #fff; text-decoration: none; padding: 0.5rem 0.9rem; border-radius: 8px; font-weight: 800; font-size: 0.8rem; margin-top: 0.55rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);">
+                  📞 Call Assigned Tutor: ${escapeHtml(match.tutorPhone)}
+                </a>
+              </div>
+            ` : `
+              <div style="background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 0.85rem; margin-bottom: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.3rem;">
+                  <span style="font-size: 0.78rem; font-weight: 850; color: #fbbf24;">⏳ MATCHING IN PROGRESS (በሂደት ላይ)</span>
+                  <span style="font-size: 0.68rem; color: #a7f3d0; background: rgba(16, 185, 129, 0.2); padding: 0.15rem 0.45rem; border-radius: 6px; font-weight: 750;">Verified Lead</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #cbd5e1; line-height: 1.45;">
+                  Matching nearby scholars in <b>${escapeHtml(pArea)}</b> for <b>${escapeHtml(pGrade)}</b> (${escapeHtml(pSubjs)}).
+                </div>
+              </div>
+            `}
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.45rem; background: rgba(0,0,0,0.25); padding: 0.65rem; border-radius: 10px; margin-bottom: 0.85rem; font-size: 0.75rem;">
+              <div><span style="color: #94a3b8;">Grade:</span> <b style="color: #fff;">${escapeHtml(pGrade)}</b></div>
+              <div><span style="color: #94a3b8;">Subjects:</span> <b style="color: #38bdf8;">${escapeHtml(pSubjs)}</b></div>
+              <div><span style="color: #94a3b8;">Package:</span> <b style="color: #fbbf24;">${escapeHtml(pPkg)}</b></div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData)" style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.65rem 0.9rem; border-radius: 10px; font-weight: 850; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                <span>📋</span> <span>View Full Live Status Card ›</span>
+              </button>
+              <button type="button" onclick="allowAdditionalChildRequest()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; padding: 0.65rem 0.9rem; border-radius: 10px; font-weight: 750; font-size: 0.8rem; cursor: pointer;">
+                ➕ Add Child
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. RENDER ACTIVE TUTOR STATUS CARD
+      if (tutorData) {
+        const tId = tutorData.trackingId || tutorData.id || 'AST-T';
+        const tName = tutorData.name || 'Verified Tutor';
+        const tUni = tutorData.uni || tutorData.university || 'University Campus';
+        const tLevel = Number(tutorData.level) || 0;
+        const tMaxSlots = tLevel >= 4 ? 3 : (tLevel >= 2 ? 2 : 1);
+        const tLevelTitle = tLevel === 5 ? 'Level 5 Master' : (tLevel === 4 ? 'Level 4 Distinguished' : (tLevel === 3 ? 'Level 3 Senior' : (tLevel === 2 ? 'Level 2 Advanced' : (tLevel === 1 ? 'Level 1 Communicator' : 'Basic Level 0'))));
+
+        const tClean = (tutorData.phone || '').replace(/\D/g, '');
+        const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+        const tMatches = localMatches.filter(m => {
+          const tPhone = (m.tutorPhone || '').replace(/\D/g, '');
+          const mId = (m.tutorId || '').toUpperCase();
+          return (tClean.length >= 6 && tPhone.endsWith(tClean.slice(-9))) || (mId === tId.toUpperCase());
+        });
+
+        html += `
+          <div class="active-status-card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(6, 78, 59, 0.35)); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 18px; padding: 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,0.35); margin-bottom: 1.15rem; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.4rem;">🎓</span>
+                <div>
+                  <div style="font-size: 0.95rem; font-weight: 850; color: #fff;">Astegni Scholar Profile (የአስጠኚ መገለጫዎ)</div>
+                  <div style="font-size: 0.75rem; color: #94a3b8;">${escapeHtml(tName)} • 🏛️ ${escapeHtml(tUni)}</div>
+                </div>
+              </div>
+              <span style="font-family: monospace; font-size: 0.8rem; font-weight: 850; color: #34d399; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.25rem 0.6rem; border-radius: 8px;">
+                🏷️ ${escapeHtml(tId)}
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
+                ⭐ ${escapeHtml(tLevelTitle)}
+              </span>
+              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
+                🛡️ Verified Scholar ✓
+              </span>
+              <span style="font-size: 0.75rem; font-weight: 850; background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 0.2rem 0.55rem; border-radius: 6px;">
+                👥 ${tMatches.length}/${tMaxSlots} Family Slot(s)
+              </span>
+            </div>
+
+            <button type="button" onclick="openTutorPortalScreen()" style="width: 100%; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: #fff; padding: 0.7rem; border-radius: 12px; font-weight: 850; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              <span>⚡</span> <span>Open Tutor Portal &amp; Level Upgrades ›</span>
+            </button>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      container.style.display = 'block';
     }
 
     // ==========================================
@@ -4818,8 +5027,6 @@
       }
     };
 
-    let currentLang = 'am';
-
     function setLang(lang) {
       if (!translations[lang]) return;
       currentLang = lang;
@@ -4830,145 +5037,154 @@
 
       const t = translations[lang];
 
+      function safeSetText(id, val) {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerText = val;
+      }
+      function safeSetHtml(id, val) {
+        const el = document.getElementById(id);
+        if (el && val !== undefined) el.innerHTML = val;
+      }
+
       // Header
-      document.getElementById('i18n-header-sub').innerText = t.headerSub;
+      safeSetText('i18n-header-sub', t.headerSub);
 
       // Home Screen
-      document.getElementById('i18n-hero-badge').innerText = t.heroBadge;
-      document.getElementById('i18n-hero-h2').innerText = t.heroH2;
-      document.getElementById('i18n-hero-p').innerText = t.heroP;
-      document.getElementById('i18n-c1-h').innerText = t.c1H;
-      document.getElementById('i18n-c1-p').innerText = t.c1P;
-      document.getElementById('i18n-c2-h').innerText = t.c2H;
-      document.getElementById('i18n-c2-p').innerText = t.c2P;
-      document.getElementById('i18n-c3-h').innerText = t.c3H;
-      document.getElementById('i18n-c3-p').innerText = t.c3P;
-      document.getElementById('i18n-c4-h').innerText = t.c4H;
-      document.getElementById('i18n-c4-p').innerText = t.c4P;
+      safeSetText('i18n-hero-badge', t.heroBadge);
+      safeSetText('i18n-hero-h2', t.heroH2);
+      safeSetText('i18n-hero-p', t.heroP);
+      safeSetText('i18n-c1-h', t.c1H);
+      safeSetText('i18n-c1-p', t.c1P);
+      safeSetText('i18n-c2-h', t.c2H);
+      safeSetText('i18n-c2-p', t.c2P);
+      safeSetText('i18n-c3-h', t.c3H);
+      safeSetText('i18n-c3-p', t.c3P);
+      safeSetText('i18n-c4-h', t.c4H);
+      safeSetText('i18n-c4-p', t.c4P);
 
-      document.getElementById('i18n-t1-h').innerText = t.t1H;
-      document.getElementById('i18n-t1-p').innerText = t.t1P;
-      document.getElementById('i18n-t2-h').innerText = t.t2H;
-      document.getElementById('i18n-t2-p').innerText = t.t2P;
-      document.getElementById('i18n-t3-h').innerText = t.t3H;
-      document.getElementById('i18n-t3-p').innerText = t.t3P;
-      document.getElementById('i18n-t4-h').innerText = t.t4H;
-      document.getElementById('i18n-t4-p').innerText = t.t4P;
-      document.getElementById('i18n-home-privacy').innerHTML = t.homePrivacy;
+      safeSetText('i18n-t1-h', t.t1H);
+      safeSetText('i18n-t1-p', t.t1P);
+      safeSetText('i18n-t2-h', t.t2H);
+      safeSetText('i18n-t2-p', t.t2P);
+      safeSetText('i18n-t3-h', t.t3H);
+      safeSetText('i18n-t3-p', t.t3P);
+      safeSetText('i18n-t4-h', t.t4H);
+      safeSetText('i18n-t4-p', t.t4P);
+      safeSetHtml('i18n-home-privacy', t.homePrivacy);
 
       // Bottom Nav
-      document.getElementById('i18n-tab-home').innerText = t.tabHome;
-      document.getElementById('i18n-tab-parent').innerText = t.tabParent;
-      document.getElementById('i18n-tab-tutor').innerText = t.tabTutor;
-      document.getElementById('i18n-tab-vetting').innerText = t.tabVetting;
-      document.getElementById('i18n-tab-hotline').innerText = t.tabHotline;
+      safeSetText('i18n-tab-home', t.tabHome);
+      safeSetText('i18n-tab-parent', t.tabParent);
+      safeSetText('i18n-tab-tutor', t.tabTutor);
+      safeSetText('i18n-tab-vetting', t.tabVetting);
+      safeSetText('i18n-tab-hotline', t.tabHotline);
 
       // PWA Install Elements
-      if (document.getElementById('i18n-header-install') && t.headerInstall) document.getElementById('i18n-header-install').innerText = t.headerInstall;
-      if (document.getElementById('i18n-pwa-sub') && t.pwaSub) document.getElementById('i18n-pwa-sub').innerText = t.pwaSub;
-      if (document.getElementById('i18n-pwa-btn') && t.pwaBtn) document.getElementById('i18n-pwa-btn').innerText = t.pwaBtn;
+      safeSetText('i18n-header-install', t.headerInstall);
+      safeSetText('i18n-pwa-sub', t.pwaSub);
+      safeSetText('i18n-pwa-btn', t.pwaBtn);
 
       // Back Buttons
-      document.getElementById('i18n-back-p').innerText = t.backP;
-      document.getElementById('i18n-back-t').innerText = t.backT;
-      document.getElementById('i18n-back-v').innerText = t.backV;
-      document.getElementById('i18n-back-h').innerText = t.backH;
+      safeSetText('i18n-back-p', t.backP);
+      safeSetText('i18n-back-t', t.backT);
+      safeSetText('i18n-back-v', t.backV);
+      safeSetText('i18n-back-h', t.backH);
 
       // Parent Screen
-      if (document.getElementById('i18n-parent-id-title') && t.parentIdTitle) document.getElementById('i18n-parent-id-title').innerText = t.parentIdTitle;
-      document.getElementById('i18n-p-badge').innerText = t.pBadge;
-      document.getElementById('i18n-p-title').innerText = t.pTitle;
-      document.getElementById('i18n-p-subtitle').innerText = t.pSubtitle;
-      if (document.getElementById('i18n-f-papplicant-type')) document.getElementById('i18n-f-papplicant-type').innerText = t.fPappType;
-      if (document.getElementById('i18n-opt-app-parent')) document.getElementById('i18n-opt-app-parent').innerText = t.optAppParent;
-      if (document.getElementById('i18n-opt-app-adult')) document.getElementById('i18n-opt-app-adult').innerText = t.optAppAdult;
-      if (document.getElementById('i18n-f-pid-title')) document.getElementById('i18n-f-pid-title').innerText = t.fPidTitle;
-      if (document.getElementById('i18n-f-pid-desc')) document.getElementById('i18n-f-pid-desc').innerText = t.fPidDesc;
-      if (document.getElementById('i18n-f-pname')) document.getElementById('i18n-f-pname').innerText = t.fPname;
-      if (document.getElementById('i18n-f-pphone')) document.getElementById('i18n-f-pphone').innerText = t.fPphone;
-      if (document.getElementById('i18n-f-parea')) document.getElementById('i18n-f-parea').innerText = t.fParea;
-      if (document.getElementById('i18n-f-puni')) document.getElementById('i18n-f-puni').innerText = t.fPuni;
-      if (document.getElementById('i18n-f-pcampus')) document.getElementById('i18n-f-pcampus').innerText = t.fPcampus;
-      if (document.getElementById('i18n-f-pchild-gender')) document.getElementById('i18n-f-pchild-gender').innerText = t.fPchildGender;
-      if (document.getElementById('i18n-popt-sel-child')) document.getElementById('i18n-popt-sel-child').innerText = t.poptSelChild;
-      if (document.getElementById('i18n-popt-fem-child')) document.getElementById('i18n-popt-fem-child').innerText = t.poptFemChild;
-      if (document.getElementById('i18n-popt-male-child')) document.getElementById('i18n-popt-male-child').innerText = t.poptMaleChild;
-      document.getElementById('i18n-f-pgrade').innerText = t.fPgrade;
-      if (document.getElementById('i18n-f-pgender')) document.getElementById('i18n-f-pgender').innerText = t.fPgender || '';
-      if (document.getElementById('i18n-opt-any')) document.getElementById('i18n-opt-any').innerText = t.optAny || '';
-      if (document.getElementById('i18n-opt-female')) document.getElementById('i18n-opt-female').innerText = t.optFemale || '';
-      if (document.getElementById('i18n-opt-male')) document.getElementById('i18n-opt-male').innerText = t.optMale || '';
-      document.getElementById('i18n-f-psubj').innerText = t.fPsubj;
-      document.getElementById('i18n-btn-psubmit').innerText = t.btnPsubmit;
+      safeSetText('i18n-parent-id-title', t.parentIdTitle);
+      safeSetText('i18n-p-badge', t.pBadge);
+      safeSetText('i18n-p-title', t.pTitle);
+      safeSetText('i18n-p-subtitle', t.pSubtitle);
+      safeSetText('i18n-f-papplicant-type', t.fPappType);
+      safeSetText('i18n-opt-app-parent', t.optAppParent);
+      safeSetText('i18n-opt-app-adult', t.optAppAdult);
+      safeSetText('i18n-f-pid-title', t.fPidTitle);
+      safeSetText('i18n-f-pid-desc', t.fPidDesc);
+      safeSetText('i18n-f-pname', t.fPname);
+      safeSetText('i18n-f-pphone', t.fPphone);
+      safeSetText('i18n-f-parea', t.fParea);
+      safeSetText('i18n-f-puni', t.fPuni);
+      safeSetText('i18n-f-pcampus', t.fPcampus);
+      safeSetText('i18n-f-pchild-gender', t.fPchildGender);
+      safeSetText('i18n-popt-sel-child', t.poptSelChild);
+      safeSetText('i18n-popt-fem-child', t.poptFemChild);
+      safeSetText('i18n-popt-male-child', t.poptMaleChild);
+      safeSetText('i18n-f-pgrade', t.fPgrade);
+      safeSetText('i18n-f-pgender', t.fPgender);
+      safeSetText('i18n-opt-any', t.optAny);
+      safeSetText('i18n-opt-female', t.optFemale);
+      safeSetText('i18n-opt-male', t.optMale);
+      safeSetText('i18n-f-psubj', t.fPsubj);
+      safeSetText('i18n-btn-psubmit', t.btnPsubmit);
 
       // Tutor Screen
-      if (document.getElementById('i18n-tutor-id-title') && t.tutorIdTitle) document.getElementById('i18n-tutor-id-title').innerText = t.tutorIdTitle;
-      document.getElementById('i18n-t-badge').innerText = t.tBadge;
-      document.getElementById('i18n-t-title').innerText = t.tTitle;
-      document.getElementById('i18n-t-subtitle').innerText = t.tSubtitle;
-      document.getElementById('i18n-f-tname').innerText = t.fTname;
-      document.getElementById('i18n-f-tphone').innerText = t.fTphone;
-      if (document.getElementById('i18n-f-tgender')) document.getElementById('i18n-f-tgender').innerText = t.fTgender;
-      if (document.getElementById('i18n-topt-sel')) document.getElementById('i18n-topt-sel').innerText = t.toptSel;
-      if (document.getElementById('i18n-topt-male')) document.getElementById('i18n-topt-male').innerText = t.toptMale;
-      if (document.getElementById('i18n-topt-female')) document.getElementById('i18n-topt-female').innerText = t.toptFemale;
-      document.getElementById('i18n-f-tuni').innerText = t.fTuni;
-      if (document.getElementById('i18n-f-tcampus') && t.fTcampus) document.getElementById('i18n-f-tcampus').innerText = t.fTcampus;
-      document.getElementById('i18n-f-tyear').innerText = t.fTyear;
-      document.getElementById('i18n-f-tcgpa').innerText = t.fTcgpa;
-      document.getElementById('i18n-f-tsubj').innerText = t.fTsubj;
-      document.getElementById('i18n-f-tcid').innerText = t.fTcid;
-      if (document.getElementById('i18n-f-t-student-id-num') && t.fTstudentIdNum) document.getElementById('i18n-f-t-student-id-num').innerText = t.fTstudentIdNum;
-      if (document.getElementById('i18n-f-t-govt-id-num') && t.fTgovtIdNum) document.getElementById('i18n-f-t-govt-id-num').innerText = t.fTgovtIdNum;
-      document.getElementById('i18n-box-cid-h').innerText = t.boxCidH;
-      document.getElementById('i18n-box-cid-p').innerText = t.boxCidP;
-      document.getElementById('i18n-f-tgrade').innerText = t.fTgrade;
-      document.getElementById('i18n-box-grade-h').innerText = t.boxGradeH;
-      document.getElementById('i18n-box-grade-p').innerText = t.boxGradeP;
-      document.getElementById('i18n-f-tgovt').innerText = t.fTgovt;
-      document.getElementById('i18n-box-govt-h').innerText = t.boxGovtH;
-      document.getElementById('i18n-box-govt-p').innerText = t.boxGovtP;
-      if (document.getElementById('i18n-t-exam-h')) document.getElementById('i18n-t-exam-h').innerText = t.tExamH;
-      if (document.getElementById('i18n-t-exam-p')) document.getElementById('i18n-t-exam-p').innerText = t.tExamP;
-      document.getElementById('i18n-btn-tsubmit').innerText = t.btnTsubmit;
+      safeSetText('i18n-tutor-id-title', t.tutorIdTitle);
+      safeSetText('i18n-t-badge', t.tBadge);
+      safeSetText('i18n-t-title', t.tTitle);
+      safeSetText('i18n-t-subtitle', t.tSubtitle);
+      safeSetText('i18n-f-tname', t.fTname);
+      safeSetText('i18n-f-tphone', t.fTphone);
+      safeSetText('i18n-f-tgender', t.fTgender);
+      safeSetText('i18n-topt-sel', t.toptSel);
+      safeSetText('i18n-topt-male', t.toptMale);
+      safeSetText('i18n-topt-female', t.toptFemale);
+      safeSetText('i18n-f-tuni', t.fTuni);
+      safeSetText('i18n-f-tcampus', t.fTcampus);
+      safeSetText('i18n-f-tyear', t.fTyear);
+      safeSetText('i18n-f-tcgpa', t.fTcgpa);
+      safeSetText('i18n-f-tsubj', t.fTsubj);
+      safeSetText('i18n-f-tcid', t.fTcid);
+      safeSetText('i18n-f-t-student-id-num', t.fTstudentIdNum);
+      safeSetText('i18n-f-t-govt-id-num', t.fTgovtIdNum);
+      safeSetText('i18n-box-cid-h', t.boxCidH);
+      safeSetText('i18n-box-cid-p', t.boxCidP);
+      safeSetText('i18n-f-tgrade', t.fTgrade);
+      safeSetText('i18n-box-grade-h', t.boxGradeH);
+      safeSetText('i18n-box-grade-p', t.boxGradeP);
+      safeSetText('i18n-f-tgovt', t.fTgovt);
+      safeSetText('i18n-box-govt-h', t.boxGovtH);
+      safeSetText('i18n-box-govt-p', t.boxGovtP);
+      safeSetText('i18n-t-exam-h', t.tExamH);
+      safeSetText('i18n-t-exam-p', t.tExamP);
+      safeSetText('i18n-btn-tsubmit', t.btnTsubmit);
 
       // Vetting Screen
-      document.getElementById('i18n-v-badge').innerText = t.vBadge;
-      document.getElementById('i18n-vp-title').innerText = t.vpTitle;
-      document.getElementById('i18n-vp-subtitle').innerText = t.vpSubtitle;
-      if (document.getElementById('i18n-ladder-h')) document.getElementById('i18n-ladder-h').innerText = t.ladderH;
-      if (document.getElementById('i18n-ladder-p')) document.getElementById('i18n-ladder-p').innerText = t.ladderP;
-      if (document.getElementById('i18n-vp1-h')) document.getElementById('i18n-vp1-h').innerText = t.vp1H;
-      if (document.getElementById('i18n-vp1-p')) document.getElementById('i18n-vp1-p').innerText = t.vp1P;
-      if (document.getElementById('i18n-vp2-h')) document.getElementById('i18n-vp2-h').innerText = t.vp2H;
-      if (document.getElementById('i18n-vp2-p')) document.getElementById('i18n-vp2-p').innerText = t.vp2P;
-      if (document.getElementById('i18n-vp3-h')) document.getElementById('i18n-vp3-h').innerText = t.vp3H;
-      if (document.getElementById('i18n-vp3-p')) document.getElementById('i18n-vp3-p').innerText = t.vp3P;
-      if (document.getElementById('i18n-vp4-h')) document.getElementById('i18n-vp4-h').innerText = t.vp4H;
-      if (document.getElementById('i18n-vp4-p')) document.getElementById('i18n-vp4-p').innerText = t.vp4P;
-      if (document.getElementById('i18n-btn-vaction')) document.getElementById('i18n-btn-vaction').innerText = t.btnVaction;
+      safeSetText('i18n-v-badge', t.vBadge);
+      safeSetText('i18n-vp-title', t.vpTitle);
+      safeSetText('i18n-vp-subtitle', t.vpSubtitle);
+      safeSetText('i18n-ladder-h', t.ladderH);
+      safeSetText('i18n-ladder-p', t.ladderP);
+      safeSetText('i18n-vp1-h', t.vp1H);
+      safeSetText('i18n-vp1-p', t.vp1P);
+      safeSetText('i18n-vp2-h', t.vp2H);
+      safeSetText('i18n-vp2-p', t.vp2P);
+      safeSetText('i18n-vp3-h', t.vp3H);
+      safeSetText('i18n-vp3-p', t.vp3P);
+      safeSetText('i18n-vp4-h', t.vp4H);
+      safeSetText('i18n-vp4-p', t.vp4P);
+      safeSetText('i18n-btn-vaction', t.btnVaction);
 
       // Phone Screen
-      if (document.getElementById('i18n-h-badge')) document.getElementById('i18n-h-badge').innerText = t.hBadge;
-      if (document.getElementById('i18n-hp-title')) document.getElementById('i18n-hp-title').innerText = t.hpTitle;
-      if (document.getElementById('i18n-hp-subtitle')) document.getElementById('i18n-hp-subtitle').innerText = t.hpSubtitle;
-      if (document.getElementById('i18n-call1-name')) document.getElementById('i18n-call1-name').innerText = t.call1Name;
-      if (document.getElementById('i18n-call2-name')) document.getElementById('i18n-call2-name').innerText = t.call2Name;
-      if (document.getElementById('i18n-call3-name')) document.getElementById('i18n-call3-name').innerText = t.call3Name;
-      if (document.getElementById('i18n-call4-name')) document.getElementById('i18n-call4-name').innerText = t.call4Name;
-      if (document.getElementById('i18n-call-btn1')) document.getElementById('i18n-call-btn1').innerText = t.callBtn1;
-      if (document.getElementById('i18n-call-btn2')) document.getElementById('i18n-call-btn2').innerText = t.callBtn2;
-      if (document.getElementById('i18n-call-btn3')) document.getElementById('i18n-call-btn3').innerText = t.callBtn3;
-      if (document.getElementById('i18n-call-btn4')) document.getElementById('i18n-call-btn4').innerText = t.callBtn4;
-      if (document.getElementById('i18n-p1-status')) document.getElementById('i18n-p1-status').innerText = t.p1Status;
-      if (document.getElementById('i18n-p2-status')) document.getElementById('i18n-p2-status').innerText = t.p2Status;
-      if (document.getElementById('i18n-p3-status')) document.getElementById('i18n-p3-status').innerText = t.p3Status;
-      if (document.getElementById('i18n-p4-status')) document.getElementById('i18n-p4-status').innerText = t.p4Status;
-      if (document.getElementById('i18n-ops-desc')) document.getElementById('i18n-ops-desc').innerText = t.opsDesc;
-      if (document.getElementById('i18n-ch-desc')) document.getElementById('i18n-ch-desc').innerText = t.chDesc;
-      if (document.getElementById('i18n-ops-btn')) document.getElementById('i18n-ops-btn').innerText = t.opsBtn;
-      if (document.getElementById('i18n-ch-btn')) document.getElementById('i18n-ch-btn').innerText = t.chBtn;
-      if (document.getElementById('i18n-modal-close')) document.getElementById('i18n-modal-close').innerText = t.modalClose;
+      safeSetText('i18n-h-badge', t.hBadge);
+      safeSetText('i18n-hp-title', t.hpTitle);
+      safeSetText('i18n-hp-subtitle', t.hpSubtitle);
+      safeSetText('i18n-call1-name', t.call1Name);
+      safeSetText('i18n-call2-name', t.call2Name);
+      safeSetText('i18n-call3-name', t.call3Name);
+      safeSetText('i18n-call4-name', t.call4Name);
+      safeSetText('i18n-call-btn1', t.callBtn1);
+      safeSetText('i18n-call-btn2', t.callBtn2);
+      safeSetText('i18n-call-btn3', t.callBtn3);
+      safeSetText('i18n-call-btn4', t.callBtn4);
+      safeSetText('i18n-p1-status', t.p1Status);
+      safeSetText('i18n-p2-status', t.p2Status);
+      safeSetText('i18n-p3-status', t.p3Status);
+      safeSetText('i18n-p4-status', t.p4Status);
+      safeSetText('i18n-ops-desc', t.opsDesc);
+      safeSetText('i18n-ch-desc', t.chDesc);
+      safeSetText('i18n-ops-btn', t.opsBtn);
+      safeSetText('i18n-ch-btn', t.chBtn);
+      safeSetText('i18n-modal-close', t.modalClose);
     }
 
     // Copy Phone Number Helper
@@ -5812,14 +6028,16 @@
       // Also verify against central cloud database
       if (!duplicateParent && typeof db !== 'undefined' && db) {
         try {
-          const snap = await db.collection('astegni_parent_leads').get();
-          snap.forEach(doc => {
-            const d = doc.data();
-            const dPhone = (d.phone || '').replace(/\D/g, '');
-            if (dPhone.endsWith(cleanPhone)) {
-              duplicateParent = d;
-            }
-          });
+          const snap = await getCollectionWithTimeout('astegni_parent_leads', 2000);
+          if (snap) {
+            snap.forEach(doc => {
+              const d = doc.data();
+              const dPhone = (d.phone || '').replace(/\D/g, '');
+              if (dPhone.endsWith(cleanPhone)) {
+                duplicateParent = d;
+              }
+            });
+          }
         } catch (err) {}
       }
 
@@ -5846,13 +6064,13 @@
 
       const pIdType = document.getElementById('p_id_type')?.value || 'National Fayda ID';
 
-      // Validate Front & Back ID photos
+      // Validate Front & Back ID photos (Front is mandatory, Back is optional)
       const frontFile = document.getElementById('p_id_front_file')?.files[0];
       const backFile = document.getElementById('p_id_back_file')?.files[0];
-      if (!frontFile || !backFile) {
+      if (!frontFile) {
         const msg = (currentLang === 'am')
-          ? 'እባክዎ የመታወቂያውን የፊት እና የኋላ ፎቶ ያያይዙ (ሁለቱም ለአስጠኚዎች ደህንነት ግዴታ ናቸው)።'
-          : 'Please upload both FRONT and BACK photos of your ID (both are mandatory for child & tutor safety).';
+          ? 'እባክዎ የመታወቂያዎን ፎቶ ያያይዙ (የፊት ገጽ ለአስጠኚዎች ደህንነት ግዴታ ነው)።'
+          : 'Please upload the Front photo of your ID (mandatory for household & tutor safety).';
         abortParentValidation(msg, null, document.getElementById('box-p-id-front'));
         return;
       }
@@ -5862,73 +6080,56 @@
       const subjs = checkedSubjs.join(', ') || 'General / All';
 
       // Use Assigned Unique Tracking ID & Telegram Tag
-      const trackingId = currentParentTrackingId;
-      const tgTag = `#AST_P_${trackingId.split('-')[2]}`;
+      const trackingId = currentParentTrackingId || generateTrackingId('P');
+      const tgTag = `#AST_P_${(trackingId.split('-')[2] || '4821')}`;
+
+      const monthlyFee = Number(document.getElementById('p_monthly_fee')?.value || 3000);
+      const packageTitle = document.getElementById('p_package_name')?.value || 'Standard Package (3,000 ETB • 3 Days/week)';
+      const packageSchedule = document.getElementById('p_package_schedule')?.value || '3 Days a Week (1 hr/day)';
+
+      let parentPayload = {
+        id: trackingId,
+        trackingId: trackingId,
+        tgTag: tgTag,
+        name: name,
+        applicantType: applicantType,
+        phone: phone,
+        area: area,
+        studentGender: studentGender,
+        childGender: studentGender,
+        grade: grade,
+        subjects: subjs,
+        monthlyFee: monthlyFee,
+        packageTitle: packageTitle,
+        packageSchedule: packageSchedule,
+        idType: pIdType,
+        idFrontAttached: !!frontFile,
+        idBackAttached: !!backFile,
+        status: 'Pending',
+        type: 'addParent',
+        createdAt: new Date().toISOString()
+      };
+
+      // Save session keys for returning user status
+      localStorage.setItem('my_astegni_parent_phone', phone);
+      localStorage.setItem('my_astegni_parent_id', trackingId);
 
       // Save offline backup
       try {
-        const monthlyFee = Number(document.getElementById('p_monthly_fee')?.value || 3000);
-        const packageTitle = document.getElementById('p_package_name')?.value || 'Standard Package (3,000 ETB • 3 Days/week)';
-        const packageSchedule = document.getElementById('p_package_schedule')?.value || '3 Days a Week (1 hr/day)';
-
-        const item = { 
-          id: trackingId,
-          trackingId: trackingId,
-          tgTag: tgTag,
-          type: 'PARENT', 
-          applicantType,
-          name, 
-          phone, 
-          area, 
-          studentGender,
-          childGender: studentGender, 
-          grade, 
-          subjs, 
-          monthlyFee,
-          packageTitle,
-          packageSchedule,
-          idType: pIdType,
-          idFrontAttached: !!frontFile,
-          idBackAttached: !!backFile,
-          status: 'Pending', 
-          date: new Date().toISOString() 
-        };
         const list = JSON.parse(localStorage.getItem('astegni_parent_leads') || '[]');
-        list.push(item);
+        list.push(parentPayload);
         localStorage.setItem('astegni_parent_leads', JSON.stringify(list));
-
-        const parentPayload = {
-          id: trackingId,
-          trackingId: trackingId,
-          tgTag: tgTag,
-          name: name,
-          applicantType: applicantType,
-          phone: phone,
-          area: area,
-          studentGender: studentGender,
-          grade: grade,
-          subjects: subjs,
-          monthlyFee: monthlyFee,
-          packageTitle: packageTitle,
-          packageSchedule: packageSchedule,
-          idType: pIdType,
-          status: 'Pending',
-          type: 'addParent',
-          createdAt: new Date().toISOString()
-        };
-
-        // Raw parent leads are preserved on Telegram Hub & Firebase Cloud (Google Sheet stores only confirmed matches)
 
         // Asynchronously compress and upload photos to Telegram for 100% free unlimited cloud storage
         if (frontFile) {
           compressImageFile(frontFile).then(blob => {
             sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Household ID (Front) • ${name} • ${phone} • ${area}`, '@AstegniParents');
-          });
+          }).catch(e => console.warn('Photo upload front error:', e));
         }
         if (backFile) {
           compressImageFile(backFile).then(blob => {
             sendPhotoToTelegramBot(blob, `${trackingId} • ${tgTag} • Household ID (Back) • ${name} • ${phone} • ${pIdType}`, '@AstegniParents');
-          });
+          }).catch(e => console.warn('Photo upload back error:', e));
         }
       } catch (err) {}
 
@@ -5936,10 +6137,6 @@
       const applicantHeader = (applicantType === 'STUDENT_ADULT') 
         ? `🎓 New Independent Student (18+) Request (Teme Astegni)` 
         : `👨‍👩‍👧 New Parent Request (Teme Astegni)`;
-
-      const currentMonthlyFee = Number(document.getElementById('p_monthly_fee')?.value || 3000);
-      const currentPkgTitle = document.getElementById('p_package_name')?.value || 'Standard Package (3,000 ETB • 3 Days/week)';
-      const currentPkgSched = document.getElementById('p_package_schedule')?.value || '3 Days a Week (1 hr/day)';
 
       const plainText = `🏷️ ID: ${trackingId}\n` +
                         `📌 SEARCH TAG: ${tgTag}\n` +
@@ -5951,14 +6148,16 @@
                         `🧒 Student Gender: ${studentGender}\n` +
                         `🎓 Academic Grade: ${grade}\n` +
                         `📖 Subjects: ${subjs}\n` +
-                        `💰 Selected Plan: ${currentPkgTitle} (${currentMonthlyFee.toLocaleString()} ETB/month)\n` +
-                        `📅 Schedule: ${currentPkgSched}\n` +
-                        `🆔 Household ID: ${pIdType} (Front & Back Attached • Verified in Vault)\n` +
+                        `💰 Selected Plan: ${packageTitle} (${monthlyFee.toLocaleString()} ETB/month)\n` +
+                        `📅 Schedule: ${packageSchedule}\n` +
+                        `🆔 Household ID: ${pIdType} (Front ${backFile ? '& Back ' : ''}Attached • Verified in Vault)\n` +
                         `━━━━━━━━━━━━━━━━━━━━\n` +
                         `🔍 Search "${trackingId}" or "${tgTag}" in Ethio - 21 Astegni Parents (@AstegniParents) to find this record instantly.`;
       
       // 100% Background Telegram Bot Delivery
-      sendTextMessageToTelegramBot(plainText, '@AstegniParents');
+      try {
+        sendTextMessageToTelegramBot(plainText, '@AstegniParents');
+      } catch (err) {}
 
       // Record active lead for silent background sync
       window.lastSubmittedRecord = Object.assign({}, parentPayload, {
@@ -5967,27 +6166,14 @@
       });
 
       // 1. Save directly to Firebase Firestore Cloud (Unlimited Scale)
-      saveParentToCloud({
-        id: trackingId,
-        trackingId: trackingId,
-        tgTag: tgTag,
-        name: name,
-        applicantType: applicantType,
-        phone: phone,
-        area: area,
-        studentGender: studentGender,
-        grade: grade,
-        subjects: subjs,
-        monthlyFee: currentMonthlyFee,
-        packageTitle: currentPkgTitle,
-        packageSchedule: currentPkgSched,
-        idType: pIdType,
-        status: 'Pending',
-        createdAt: new Date().toISOString()
-      });
+      try {
+        saveParentToCloud(parentPayload);
+      } catch (err) {}
 
       // 2. Automatically execute silent background push to Google Sheets
-      pushCurrentApplicationToSheetSilent();
+      try {
+        pushCurrentApplicationToSheetSilent();
+      } catch (err) {}
 
       // Configure Action Button to directly join the community
       const btnSingle = document.getElementById('btn-single-submit');
@@ -6012,17 +6198,25 @@
           ? `Kabajamoo <b>${name}</b>, gaaffiin keessan garee keenyaan qaqqabeera. Qindeessitoonni keenya sa'aatii 24 keessatti barsiisaa filatamaa waliin isin qunnamsiisu.`
           : `Dear <b>${name}</b>, your request has been safely received. Our academic coordinators will review your requirements and reach out within 24 hours to match the best tutor.`);
 
-      document.getElementById('modal-title').innerText = modalTitle;
-      document.getElementById('modal-desc').innerHTML = modalDesc;
+      const modalTitleEl = document.getElementById('modal-title');
+      if (modalTitleEl) modalTitleEl.innerText = modalTitle;
+      const modalDescEl = document.getElementById('modal-desc');
+      if (modalDescEl) modalDescEl.innerHTML = modalDesc;
       const modalTrackingPill = document.getElementById('modal-tracking-pill');
       if (modalTrackingPill) {
         modalTrackingPill.innerText = trackingId;
       }
-      document.getElementById('dispatch-modal').classList.add('active');
+      const dispatchModal = document.getElementById('dispatch-modal');
+      if (dispatchModal) dispatchModal.classList.add('active');
 
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnHtml;
+      }
+
+      // Update home screen live status card if present
+      if (typeof updateHomeActiveStatusCards === 'function') {
+        updateHomeActiveStatusCards();
       }
 
       // Reset image previews
@@ -6691,6 +6885,9 @@
       setLang('am');
       initUniversityDropdown();
       updateLiveTrackingBanners();
+      if (typeof updateHomeActiveStatusCards === 'function') {
+        updateHomeActiveStatusCards();
+      }
 
       // Automatically persist cloud webhook from URL query if provided
       try {
