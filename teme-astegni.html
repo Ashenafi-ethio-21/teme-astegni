@@ -1594,11 +1594,16 @@
         <!-- Returning Parent Status Banner -->
         <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
           <div style="font-size: 0.8rem; color: #cbd5e1;">
-            👨‍👩‍👧 <b>Already applied?</b> Check your live matching progress &amp; assigned scholar status:
+            👨‍👩‍👧 <b>Already applied?</b> Check your live matching progress &amp; submit monthly payment receipts:
           </div>
-          <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
-            Check Request Status ›
-          </button>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+            <button type="button" onclick="openParentStatusLookupModal()" style="background: rgba(56, 189, 248, 0.25); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer;">
+              Check Request Status ›
+            </button>
+            <button type="button" onclick="openParentPaymentModal()" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5); color: #34d399; font-weight: 850; font-size: 0.75rem; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
+              <span>💳</span> <span>Submit Monthly Payment ›</span>
+            </button>
+          </div>
         </div>
 
         <form id="parent-form" novalidate onsubmit="handleParentSubmit(event)">
@@ -2889,6 +2894,94 @@
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- PARENT MONTHLY PAYMENT SCREENSHOT MODAL   -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="parent-payment-modal">
+    <div class="modal-card" style="max-width: 480px; width: 94%; text-align: left; border-radius: 24px; border: 1.5px solid rgba(16, 185, 129, 0.45); background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 30, 0.98) 100%); backdrop-filter: blur(28px); padding: 1.75rem 1.4rem; max-height: 90vh; overflow-y: auto;">
+      
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">💳</div>
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 850; color: #fff;">Submit Payment Screenshot</div>
+            <div style="font-size: 0.72rem; color: #34d399; font-weight: 700;">የወርሃዊ ክፍያ ደረሰኝ መላኪያ</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeParentPaymentModal()" style="background: rgba(255,255,255,0.08); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">✕</button>
+      </div>
+
+      <!-- Telegram Group Destination Banner -->
+      <div style="background: rgba(36, 161, 222, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 0.75rem 0.9rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+        <div style="font-size: 0.75rem; color: #e2e8f0; line-height: 1.4;">
+          ✈️ <b>Official Telegram Group:</b> Verified receipts arrive directly in the <b>"parents payments"</b> group with your Tracking ID.
+        </div>
+        <a href="https://t.me/+1nwxhaCqN9M4Y2E0" target="_blank" rel="noopener" style="background: #0284c7; color: #fff; text-decoration: none; font-size: 0.7rem; font-weight: 800; padding: 0.35rem 0.65rem; border-radius: 8px; white-space: nowrap;">
+          View Group ↗
+        </a>
+      </div>
+
+      <form id="form-parent-payment" onsubmit="event.preventDefault(); submitParentPaymentScreenshot();">
+        <div style="margin-bottom: 0.75rem;">
+          <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Parent Tracking ID (AST-P-XXXX) *</label>
+          <input type="text" id="pay-parent-id" required placeholder="e.g. AST-P-1717" style="width: 100%; padding: 0.7rem; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1.5px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-weight: 850; font-family: monospace; font-size: 0.95rem; box-sizing: border-box;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem;">
+          <div>
+            <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Parent / Student Name</label>
+            <input type="text" id="pay-parent-name" placeholder="Full Name" style="width: 100%; padding: 0.7rem; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.85rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Phone Number *</label>
+            <input type="tel" id="pay-parent-phone" required placeholder="09xxxxxxxx" style="width: 100%; padding: 0.7rem; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.85rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem;">
+          <div>
+            <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Billing Month *</label>
+            <select id="pay-month-cycle" required style="width: 100%; padding: 0.7rem; border-radius: 10px; background: #0f172a; border: 1.5px solid rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 800; font-size: 0.82rem; box-sizing: border-box;">
+              <option value="Month 1" selected>🥇 Month 1 (Initial Tuition Escrow)</option>
+              <option value="Month 2">🔄 Month 2 (Recurring Tuition)</option>
+              <option value="Month 3">🔄 Month 3 (Recurring Tuition)</option>
+              <option value="Month 4">🔄 Month 4 (Recurring Tuition)</option>
+              <option value="Month 5">🔄 Month 5 (Recurring Tuition)</option>
+              <option value="Month 6+">🔄 Month 6+ (Recurring Tuition)</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Tuition Amount Paid (ETB) *</label>
+            <input type="number" id="pay-amount" required value="3500" placeholder="e.g. 3500" style="width: 100%; padding: 0.7rem; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #fbbf24; font-weight: 850; font-size: 0.9rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Payment Transfer Method *</label>
+          <select id="pay-method" required style="width: 100%; padding: 0.7rem; border-radius: 10px; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.82rem; box-sizing: border-box;">
+            <option value="Telebirr" selected>📱 Telebirr (0945399808 / 0960064466)</option>
+            <option value="CBE - Commercial Bank of Ethiopia">🏛️ Commercial Bank of Ethiopia (CBE)</option>
+            <option value="Awash Bank">🏦 Awash Bank</option>
+            <option value="Bank of Abyssinia">🏦 Bank of Abyssinia</option>
+            <option value="Other Bank Transfer">💵 Other Bank Transfer</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.76rem; color: #cbd5e1; font-weight: 750; margin-bottom: 0.35rem;">Attach Payment Receipt / Screenshot *</label>
+          <input type="file" id="pay-screenshot-file" accept="image/*" required onchange="previewPaymentScreenshot(this)" style="width: 100%; padding: 0.6rem; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1.5px dashed rgba(56, 189, 248, 0.45); color: #cbd5e1; font-size: 0.8rem; box-sizing: border-box;">
+          <div id="pay-screenshot-preview" style="display: none; margin-top: 0.6rem; text-align: center;">
+            <img id="pay-preview-img" src="" alt="Receipt Preview" style="max-height: 160px; max-width: 100%; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 14px rgba(0,0,0,0.5);">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit-payment-proof" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: #fff; padding: 0.85rem; border-radius: 14px; font-weight: 850; font-size: 0.95rem; cursor: pointer; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <span>🚀 Submit Payment Screenshot to Ethio 21</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
     // GLOBAL SECURITY & TEXT SANITIZER
     function escapeHtml(str) {
@@ -3513,6 +3606,244 @@
       if (modal) modal.classList.remove('active');
     }
 
+    // ==========================================
+    // PARENT MONTHLY PAYMENT SCREENSHOT HANDLERS
+    // ==========================================
+    function openParentPaymentModal(optParentId, optFee) {
+      const modal = document.getElementById('parent-payment-modal');
+      if (!modal) return;
+
+      let targetId = optParentId || localStorage.getItem('my_astegni_parent_id') || '';
+      if (!targetId && window.currentParentTrackingId) {
+        targetId = window.currentParentTrackingId;
+      }
+
+      const idInput = document.getElementById('pay-parent-id');
+      if (idInput && targetId) idInput.value = targetId;
+
+      let parentRecord = null;
+      const pRecordRaw = localStorage.getItem('my_astegni_parent_record');
+      if (pRecordRaw) {
+        try { parentRecord = JSON.parse(pRecordRaw); } catch(e){}
+      }
+      const nameInput = document.getElementById('pay-parent-name');
+      if (nameInput && !nameInput.value) {
+        if (parentRecord && parentRecord.name) nameInput.value = parentRecord.name;
+      }
+      const phoneInput = document.getElementById('pay-parent-phone');
+      if (phoneInput && !phoneInput.value) {
+        const savedPhone = localStorage.getItem('my_astegni_parent_phone') || (parentRecord && parentRecord.phone) || '';
+        if (savedPhone) phoneInput.value = savedPhone;
+      }
+      const feeInput = document.getElementById('pay-amount');
+      if (feeInput && optFee) {
+        feeInput.value = optFee;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeParentPaymentModal() {
+      const modal = document.getElementById('parent-payment-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function previewPaymentScreenshot(input) {
+      const previewContainer = document.getElementById('pay-screenshot-preview');
+      const previewImg = document.getElementById('pay-preview-img');
+      if (!input.files || !input.files[0]) {
+        if (previewContainer) previewContainer.style.display = 'none';
+        return;
+      }
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        if (previewImg) previewImg.src = e.target.result;
+        if (previewContainer) previewContainer.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function submitParentPaymentScreenshot() {
+      const idInput = document.getElementById('pay-parent-id');
+      const nameInput = document.getElementById('pay-parent-name');
+      const phoneInput = document.getElementById('pay-parent-phone');
+      const monthSelect = document.getElementById('pay-month-cycle');
+      const amountInput = document.getElementById('pay-amount');
+      const methodSelect = document.getElementById('pay-method');
+      const fileInput = document.getElementById('pay-screenshot-file');
+      const submitBtn = document.getElementById('btn-submit-payment-proof');
+
+      const parentId = (idInput ? idInput.value : '').trim().toUpperCase();
+      const parentName = (nameInput ? nameInput.value : '').trim() || 'Parent';
+      const parentPhone = (phoneInput ? phoneInput.value : '').trim();
+      const monthCycle = (monthSelect ? monthSelect.value : 'Month 1');
+      const amount = Number(amountInput ? amountInput.value : 0) || 3500;
+      const method = (methodSelect ? methodSelect.value : 'Telebirr');
+
+      if (!parentId) {
+        alert('Please enter your Parent Tracking ID (AST-P-XXXX).');
+        if (idInput) idInput.focus();
+        return;
+      }
+      if (!parentPhone) {
+        alert('Please provide your contact phone number.');
+        if (phoneInput) phoneInput.focus();
+        return;
+      }
+      if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+        alert('Please attach or take a photo/screenshot of your payment receipt transfer.');
+        if (fileInput) fileInput.focus();
+        return;
+      }
+
+      const receiptFile = fileInput.files[0];
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Uploading receipt &amp; routing to Telegram...</span>';
+      }
+
+      try {
+        // Compress and encode receipt image as Base64 data URL
+        const base64DataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+              const maxDim = 1200;
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.82));
+            };
+            img.onerror = () => resolve(e.target.result);
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(receiptFile);
+        });
+
+        const paymentRecord = {
+          id: 'PAY-' + Date.now().toString(36).toUpperCase(),
+          parentId: parentId,
+          parentName: parentName,
+          parentPhone: parentPhone,
+          monthCycle: monthCycle,
+          amount: amount,
+          paymentMethod: method,
+          screenshotUrl: base64DataUrl,
+          submittedAt: new Date().toISOString(),
+          status: 'VERIFICATION_PENDING',
+          telegramTargetGroup: 'https://t.me/+1nwxhaCqN9M4Y2E0'
+        };
+
+        // 1. Save in localStorage payments ledger
+        const existingPayments = JSON.parse(localStorage.getItem('astegni_parent_payments') || '[]');
+        existingPayments.unshift(paymentRecord);
+        localStorage.setItem('astegni_parent_payments', JSON.stringify(existingPayments));
+
+        // 2. Attach payment info to any matching record in astegni_matches
+        const localMatches = JSON.parse(localStorage.getItem('astegni_matches') || '[]');
+        let matchedRecord = null;
+        const pClean = parentPhone.replace(/\\D/g, '');
+        localMatches.forEach(m => {
+          const mId = (m.parentId || '').toUpperCase();
+          const mPhone = (m.parentPhone || '').replace(/\\D/g, '');
+          if (mId === parentId || (pClean.length >= 6 && mPhone.endsWith(pClean.slice(-9)))) {
+            m.paymentScreenshot = base64DataUrl;
+            m.latestPaymentId = paymentRecord.id;
+            m.paymentMonthCycle = monthCycle;
+            m.paymentAmount = amount;
+            m.parentPaidStatus = 'PENDING_ADMIN_CONFIRMATION';
+            m.paymentSubmittedAt = paymentRecord.submittedAt;
+            matchedRecord = m;
+          }
+        });
+        localStorage.setItem('astegni_matches', JSON.stringify(localMatches));
+
+        // 3. Save to Firebase Firestore cloud database if online
+        if (typeof db !== 'undefined' && db) {
+          try {
+            await db.collection('astegni_parent_payments').doc(paymentRecord.id).set(paymentRecord);
+            if (matchedRecord && matchedRecord.id) {
+              await db.collection('astegni_matches').doc(matchedRecord.id).set({
+                paymentScreenshot: base64DataUrl,
+                latestPaymentId: paymentRecord.id,
+                paymentMonthCycle: monthCycle,
+                paymentAmount: amount,
+                parentPaidStatus: 'PENDING_ADMIN_CONFIRMATION',
+                paymentSubmittedAt: paymentRecord.submittedAt
+              }, { merge: true });
+            }
+          } catch (cloudErr) {
+            console.warn('Firebase payment sync notice:', cloudErr);
+          }
+        }
+
+        // 4. Send directly to Telegram Group: "parents payments" (https://t.me/+1nwxhaCqN9M4Y2E0)
+        const tgCaption = `💳 <b>NEW PARENT PAYMENT SCREENSHOT RECEIVED</b>\n` +
+          `━━━━━━━━━━━━━━━━━━━\n` +
+          `🆔 <b>Parent ID:</b> <code>${parentId}</code>\n` +
+          `👤 <b>Parent Name:</b> ${escapeHtml(parentName)}\n` +
+          `📱 <b>Phone:</b> ${escapeHtml(parentPhone)}\n` +
+          `🗓️ <b>Billing Cycle:</b> <b>${escapeHtml(monthCycle)}</b>\n` +
+          `💵 <b>Amount Paid:</b> <b>${amount.toLocaleString()} ETB</b>\n` +
+          `🏦 <b>Method:</b> ${escapeHtml(method)}\n` +
+          `⏰ <b>Submitted At:</b> ${new Date().toLocaleString()}\n` +
+          `━━━━━━━━━━━━━━━━━━━\n` +
+          `🔍 <b>Search Tag:</b> #${parentId.replace(/[^A-Za-z0-9_]/g, '_')}\n` +
+          `✈️ <b>Official Group:</b> https://t.me/+1nwxhaCqN9M4Y2E0`;
+
+        try {
+          const byteString = atob(base64DataUrl.split(',')[1]);
+          const mimeString = base64DataUrl.split(',')[0].split(':')[1].split(';')[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const photoBlob = new Blob([ab], { type: mimeString });
+
+          const targetPaymentsChat = window.TEME_TG_PARENTS_PAYMENTS_CHAT || localStorage.getItem('teme_astegni_tg_payments_chat_id') || localStorage.getItem('teme_astegni_tg_chat_id') || '@AstegniParents';
+          sendPhotoToTelegramBot(photoBlob, tgCaption, targetPaymentsChat);
+        } catch(blobErr) {
+          console.warn('Telegram photo blob dispatch notice:', blobErr);
+        }
+
+        sendTextMessageToTelegramBot(tgCaption, window.TEME_TG_PARENTS_PAYMENTS_CHAT || localStorage.getItem('teme_astegni_tg_payments_chat_id'));
+
+        localStorage.setItem('my_astegni_parent_id', parentId);
+        localStorage.setItem('my_astegni_parent_phone', parentPhone);
+
+        closeParentPaymentModal();
+
+        alert(`✅ Payment Screenshot Submitted Successfully!\n\nParent Tracking ID: ${parentId}\nBilling Month: ${monthCycle}\nAmount: ${amount} ETB\n\nYour screenshot is safely attached to your file and dispatched to our finance team on Telegram.\n\nYou can also view the "parents payments" Telegram group at: https://t.me/+1nwxhaCqN9M4Y2E0`);
+
+      } catch(err) {
+        console.error('Error submitting payment proof:', err);
+        alert('There was an issue processing your screenshot. Please check your connection and try again.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>🚀 Submit Payment Screenshot to Ethio 21</span>';
+        }
+      }
+    }
+
     async function handleParentLookupSubmit() {
       const queryInp = document.getElementById('parent-lookup-query');
       const query = (queryInp ? queryInp.value : '').trim();
@@ -3688,6 +4019,20 @@
             <div style="font-size: 0.66rem; text-transform: uppercase; color: #94a3b8; font-weight: 750;">💵 Selected Package</div>
             <div style="font-size: 0.84rem; font-weight: 800; color: #fbbf24;">${escapeHtml(parentData.packageTitle || 'Standard (3,000 ETB)')}</div>
           </div>
+        </div>
+
+        <!-- Monthly Tuition & Payment Receipt Action -->
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.22) 100%); border: 1.5px solid #10b981; border-radius: 14px; padding: 1rem; margin-bottom: 0.85rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+            <span style="font-weight: 850; font-size: 0.88rem; color: #fff;">💳 Monthly Tuition Payment &amp; Receipt</span>
+            <span style="font-size: 0.7rem; background: #059669; color: #fff; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 800;">Agency Escrow</span>
+          </div>
+          <p style="font-size: 0.77rem; color: #cbd5e1; line-height: 1.45; margin-bottom: 0.75rem;">
+            Submit your Telebirr / CBE payment screenshot here with your tracking ID (<b>${escapeHtml(pId)}</b>). Verified receipts route directly to our official <b>"parents payments"</b> Telegram group.
+          </p>
+          <button type="button" onclick="closeParentStatusModal(); openParentPaymentModal('${escapeHtml(pId)}', ${match?.parentFee || match?.fee || 3500})" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: #fff; padding: 0.75rem; border-radius: 12px; font-weight: 850; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+            <span>📸</span> <span>Submit Monthly Payment Screenshot (የክፍያ ደረሰኝ መላኪያ) ›</span>
+          </button>
         </div>
 
         <button type="button" onclick="allowAdditionalChildRequest()" style="width: 100%; background: rgba(56, 189, 248, 0.12); border: 1.5px solid rgba(56, 189, 248, 0.35); color: #38bdf8; font-weight: 800; font-size: 0.82rem; padding: 0.65rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
@@ -3913,6 +4258,9 @@
               <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData)" style="flex: 1; min-width: 160px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: none; color: #fff; padding: 0.7rem 0.95rem; border-radius: 12px; font-weight: 850; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);">
                 <span>📋</span> <span>View Full Details Dossier ›</span>
               </button>
+              <button type="button" onclick="openParentPaymentModal('${escapeHtml(pId)}')" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: #fff; padding: 0.7rem 0.95rem; border-radius: 12px; font-weight: 850; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+                <span>💳</span> <span>Submit Monthly Payment ›</span>
+              </button>
               <button type="button" onclick="allowAdditionalChildRequest()" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; padding: 0.7rem 0.95rem; border-radius: 12px; font-weight: 800; font-size: 0.8rem; cursor: pointer;">
                 ➕ Add Another Child
               </button>
@@ -4113,6 +4461,9 @@
             <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
               <button type="button" onclick="showParentStatusModal(window.currentDeviceParentData || JSON.parse(localStorage.getItem('my_astegni_parent_record')))" style="background: #0284c7; color: #fff; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 850; font-size: 0.78rem; cursor: pointer; box-shadow: 0 4px 12px rgba(2,132,199,0.35);">
                 📋 View Live Status Card ›
+              </button>
+              <button type="button" onclick="openParentPaymentModal('${escapeHtml(pId)}')" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; border: none; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 850; font-size: 0.78rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35); display: flex; align-items: center; gap: 0.35rem;">
+                <span>💳</span> <span>Submit Monthly Payment ›</span>
               </button>
             </div>
           </div>
@@ -5664,6 +6015,8 @@
     window.TEME_DEFAULT_TG_CHAT_ID = window.TEME_DEFAULT_TG_CHAT_ID || '@AstegniTutors';
     window.TEME_TG_TUTORS_CHAT = '@AstegniTutors';
     window.TEME_TG_PARENTS_CHAT = '@AstegniParents';
+    window.TEME_TG_PARENTS_PAYMENTS_CHAT = localStorage.getItem('teme_astegni_tg_payments_chat_id') || '@AstegniParents';
+    window.TEME_TG_PARENTS_PAYMENTS_INVITE = 'https://t.me/+1nwxhaCqN9M4Y2E0';
 
     // ==========================================
     // GOOGLE FIREBASE FIRESTORE CLOUD ENGINE
